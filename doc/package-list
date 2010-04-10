@@ -1,0 +1,10 @@
+whitecat.core
+whitecat.core.agents
+whitecat.core.annotation
+whitecat.core.event
+whitecat.core.exceptions
+whitecat.core.role
+whitecat.core.role.descriptors
+whitecat.core.role.impl
+whitecat.example
+whitecat.osgi
