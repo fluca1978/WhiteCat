@@ -1,0 +1,26 @@
+This file describes some coding conventions used for the WhiteCat project.
+Developers are encouraged to follow the explained steps in order to get their patches
+approved quickly and in order to keep the code base uniform and easy to mantain and read.
+
+All packges related to the WhiteCat internals must have the 'whitecat' prefix.
+The package 'whitecat.core' is associated to the very internals of the project (i.e., the
+agent proxies, agents, roles, role booster, etc.).
+
+Each exception thrown by the core classes must be placed into the 'whitecat.core.exceptions'
+package and must be named after the 'WC' prefix.
+
+Since the 'core' package provides an API, each default implementation of such API
+must be placed in the 'impl' subpackage. As an example, consider the whitecat.core.role.impl
+package.
+
+Each new source file must contain the licence preamble and, whenever possible, a statement
+that explains what WhiteCat is.
+
+Each Java interface must have a name that starts with a capital I, like in IMyInterface.
+Each Java class that implements an interface must have a name that ends with the 'impl' suffix,
+and that start with a clear reference to the (main) interface it implements, like in MyInterfaceImpl.
+
+Each class and/or interface that is really tied to the WhiteCat project, and that can be exported and used into
+another project should have a name that starts with the WC prefix.
+
+There is no absolutely good convention to follow, just be coherent and adhere to a good Java coding style.

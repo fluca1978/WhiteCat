@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>WhiteCat runtime configuration options</comment>
+
+<entry key="DefaultProxyHandler">whitecat.core.agents.LocalProxyHandler</entry>
+<entry key="DefaultMethodForwarderGenerator">whitecat.core.agents.LocalForwarderMethodGenerator</entry>
+<entry key="DefaultAgentProxy">whitecat.core.agents.LocalAgentProxy</entry>
+<entry key="DefaultRoleRepository">whitecat.core.role.impl.RoleRepositoryImpl</entry>
+</properties>

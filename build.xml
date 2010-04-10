@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This is the XML build file used by ant.
+This file is used to rebuild the library and the
+documentation. -->
+
+
+<!-- The project element. Each build file must have exactly one project element, that
+contains tasks and tags for building the project.
+The attributes of this elements are:
+   basedir: specifies the directory from which the build process should start
+   default: specifies the default task to execute if no one is specified on the command line
+   name:    specifiies the project name, used to identify the build
+-->
+<project basedir="."      default="init"      name="whitecat"  >
+	
+	
+	
+
+
+
+	
+	<!-- define the directory as properties -->
+	<property name="src.dir"            value="src">                                  </property>		<!-- the source directory -->
+	<property name="src.test.dir"       value="srcTest">                              </property>		<!-- the source directory with the test files (JUnit)-->
+	<property name="src.conf.dir"       value="conf">                                 </property>		<!-- the directory that contains the configuration files -->
+	<property name="src.lib.dir"        value="lib">					              </property>     <!-- where the jars required by this project are placed -->
+	<!--<property name="src.img.dir"        value="img">                                  </property>-->     <!-- where the icons and images are -->	
+	<property name="build.root"         value="build">                                </property>		<!-- the root directory that will contain the build result -->
+	<property name="img.dir.prefix"     value="img">                                  </property>     <!-- the name of the img directory -->
+	<property name="conf.dir.prefix"    value="conf">                                 </property>     <!-- the name of the configuration directory -->
+	<property name="build.dir"          value="${build.root}/classes">                </property>     <!-- the directory that will contain the compiled classes -->
+	<property name="build.dist.dir"     value="${build.root}/dist">                   </property>     <!-- the directory that will contain the libraries and the jar-ed version of the program -->
+	<property name="build.conf.dir"     value="${build.root}/${conf.dir.prefix}">     </property>     <!-- the directory that contains the configuration files -->
+	<property name="build.log.dir"      value="${build.root}/logs">                   </property>     <!-- the directory that will contain the log files -->
+	<property name="build.lib.dir"      value="${build.root}/lib">                    </property>		<!-- the directory that contains the jars this projects depends on -->
+	<property name="build.img.dir"      value="${build.root}/${img.dir.prefix}">      </property>		<!-- the directory that will contain the images and the icons -->
+	<property name="build.deploy.dir"   value="${build.root}/deploy">                 </property>     <!-- the directory that will contains only the jars required to run the application, including the jar created from
+			 																					 this buildfile -->
+	<property name="build.version"      value="0.1" >                                 </property>     <!-- the build version of this project -->
+	<property name="build.description"  value="WhiteCat framework: supports dynamic role injection." />
+	<property name="author.name"        value="Luca Ferrari - cat4hire@users.sourceforge.net" />
+	<property name="vendor.name"        value="${author.name}" />
+	
+	<property name="build.jar.name"     value="${build.deploy.dir}/${ant.project.name}.jar">          <!-- the name of the jar file -->         
+	</property>	
+	<property name="runtime.mainclass"  value="g2.main.Main">                         </property>  <!-- the main class to execute when launching the application -->
+	
+	
+	<property name="osgi.bundle.activator" value="whitecat.osgi.WCBundleActivator"   />
+	<property name="osgi.bundle.import"    value="org.osgi.framework"                />
+	<property name="osgi.bundle.export"    value=""                                  />
+	
+	
+
+	<property name="src.application.version"   value="APPLICATION_VERSION">           </property>		<!-- the value of this property will be searched thru the config files in order to make
+																						   		             a substitution. The string will be substituted with the value of the application version, build number, etc. -->	
+	
+	<!-- where to find the aspectj jars required for the compilation -->
+	<property name="aspectj.tools"	 value="${src.lib.dir}/aspectjtools.jar">         </property>
+	<property name="aspectj.runtime" value="${src.lib.dir}/aspectjrt.jar"   >         </property>
+	
+	<!-- unset this property to compile using aspectj -->
+	<!--
+	<property name="compile.aspectj">true</property>
+	-->
+
+	<!-- definition of the ant task for the compilation -->
+	<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties" classpath="${aspectj.tools}">
+	</taskdef>
+
+	
+	<!-- the classpath with specific libraries required by the project -->
+	<path id="build.classpath">
+		<pathelement location="${build.lib.dir}/log4j-1.2.15.jar"              />
+		<pathelement location="${build.lib.dir}/javassist.jar"                 />
+		<pathelement location="${build.lib.dir}/equinox.jar"                   />
+	</path>
+	
+	<!-- the manifest classpath -->
+	<!--
+	<manifestclasspath property="manifest.classpath" jarfile="${build.jar.name}">
+		<classpath refid="${build.classpath}"></classpath>
+	</manifestclasspath>
+	-->
+	
+	
+	<!-- A task to initialize the directory structure -->
+	<target name="_createDirectoryStructure" description="Creates the project directory structure (i.e., creates the build classes)" depends="clean" >
+		<echo>
+			Creating the build directory tree, creating all the directory required for a complete build.
+		</echo>
+		
+		<mkdir dir="${build.root}"       />
+		<mkdir dir="${build.dir}"        />			
+		<mkdir dir="${build.dist.dir}"   />
+		<mkdir dir="${build.conf.dir}"   />
+		<mkdir dir="${build.img.dir}"    />
+		<mkdir dir="${build.dist.dir}"   />
+		<mkdir dir="${build.log.dir}"    />
+		<mkdir dir="${build.deploy.dir}" />
+		<mkdir dir="${build.lib.dir}"    />
+	</target>
+	
+	
+	<!-- A task to clean the directory structure of this project. -->
+	<target name="clean" description="Cleans (i.e., removes) the build directory tree.">
+		<echo>
+			Cleaning the build directory tree, removing all the directories required for a complete build.
+		</echo>
+		
+
+		<delete dir="${build.dir}"        />			
+		<delete dir="${build.dist.dir}"   />
+		<delete dir="${build.conf.dir}"   />
+		<delete dir="${build.img.dir}"    />
+		<delete dir="${build.dist.dir}"   />
+		<delete dir="${build.log.dir}"    />
+		<delete dir="${build.root}"       />
+		<delete dir="${build.deploy.dir}" />
+		<delete dir="${build.lib.dir}"    />
+	</target>
+	
+
+	
+	<!-- a target to copy the img resources for this project -->
+	<target name="_copyImg" depends="_createDirectoryStructure" description="Copies the images and other graphical resources for the build. All the subdirectories will be copied." if="${src.img.dir}">
+		<copy todir="${build.img.dir}" verbose="true">
+			<fileset dir="${src.img.dir}" casesensitive="true" >
+			</fileset>
+		</copy>
+	</target>
+
+	
+	
+
+	<!-- inits the buildsystem -->
+	<target name="_preInit" depends="_createDirectoryStructure"  description="Inits the build system, please note that this task will create the directory structure.">
+			
+		
+		<!-- set the build number, by default it goes to the build.number file
+			 and sets the ${build.number} property -->
+		<buildnumber/>
+		
+		<!-- set the timestamp and place it into a timestamp property -->
+		<tstamp>
+			<format property="build.timestamp" pattern="dd/MM/yyyy"/>
+		</tstamp>
+
+		<echo>
+			${build.description}
+		</echo>
+		
+		<echo>
+			Starting the build system...
+			Build info:
+				build.number = ${build.number}
+			    build.version= ${build.version}
+				build.root   = ${build.root}		(the root directory for the build process)
+			    
+			
+				src.dir      = ${src.dir}			(where the sources are)
+				src.test.dir = ${src.test.dir}		(where the test sources are)
+				src.conf.dir = ${src.conf.dir}		(where the configuration files are)
+				src.lib.dir  = ${src.lib.dir}       (packages and jars required by this program)
+				src.img.dir  = ${src.img.dir}       (images and icons)
+			
+				build.dist.dir     = ${build.dist.dir}	(where the final package will be placed)
+				build.dir          = ${build.dir}		(where the classes will be placed)
+				build.log.dir      = ${build.log.dir}	(directory that will contain application logs)
+				build.lib.dir      = ${build.lib.dir}	(directory that contains the library this application depends on)
+				build.conf.dir     = ${build.conf.dir}	(where the configuration files will be stored)
+				build.img.dir      = ${build.img.dir}   (where the images and icons will be stored)
+			    build.deploy.dir   = ${build.deploy.dir}(where the jar will be created)
+			
+				Ant additional internal variables:
+			    basedir            = ${basedir}         (the basedir specified in the basedir attribute of the project)
+				ant.file           = ${ant.file}        (the buildfile absolute path and name)
+	            ant.version        = ${ant.version}     (the version of the running Ant)
+	            ant.project.name   = ${ant.project.name}(the name of the current project)
+			    ant.java.version   = ${ant.java.version}(the version of the JVM running this build)
+		</echo>
+		
+	</target>
+		
+
+	
+	
+
+	
+
+
+	
+	<!-- a target to copy the config files -->
+	<target name="_copyConfig" depends="_createDirectoryStructure" description="Copies the files for the configuration of the application." if="${src.conf.dir}">
+
+		<copy todir="${build.conf.dir}"  verbose="true">
+			<fileset dir="${src.conf.dir}">
+			</fileset>
+
+			<!-- filter the config files -->
+			<filterset begintoken="@" endtoken="@" id="filter.application.version">
+				<filter token="${src.application.version}" value="[ build number ${build.number} - ${build.timestamp} ]" />
+			</filterset>
+
+		</copy>
+	</target>
+	
+	
+	<!-- copy the jar this project depends on -->
+	<target name="_copyDependencies" depends="_createDirectoryStructure" description="Copies all the jars this project depdends on contained in ${src.lib.dir}" if="src.lib.dir" >
+		<copy todir="${build.lib.dir}" >
+			<fileset dir="${src.lib.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+
+	<!-- prepares the build system. Creates the directory tree and copies the dependencies and the configuration file.
+	     After this task has run, it is possible to start compiling the source. -->
+	<target name="init" depends="_preInit, _copyImg, _copyConfig, _copyDependencies" description="Creates the directory tree for the build and places the dependencies and the configuration files in the right place.">
+	</target>
+
+	
+	<!-- AspectJ compilation of the project -->
+	<target name="_AspectJCompile" depends="init" description="Compiles the project using AspectJ compiler."  if="compile.aspectj">
+		<echo>Compiling using the AspectJ compiler... 
+			  (if you want to avoid the use of the AspectJ compiler 
+			  unset the $${compile.aspectj}=${compile.aspectj} property of the ant build file)
+		</echo>
+		
+		<iajc srcDir="${src.dir}" destDir="${build.dir}"  source="1.5"  classpathref="build.classpath" incremental="true">
+		</iajc>
+	</target>
+	
+	<!-- standard compilation of the project -->
+	<target name="_javacCompile" depends="init" description="Compiles the project with the standard javac compiler." unless="${compile.aspectj}" >
+		<echo>Compiling using the Java compiler... 
+			  (if you want to avoid the use of the Java compiler 
+			  using the AspectJ compiler instead, just set the property $${compile.aspectj}=${compile.aspectj} of the ant build file)
+		</echo>
+
+		<javac srcdir="${src.dir}" destdir="${build.dir}" source="1.5" classpathref="build.classpath">
+		</javac>
+	</target>
+	
+	<!-- a "public" target to compile the sources -->
+	<target name="compile" depends="init, _AspectJCompile, _javacCompile" description="Compiles the sources of this project" >
+		<echo>Compiling sources...</echo>
+	</target>
+
+	<!-- A task to Jar the build -->
+	<target name="dist" depends="compile" description="Creates the Jar bundle for this project." >
+		<jar destfile="${build.jar.name}" update="false" >
+			
+			<!-- include the compiled files -->
+			<zipfileset dir="${build.dir}">
+				<exclude name="**/*example*/**"  />		<!-- exclude example files -->
+				<exclude name="**/*Test*/**"     />		<!-- exclude test files    -->
+			</zipfileset>
+
+			<!-- the manifest of this jar -->
+			<manifest>
+				<attribute name="Built-By"    value="${user.name}"          />
+				<attribute name="Main-Class"  value="${runtime.mainclass}"  />
+				
+				<!-- a section with a few notes -->
+				<section name="additional-info">
+				      <attribute name="Project-Name"    value="${ant.project.name}"/>
+				      <attribute name="Project-Version" value="${build.version}"   />
+					  <attribute name="Project-Build"   value="${build.number}"    />
+			    </section>
+				
+				<!-- an osgi section -->
+					<attribute name="Bundle-Name"			value="${ant.project.name}"      />
+					<attribute name="Bundle-SymbolicName"	value="${ant.project.name}"      />
+					<attribute name="Bundle-Version"		value="${build.version}"         />
+					<attribute name="Bundle-Description"    value="${build.description}"     />
+					<attribute name="Bundle-Vendor"         value="${vendor.name}"           />
+					<attribute name="Bundle-Activator"      value="${osgi.bundle.activator}" />
+					<attribute name="Bundle-Category"       value="${ant.project.name}"      />
+					<attribute name="Import-Package"        value="${osgi.bundle.import}"    />
+				
+			</manifest>
+
+		</jar>
+		
+	</target>
+	
+	
+	<target name="install" depends="dist" description="Installs the application" >
+		
+	</target>
+	
+	
+</project>
