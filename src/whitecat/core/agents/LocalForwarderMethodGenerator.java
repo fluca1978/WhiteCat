@@ -98,7 +98,6 @@ public class LocalForwarderMethodGenerator implements MethodForwarderGenerator {
 	    // different from void, that I also need to insert a return statement.
 	    methodCode.append("{ ");
 
-	    methodCode.append(" System.out.println(\"mappa dei ruoli \" + this.roleMap ); ");
 	    
 	    if( ! "void".equals(interfaceMethod.getReturnType().getName()) )
 		methodCode.append(" return ");

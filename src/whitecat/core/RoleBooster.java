@@ -530,10 +530,6 @@ public class RoleBooster extends SecureClassLoader{
 
     
     
-    // TODO
-    // 1) una volta creato il proxy occorre inserire il suo agente nella mappa, al valore specificato dalla chiave
-    // 2) trasformare questo in un classloader
-    
     private final AgentProxy weaveRoleToProxy(Class publicRoleInterface, AgentProxy proxy, IRole role, boolean addition) throws WCException{
 	
 	try{
