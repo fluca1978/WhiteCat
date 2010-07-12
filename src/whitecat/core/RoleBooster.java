@@ -448,7 +448,10 @@ public class RoleBooster extends SecureClassLoader{
 			found = true;
 		
 		// if not found, go with the superclass
-		if( ! found )
+		// ATTENTION: it could happen that the proxy has assumed only one role, so only one interface!
+		// In this case the class should be the superclass, because this means that the subclass/current class
+		// is the roled one!
+		if( (! found) || ( interfaces.length == 1 ) )
 		    currentClass = currentClass.getSuperclass();
 		
 	    }while( found == false );
@@ -461,14 +464,14 @@ public class RoleBooster extends SecureClassLoader{
 		proxyHandler.setSourceProxy( proxy );
 		proxyHandler.setDestinationProxy( newProxy );
 		proxyHandler.updateProxy();
-		    
+		return newProxy;    
 		    
 	    }catch(Exception e){
 		logger.error("Exception caught while removing a role from a proxy", e);
 		throw new WCException(e);
 	    }
 	    
-	    return proxy;
+	    
     }
     
 
