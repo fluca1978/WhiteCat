@@ -4,7 +4,7 @@
  * This project represents a new implementation of the so called BlackCat,
  * a project I made during my thesis degree. For more information about such project please see:
  * 
- *   G., L. Ferrari, L. Leonardi,
+ *   G. Cabri, L. Ferrari, L. Leonardi,
  *   Injecting Roles in Java Agents Through Run-Time Bytecode Manipulation
  *   IBM Systems Journal, Vol. 44, No. 1, pp.185-208, 2005
  *
@@ -192,29 +192,16 @@ public class RoleBooster extends SecureClassLoader{
     }
 
 
+    /**
+     * Creates this booster associating a parent booster to use a chained-Java class loader.
+     * @param proxyClassName the proxy to use
+     * @param parent the parent role booster
+     * @throws WCException
+     */
     public RoleBooster(String proxyClassName, RoleBooster parent) throws WCException{
 	super();
 	try{
 	    this.parentLoader = parent;
-
-	    /*
-	    ClassPool parentPool = null;
-	    if( parent != null )
-		parentPool = parent.getPool();
-	    
-	    if( parentPool != null ){
-		logger.info("Using a parent pool for this loader " + parentPool.hashCode());
-		this.myPool = parentPool;
-	    }
-	    else{
-		logger.info("Using the default pool for this loader ");
-		this.myPool = ClassPool.getDefault();
-	    }
-	    
-	    logger.info("Loading the default proxy class");
-	    this.cleanProxyPrototype = this.myPool.get(proxyClassName);
-	    */
-	    
 	}catch(Exception e){
 	    throw new WCException(e);
 	}
@@ -418,7 +405,7 @@ public class RoleBooster extends SecureClassLoader{
 		// here I have to weave the proxy with the public interface
 		for( Class publicRoleInterface : role.getClass().getInterfaces() )
 		    if( publicRoleInterface.getName().equals(publicRoleInterfaceName) ){
-			return this.weaveRoleToProxy(publicRoleInterface, proxy, role, true);
+			return this.addRoleToProxy(publicRoleInterface, proxy, role, true);
 		    }
 	    }
 	} catch (WCException e) {
@@ -529,8 +516,23 @@ public class RoleBooster extends SecureClassLoader{
 
 
     
-    
-    private final AgentProxy weaveRoleToProxy(Class publicRoleInterface, AgentProxy proxy, IRole role, boolean addition) throws WCException{
+    /**
+     * This is the horse-power method used to add a public role to an agent (proxy).
+     * The method performs the following main steps:
+     * 1) obtains a proxy handler from the proxy handler factory in order to handle the proxy's state
+     * 2) obtains a method forwarder generator in order to construct the method forwarders for the
+     * role public methods. In its simpler form, the method forwarder will construct  a method body
+     * that simply forwards the method call from the proxy (role) interface to the role one.
+     * 3) loads the new class with the new role interface added
+     * 4) copies the status of the previous proxy and complete the method forwarders.
+     * @param publicRoleInterface the interface that will be added to the proxy
+     * @param proxy the proxy on which the method is going to work on
+     * @param role the role to add to the proxy
+     * @param addition true if the role is going to be added 
+     * @return the new proxy instance
+     * @throws WCException if something goes wrong
+     */
+    private final AgentProxy addRoleToProxy(Class publicRoleInterface, AgentProxy proxy, IRole role, boolean addition) throws WCException{
 	
 	try{
 	    this.agentProxyClassName = proxy.getClass().getName();
