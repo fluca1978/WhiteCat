@@ -30,6 +30,7 @@
  */
 package whitecat.example;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 import whitecat.core.agents.AgentProxy;
@@ -104,7 +105,7 @@ public class DBProxy extends LocalAgentProxy {
      * Dumps the content of the properties.
      */
     public void dump(){
-	System.out.println("AgentProxy " + this.getClass() + " hashcode " + this.hashCode());
+	System.out.println("AgentProxy " + this.getClass() + " hashcode " + this.getClass().hashCode());
 	System.out.println("Property 1 = " + this.property1);
 	System.out.println("Property 2 = " + this.property2);
 	System.out.println("Agent owned = " + this.myAgent);
@@ -112,6 +113,12 @@ public class DBProxy extends LocalAgentProxy {
 	System.out.println("Method list: ");
 	for( Method m : this.getClass().getMethods() )
 	    System.out.println("\tname " + m.getName() + "\tmodifier " + m.getModifiers());
+	
+	System.out.println("Annotation List:");
+	for( Annotation a : this.getClass().getAnnotations() )
+	    System.out.println("\tname " + a + " class " + a.getClass() );
+	
+	
     }
 
     /* (non-Javadoc)

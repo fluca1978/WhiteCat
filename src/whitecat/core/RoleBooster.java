@@ -240,8 +240,65 @@ public class RoleBooster extends SecureClassLoader{
 	// check if the class has the specified annotation
 	if( proxyClass.isAnnotationPresent(annotationClass) )
 	    return true;
-	else
+	else{
+	    // if here the current proxy class does not have any role annotation, but this does not mean
+	    // that the proxy does not has a role, I need to search among the annotations of the proxy
+	    // to see if one of them has the role annotation
+	    for( Annotation annotation : proxyClass.getAnnotations() )
+		if( this.annotationIsAnnotated(annotation, annotationClass) )
+		    return true;
+	   
+	    
+	    // if here the annotation has not been found even in the annotations
 	    return false;
+	}
+    }
+    
+    
+    /**
+     * An utility method to see if a specific annotation is annotated with another class.
+     * This method uses reflection in a particular way to load the annotation thru its symbolic name,
+     * since the annotation injected from the role booster belong to a special class <i>$proxy</i> and so
+     * it is not possible to use the same reflective methods.
+     * @param toAnalize the annotation to analize
+     * @param annotationToSearchFor the class of the other annotation to search for
+     * @return true if the annotation is found in this annotation (or its annotations)
+     */
+    private boolean annotationIsAnnotated( Annotation toAnalize, Class annotationToSearchFor ){
+	
+	// create the name of the annotation: skip java.lang annotations and
+	// remove special chars
+	String annotationClassName = toAnalize.toString();
+	if( annotationClassName.contains("java.lang") )
+	    return false;
+	
+	annotationClassName = annotationClassName.replace('@', ' ' );
+	annotationClassName = annotationClassName.replace('(', ' ' );
+	annotationClassName = annotationClassName.replace(')', ' ' );
+	annotationClassName = annotationClassName.trim();
+	Class nestedAnnotationClass;
+	
+	try {
+	    // load the class from its name
+	    nestedAnnotationClass = Class.forName(annotationClassName);
+	    
+	    // search for the annotation
+	    if( nestedAnnotationClass.isAnnotationPresent( annotationToSearchFor ) )
+		return true;
+	    else
+		// if here not found, so loop recursively among nested annotations
+		for( Annotation ann : nestedAnnotationClass.getAnnotations() )
+		    if( annotationIsAnnotated( ann, annotationToSearchFor ) )
+			return true;
+
+
+	} catch (ClassNotFoundException e) {
+	    // cannot get access to the annotations
+	    logger.error("Exception while iterating thru exceptions", e);
+	    return false;
+	}
+	
+	return false;
     }
     
 
@@ -285,6 +342,17 @@ public class RoleBooster extends SecureClassLoader{
      */
     public final boolean hasPublicRoleAnnotation(AgentProxy proxy){
 	return this.hasPublicRole(proxy, true);
+    }
+    
+    /**
+     * Checks if the current proxy has the role annotation. This implies that the
+     * proxy has at least a visible role.
+     * @param proxy the proxy instance to analyze.
+     * @return true if the proxy has a role annotation or is annotated with an annotation that has
+     * a role annotation
+     */
+    public final boolean hasRoleAnnotation(AgentProxy proxy){
+	return this.hasRoleAnnotation(proxy, Role.class );
     }
     
     /**
@@ -611,13 +679,17 @@ public class RoleBooster extends SecureClassLoader{
 	    ProxyHandler proxyHandler = ProxyHandlerFactory.getProxyHandler();
 	    proxyHandler.setSourceProxy( proxy );
 
+	    
+	    // load the manipulated proxy class
 	    Class newProxyClass = this.findClass( proxy.getClass().getName() );
+	    // create a new instance of the manipulated proxy   
 	    AgentProxy newProxy = (AgentProxy) newProxyClass.newInstance();
 	    proxyHandler.setDestinationProxy( newProxy );
+	    
 
 	    // update the proxies
 	    proxyHandler.updateProxy();
-
+	    
 	    // all done
 	    return newProxy;
 
@@ -889,8 +961,9 @@ public class RoleBooster extends SecureClassLoader{
 	logger.debug("Creating the class file for the created class and adding the annotation " + this.annotationClassName);
 	ClassFile classFile = newProxyClass.getClassFile();
 	ConstPool constantPool = classFile.getConstPool();
-	AnnotationsAttribute attr = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
-	javassist.bytecode.annotation.Annotation a = new javassist.bytecode.annotation.Annotation(this.annotationClassName, constantPool);
+	AnnotationsAttribute attr = new AnnotationsAttribute( constantPool, AnnotationsAttribute.visibleTag );
+	javassist.bytecode.annotation.Annotation a = new javassist.bytecode.annotation.Annotation( this.annotationClassName, constantPool );
+	a.addMemberValue("test", new StringMemberValue("ciao", constantPool) );
 	attr.setAnnotation(a);
 	classFile.addAttribute(attr);
 	classFile.setVersionToJava5();

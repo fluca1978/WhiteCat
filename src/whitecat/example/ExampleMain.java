@@ -174,8 +174,8 @@ public class ExampleMain extends DBProxy implements Runnable, EventListener{
 		    System.out.println("annotazione non di ruolo");
 	    }
 	    
-	    
 	    */
+	    
 	    
 	    newproxy = engine4.removeVisibleRole(newproxy, dbaRole);
 	    System.out.println("New proxy class " + newproxy + " now analyzing annotations");

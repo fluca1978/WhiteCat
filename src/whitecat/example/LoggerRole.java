@@ -41,7 +41,9 @@ import whitecat.core.annotation.Role;
 @Role()
 		// here I specify the part of the role that can be visible
 		// to outsider and that will be applied to the proxy
-@PublicRole(roleInterface = "whitecat.example.ILogger")
+@PublicRole(roleInterface  = "whitecat.example.ILogger",
+    	    roleAnnotation = "whitecat.example.DBRoleAnnotation" 
+           )
 public class LoggerRole implements ILogger{
 
     public boolean log(String msg) {
