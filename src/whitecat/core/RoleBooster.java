@@ -62,6 +62,7 @@ import javassist.bytecode.MethodInfo;
 import javassist.bytecode.annotation.*;
 
 import whitecat.core.agents.AgentProxy;
+import whitecat.core.agents.IClonableAgentProxy;
 import whitecat.core.agents.MethodForwarderGenerator;
 import whitecat.core.agents.MethodForwarderGeneratorFactory;
 import whitecat.core.agents.ProxyHandlerFactory;
@@ -567,13 +568,18 @@ public class RoleBooster extends SecureClassLoader{
     
 	    Class currentClass = this.findClass( this.agentProxyClassName );
 	    AgentProxy newProxy = (AgentProxy) currentClass.newInstance();
-	    newProxy.initializeByCopy(proxy);
+	    
+	    // get a proxy handler to handle copies
+	    ProxyHandler<AgentProxy> handler = ProxyHandlerFactory.getProxyHandler();
+	    handler.setSourceProxy( proxy );
+	    handler.setDestinationProxy( proxy );
+	    handler.updateProxy();
+	    
 	    proxy = newProxy;
 
 
 	}catch(Exception e){
 	    logger.error("Exception caught while removing a role from a proxy", e);
-	    System.out.println("Eccezione " + e + " - " + e.getMessage() + " - " + e.getCause());
 	    e.printStackTrace();
 	    throw new WCException(e);
 	}
@@ -585,7 +591,7 @@ public class RoleBooster extends SecureClassLoader{
 	return proxy;
     }
 
-
+    
     
     /**
      * This is the horse-power method used to add a public role to an agent (proxy).
@@ -630,6 +636,15 @@ public class RoleBooster extends SecureClassLoader{
 	    
 	    Class newProxyClass = this.findClass( this.agentProxyClassName );
 	    AgentProxy newProxy = (AgentProxy) newProxyClass.newInstance();
+	    // copy the proxy status
+	    newProxy.initializeByCopy( proxy );
+	    
+	    // if the old proxy instance is clonable, clone it now!
+	    // Please note that if the original agent proxy is clonable, also the new one must be, but we check
+	    // for it in the case something in the manipulation process has going bad!
+	    if( proxy instanceof IClonableAgentProxy && newProxy instanceof IClonableAgentProxy )
+		((IClonableAgentProxy) newProxy).cloneAgentProxyState( (IClonableAgentProxy) proxy );
+	    
 	    // store the role implementation as key for the proxy
 	    mGenerator.bindReferences(newProxy, role);
 
@@ -685,6 +700,8 @@ public class RoleBooster extends SecureClassLoader{
 	    // create a new instance of the manipulated proxy   
 	    AgentProxy newProxy = (AgentProxy) newProxyClass.newInstance();
 	    proxyHandler.setDestinationProxy( newProxy );
+	    
+	    
 	    
 
 	    // update the proxies

@@ -69,6 +69,8 @@ public interface ProxyHandler<PH extends AgentProxy> {
      * fields, so that it can easily access the fields and the state of the source proxy and
      * can copy it to the destination proxy. Another way is to insert a method within the proxy class
      * that allows a deeper copy of the proxy state (something like the clone method).
+     * <B>Please note that this method should take care of ICloneableAgentProxy interface and
+     * should invoke the clone method if the proxies are cloneable.</B>
      * @return true if the update has been performed, false otherwise
      * @throws WCProxyException if something goes wrong during the copy
      */

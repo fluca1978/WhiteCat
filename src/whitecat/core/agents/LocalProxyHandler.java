@@ -94,6 +94,12 @@ public class LocalProxyHandler implements ProxyHandler<LocalAgentProxy> {
 	this.destinationProxy.setMyAgent( this.sourceProxy.getMyAgent() );
 	this.destinationProxy.initializeByCopy( this.sourceProxy );	
 	
+	// if the old proxy instance is clonable, clone it now!
+	// Please note that if the original agent proxy is clonable, also the new one must be, but we check
+	// for it in the case something in the manipulation process has going bad!
+	if( this.sourceProxy instanceof IClonableAgentProxy && this.destinationProxy instanceof IClonableAgentProxy )
+	    ((IClonableAgentProxy) this.sourceProxy).cloneAgentProxyState( (IClonableAgentProxy) this.destinationProxy );
+	
 	return true;
     }
 
