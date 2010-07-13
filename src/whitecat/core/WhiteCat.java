@@ -28,39 +28,41 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package whitecat.core.agents;
+package whitecat.core;
 
-import whitecat.core.Configuration;
-import whitecat.core.exceptions.WCForwarderMethodException;
+import org.springframework.beans.factory.xml.XmlBeanFactory;
+import org.springframework.core.io.ClassPathResource;
 
 /**
- * A factory that provides the method forwarder code generators depending
- * on the configuration of the WhiteCat engine.
+ * This is the main class of the whole system. 
+ * This class has been created to act as a front-end for the whole system.
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class MethodForwarderGeneratorFactory {
+public class WhiteCat {
+    
+    /**
+     * The spring xml bean factory, used to instantiate the beans.
+     */
+    private static XmlBeanFactory xmlBeanFactory = null;
+    
+    static{
+	 // configure the spring resource in order to get it available for the
+        // beans configurations. Please note that the configuration file must be
+	// in the classpath.
+        String springConfigurationPath = "spring.xml";
+        ClassPathResource classPathResource = new ClassPathResource( springConfigurationPath );
+        xmlBeanFactory = new XmlBeanFactory(classPathResource);
 
-    public static IMethodForwarderGenerator getMethodForwarderGenerator() throws WCForwarderMethodException{
-	try{
-	    // get the configuration
-	    Configuration conf = Configuration.getInstance();
-	    /*
-	    // get the name of the class that must be created
-	    String className = conf.getProperty( Configuration.DEFAULT_METHOD_FORWARDER_GENERATOR );
-	    
-	    // create a new instance
-	    return (IMethodForwarderGenerator) Class.forName(className).newInstance();
-	    */
-	    
-	    // get a new instance from the spring subsystem
-	    return (IMethodForwarderGenerator) conf.getBean( IMethodForwarderGenerator.class );
-	    
-	    
-	    
-	}catch(Exception e){
-	    e.printStackTrace();
-	    throw new WCForwarderMethodException("Exception caught while creating a forwarding generator", e);
-	}
     }
+    
+    
+    /**
+     * Provides a default role booster to use.
+     * @return the role booster to use for role manipulations
+     */
+    public static IRoleBooster getRoleBooster(  ){
+	return (IRoleBooster) xmlBeanFactory.getBean( "IRoleBooster" );
+    }
+
 }

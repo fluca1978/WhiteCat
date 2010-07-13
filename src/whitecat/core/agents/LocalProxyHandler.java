@@ -30,7 +30,7 @@
  */
 package whitecat.core.agents;
 
-import whitecat.core.ProxyHandler;
+import whitecat.core.IProxyHandler;
 import whitecat.core.exceptions.WCProxyException;
 
 /**
@@ -39,7 +39,7 @@ import whitecat.core.exceptions.WCProxyException;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class LocalProxyHandler implements ProxyHandler<LocalAgentProxy> {
+public class LocalProxyHandler implements IProxyHandler<LocalAgentProxy> {
 
     /**
      * The source and destination proxy handled by this proxy handler.

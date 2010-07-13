@@ -42,7 +42,7 @@ import whitecat.core.role.IRole;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class LocalForwarderMethodGenerator implements MethodForwarderGenerator {
+public class LocalForwarderMethodGenerator implements IMethodForwarderGenerator {
 
     
     /**

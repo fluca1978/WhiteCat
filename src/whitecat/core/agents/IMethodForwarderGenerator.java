@@ -40,7 +40,7 @@ import javassist.CtMethod;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public interface MethodForwarderGenerator {
+public interface IMethodForwarderGenerator {
 
     
     /**

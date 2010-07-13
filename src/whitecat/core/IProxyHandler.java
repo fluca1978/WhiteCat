@@ -42,7 +42,7 @@ import whitecat.core.exceptions.WCProxyException;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public interface ProxyHandler<PH extends AgentProxy> {
+public interface IProxyHandler<PH extends AgentProxy> {
 
     /**
      * Stores the source proxy to the proxy handler.

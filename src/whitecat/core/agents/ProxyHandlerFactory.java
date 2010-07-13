@@ -31,7 +31,7 @@
 package whitecat.core.agents;
 
 import whitecat.core.Configuration;
-import whitecat.core.ProxyHandler;
+import whitecat.core.IProxyHandler;
 import whitecat.core.exceptions.WCProxyException;
 
 /**
@@ -41,17 +41,22 @@ import whitecat.core.exceptions.WCProxyException;
  */
 public class ProxyHandlerFactory {
 
-    public static ProxyHandler getProxyHandler() throws WCProxyException{
+    public static IProxyHandler getProxyHandler() throws WCProxyException{
 	try{
 	    // get the configuration
 	    Configuration conf = Configuration.getInstance();
 
+	    /*
 	    // the proxy handler class name
 	    String proxyHandlerClassName = conf.getProperty( Configuration.DEFAULT_PROXY_HANDLER );
 
 	    // create the proxy handler
-	    ProxyHandler handler = (ProxyHandler) Class.forName( proxyHandlerClassName ).newInstance();
-
+	    IProxyHandler handler = (IProxyHandler) Class.forName( proxyHandlerClassName ).newInstance();
+		*/
+	    
+	    // get the proxy handler from the spring bean subsystem
+	    IProxyHandler handler = (IProxyHandler) conf.getBean( IProxyHandler.class );
+	    
 	    // all done
 	    return handler;
 	}catch(Exception e){

@@ -62,7 +62,7 @@ import javassist.bytecode.MethodInfo;
 import javassist.bytecode.annotation.*;
 
 import whitecat.core.agents.AgentProxy;
-import whitecat.core.agents.MethodForwarderGenerator;
+import whitecat.core.agents.IMethodForwarderGenerator;
 import whitecat.core.agents.MethodForwarderGeneratorFactory;
 import whitecat.core.agents.ProxyHandlerFactory;
 import whitecat.core.agents.WCAgent;
@@ -91,7 +91,7 @@ import org.w3c.dom.DOMConfiguration;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class RoleBooster extends SecureClassLoader{
+public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 
     /**
      * The logger for this class loader.
@@ -121,7 +121,7 @@ public class RoleBooster extends SecureClassLoader{
     /**
      * The method forwarder generator that must be used for the current manipulation.
      */
-    private MethodForwarderGenerator methodForwarderGenerator = null;
+    private IMethodForwarderGenerator methodForwarderGenerator = null;
     
     
     /**
@@ -193,6 +193,16 @@ public class RoleBooster extends SecureClassLoader{
 
 
     /**
+     * The default constructor for this role booster.
+     * Used from the spring framework.
+     */
+    public RoleBooster() {
+	super();
+	this.parentLoader = this.getClass().getClassLoader();
+    }
+    
+    
+    /**
      * Creates this booster associating a parent booster to use a chained-Java class loader.
      * @param proxyClassName the proxy to use
      * @param parent the parent role booster
@@ -228,7 +238,7 @@ public class RoleBooster extends SecureClassLoader{
      * @param annotationClass the type of annotation (and thus of role visibility) to search for
      * @return true if the proxy has the specified role
      */
-    private final boolean hasRoleAnnotation(AgentProxy roled, Class annotationClass){
+    final boolean hasRoleAnnotation(AgentProxy roled, Class annotationClass){
 	// check arguments
 	if( roled == null )
 	    return false;
@@ -324,21 +334,16 @@ public class RoleBooster extends SecureClassLoader{
 	    return false;
     }
     
-    /**
-     * Determines if the proxy is currently playing a visible (i.e., public) role. A publi role
-     * must be marked thru the @PublicRole annotation.
-     * @param proxy the proxy to analyze.
-     * @return true if the proxy is playing a public role.
+    /* (non-Javadoc)
+     * @see whitecat.core.IRoleBooster#hasPublicRoleInterface(whitecat.core.agents.AgentProxy)
      */
     public final boolean hasPublicRoleInterface(AgentProxy proxy){
 	return this.hasPublicRole(proxy, false);
     }
     
     
-    /**
-     * Checks if the proxy has a public role thru an annotation.
-     * @param proxy the proxy to check
-     * @return true if the proxy has the annotation
+    /* (non-Javadoc)
+     * @see whitecat.core.IRoleBooster#hasPublicRoleAnnotation(whitecat.core.agents.AgentProxy)
      */
     public final boolean hasPublicRoleAnnotation(AgentProxy proxy){
 	return this.hasPublicRole(proxy, true);
@@ -355,12 +360,8 @@ public class RoleBooster extends SecureClassLoader{
 	return this.hasRoleAnnotation(proxy, Role.class );
     }
     
-    /**
-     * Checks if a specific annotation is a role annotation, that is an annotation
-     * annotated with the @Role annotation.
-     * @param annotation the annotation to check
-     * @return true if the annotation is a role annotation, false if it is a normal annotation or the
-     * specified annotation is null
+    /* (non-Javadoc)
+     * @see whitecat.core.IRoleBooster#isRoleAnnotation(java.lang.annotation.Annotation)
      */
     public final boolean isRoleAnnotation(Annotation annotation){
 	if( annotation == null )
@@ -458,6 +459,9 @@ public class RoleBooster extends SecureClassLoader{
     }
     
     
+    /* (non-Javadoc)
+     * @see whitecat.core.IRoleBooster#injectPublicRole(whitecat.core.agents.WCAgent, whitecat.core.agents.AgentProxy, whitecat.core.role.IRole)
+     */
     public final synchronized AgentProxy injectPublicRole(WCAgent agent, AgentProxy proxy, IRole role) throws WCException{
 	// check arguments
 	
@@ -485,16 +489,8 @@ public class RoleBooster extends SecureClassLoader{
     }
     
 
-    /**
-     * Removes all the applied roles until the specified one (included). Since the roles are applied to
-     * a proxy by means of subclasses implementing the role interfaces, this method simply removes a role
-     * returnin a proxy that is the instance of the superclass of the class when the specified role has been applied.
-     * This means that the agent will loose all the role acquired since the specified one.
-     * @param agent the agent that wants to remove the role
-     * @param proxy the proxy to change
-     * @param role the role to remove
-     * @return the new instance of the agent proxy without all the roles until the specified one
-     * @throws WCException if something goes wrong
+    /* (non-Javadoc)
+     * @see whitecat.core.IRoleBooster#removeUntilRole(whitecat.core.agents.WCAgent, whitecat.core.agents.AgentProxy, whitecat.core.role.IRole)
      */
     public synchronized AgentProxy removeUntilRole(WCAgent agent, AgentProxy proxy, IRole role) throws WCException{
 	// check params
@@ -528,7 +524,7 @@ public class RoleBooster extends SecureClassLoader{
 	    
 	    try{
 		AgentProxy newProxy = (AgentProxy) currentClass.newInstance();
-		ProxyHandler proxyHandler = ProxyHandlerFactory.getProxyHandler();
+		IProxyHandler proxyHandler = ProxyHandlerFactory.getProxyHandler();
 		proxyHandler.setSourceProxy( proxy );
 		proxyHandler.setDestinationProxy( newProxy );
 		proxyHandler.updateProxy();
@@ -544,6 +540,9 @@ public class RoleBooster extends SecureClassLoader{
     
 
     
+    /* (non-Javadoc)
+     * @see whitecat.core.IRoleBooster#removePublicRole(whitecat.core.agents.WCAgent, whitecat.core.agents.AgentProxy, whitecat.core.role.IRole)
+     */
     public synchronized AgentProxy removePublicRole(WCAgent agent, AgentProxy proxy, IRole role) throws WCException{
 	// check params
 	if( agent == null || role == null )
@@ -561,7 +560,7 @@ public class RoleBooster extends SecureClassLoader{
 
 	try{
 	    // get a method forwarder
-	    MethodForwarderGenerator mGenerator = MethodForwarderGeneratorFactory.getMethodForwarderGenerator();
+	    IMethodForwarderGenerator mGenerator = MethodForwarderGeneratorFactory.getMethodForwarderGenerator();
 	    // do not initialize it, it will be done in the find class method
 	    this.setMethodForwarderGenerator(mGenerator);
     
@@ -615,11 +614,11 @@ public class RoleBooster extends SecureClassLoader{
 	    // set that this is a role addition
 	    this.setInjectionType( RoleInjectionType.ROLE_PUBLIC_INTERFACE_ADDITION_TO_PROXY );
 
-	    ProxyHandler proxyHandler = ProxyHandlerFactory.getProxyHandler();
+	    IProxyHandler proxyHandler = ProxyHandlerFactory.getProxyHandler();
 	    proxyHandler.setSourceProxy( proxy );
 	    
 	    // get a new method forwarder generator
-	    MethodForwarderGenerator mGenerator = MethodForwarderGeneratorFactory.getMethodForwarderGenerator();
+	    IMethodForwarderGenerator mGenerator = MethodForwarderGeneratorFactory.getMethodForwarderGenerator();
 	    // initialize the method forwarder
 	    mGenerator.init(agentProxyClassName, roleClassName, roleImplementationAccessKey);
 	    // store it for further use within the findClass method
@@ -659,6 +658,9 @@ public class RoleBooster extends SecureClassLoader{
     }
     
     
+    /* (non-Javadoc)
+     * @see whitecat.core.IRoleBooster#injectVisibleRole(whitecat.core.agents.WCAgent, whitecat.core.agents.AgentProxy, whitecat.core.role.IRole)
+     */
     public final synchronized AgentProxy injectVisibleRole(WCAgent agent, AgentProxy proxy, IRole role){
 	// check params
 	if( proxy == null || role == null )
@@ -676,7 +678,7 @@ public class RoleBooster extends SecureClassLoader{
 
 	try {
 	    // create a new proxy handler
-	    ProxyHandler proxyHandler = ProxyHandlerFactory.getProxyHandler();
+	    IProxyHandler proxyHandler = ProxyHandlerFactory.getProxyHandler();
 	    proxyHandler.setSourceProxy( proxy );
 
 	    
@@ -1142,7 +1144,7 @@ public class RoleBooster extends SecureClassLoader{
 	                                       String publicRoleInterfaceName, 
 	                                       String roleInstanceAccessKey, 
 	                                       String roleClassName,
-	                                       MethodForwarderGenerator methodForwarder)
+	                                       IMethodForwarderGenerator methodForwarder)
     	throws NotFoundException, CannotCompileException, WCForwarderMethodException {
 
 	// debug info 
@@ -1310,6 +1312,9 @@ public class RoleBooster extends SecureClassLoader{
 
 
 
+    /* (non-Javadoc)
+     * @see whitecat.core.IRoleBooster#removeVisibleRole(whitecat.core.agents.AgentProxy, whitecat.core.role.IRole)
+     */
     public AgentProxy removeVisibleRole(AgentProxy proxy,
 	    IRole role) {
 	try{
@@ -1320,7 +1325,7 @@ public class RoleBooster extends SecureClassLoader{
 	    this.setInjectionType( RoleInjectionType.ROLE_ANNOTATION_REMOVAL_FROM_PROXY );
 	    
 	    // create a proxy handler
-	    ProxyHandler proxyHandler = ProxyHandlerFactory.getProxyHandler();
+	    IProxyHandler proxyHandler = ProxyHandlerFactory.getProxyHandler();
 	    proxyHandler.setSourceProxy(proxy);
 	    
 	    Class newProxyClass = this.findClass( proxy.getClass().getName() );
@@ -1349,7 +1354,7 @@ public class RoleBooster extends SecureClassLoader{
      * Provides the value of the methodForwarderGenerator field.
      * @return the methodForwarderGenerator
      */
-    protected synchronized final MethodForwarderGenerator getMethodForwarderGenerator() {
+    protected synchronized final IMethodForwarderGenerator getMethodForwarderGenerator() {
         return methodForwarderGenerator;
     }
 
@@ -1362,7 +1367,7 @@ public class RoleBooster extends SecureClassLoader{
      * @param methodForwarderGenerator the methodForwarderGenerator to set
      */
     protected synchronized final void setMethodForwarderGenerator(
-    	MethodForwarderGenerator methodForwarderGenerator) {
+    	IMethodForwarderGenerator methodForwarderGenerator) {
 	this.methodForwarderGenerator = methodForwarderGenerator;
     }
     

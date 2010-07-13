@@ -8,7 +8,7 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
-import whitecat.core.ProxyHandler;
+import whitecat.core.IProxyHandler;
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.ProxyHandlerFactory;
 import whitecat.core.agents.WCAgent;
@@ -38,7 +38,7 @@ public class ProxyHandlerTest {
 	dbproxy1.setProperty2("A string test-" + dbproxy1.getProperty1());
 	
 	// create a proxy handler
-	ProxyHandler<DBProxy> handler = ProxyHandlerFactory.getProxyHandler();
+	IProxyHandler<DBProxy> handler = ProxyHandlerFactory.getProxyHandler();
 	
 	// create a new proxy
 	DBProxy dbproxy2 = new DBProxy( new DBAgent() );
