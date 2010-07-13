@@ -3,6 +3,7 @@ package whitecat.test;
 
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.junit.Before;
@@ -13,6 +14,7 @@ import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.ProxyHandlerFactory;
 import whitecat.core.agents.WCAgent;
 import whitecat.core.exceptions.WCProxyException;
+import whitecat.example.CloneableAgentProxy;
 import whitecat.example.DBAgent;
 import whitecat.example.DBProxy;
 
@@ -65,5 +67,41 @@ public class ProxyHandlerTest {
 	
     }
 
+    @Test
+    public void testCloneableProxy() throws WCProxyException{
+	// create a new cloneable proxy to test
+	CloneableAgentProxy proxy1 = new CloneableAgentProxy( new DBAgent() );
+	
+	// create a new proxy
+	CloneableAgentProxy proxy2 = new CloneableAgentProxy( new DBAgent() );
+	
+	// check that the proxies are not the same!
+	if( proxy1.getIntegerVariable() == proxy2.getIntegerVariable()
+		|| proxy1.getStringVariable().equals( proxy2.getStringVariable() )
+		|| Arrays.equals( proxy1.getIntegerArray(), proxy2.getIntegerArray() )
+		)
+	    fail("Two agent proxies created equal but not yet cloned!");
+	
+	// now clone one
+	ProxyHandler handler = ProxyHandlerFactory.getProxyHandler();
+	handler.setSourceProxy( proxy1 );
+	handler.setDestinationProxy(proxy2);
+	handler.updateProxy();
+	
+	    
+	
+	// check if all the extended state is the same
+	if( ! ( proxy1.getIntegerVariable() == proxy2.getIntegerVariable()
+		&& proxy1.getStringVariable().equals( proxy2.getStringVariable() )
+		&& Arrays.equals( proxy1.getIntegerArray(),  proxy2.getIntegerArray() )
+		)
+		)
+	    fail("Proxy extended state not cloned !!");
+	
+	
+	 
+    }
 
+    
+    
 }
