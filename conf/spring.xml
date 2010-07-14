@@ -27,9 +27,16 @@
    	</bean>
 
    	<!-- the default role booster, the only to use, but with initialized parameters -->
-	<bean id="IRoleBooster" class="whitecat.core.RoleBooster"
-		scope="prototype">
-	
-	</bean>
+   	<bean id="IRoleBooster" class="whitecat.core.RoleBooster"
+   		scope="prototype">
 
+	<property name="currentRoleOperation" ref="IRoleOperation"></property>
+   	</bean>
+
+   	<bean id="IRoleOperation" class="RoleOpeationImpl">
+   		<property name="agentProxyHandler" ref="IProxyHandler"></property>
+   		<property name="methodForwarderGenerator"
+   			ref="IMethodForwarderGenerator">
+   		</property>
+   	</bean>
 </beans>

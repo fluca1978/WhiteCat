@@ -105,6 +105,13 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
     
     
     /**
+     * The current role operation the role booster is working on
+     * or will work as next.
+     */
+    private IRoleOperation currentRoleOperation = null;
+    
+    
+    /**
      * The class loader parent of this loader.
      */
     private ClassLoader parentLoader = null;
@@ -1377,6 +1384,20 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
     protected synchronized final void setMethodForwarderGenerator(
     	IMethodForwarderGenerator methodForwarderGenerator) {
 	this.methodForwarderGenerator = methodForwarderGenerator;
+    }
+
+
+
+
+    public synchronized IRoleOperation getCurrentRoleOperation() {
+	return this.currentRoleOperation;
+    }
+
+
+
+
+    public void setCurrentRoleOperation(IRoleOperation operation) {
+	this.currentRoleOperation = operation;
     }
     
     

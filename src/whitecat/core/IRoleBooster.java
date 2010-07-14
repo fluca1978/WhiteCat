@@ -66,5 +66,21 @@ public interface IRoleBooster {
      * a role annotation
      */
     public boolean hasRoleAnnotation(AgentProxy proxy);
+    
+    
+    /**
+     * Set the current role operation. A role operation is an abstraction over the
+     * operation the role booster will (or is) doing. It contains configurable and pluggable
+     * parameters for the operation to succeed, such as the method forwarder generator and
+     * the proxy handler.
+     * @param operation the role operation and its parameters
+     */
+    public void setCurrentRoleOperation( IRoleOperation operation );
+    
+    /**
+     * Provides the current role operation the role booster is executing.
+     * @return the role operation abstraction
+     */
+    public IRoleOperation getCurrentRoleOperation();
 
 }
