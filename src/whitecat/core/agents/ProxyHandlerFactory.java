@@ -32,6 +32,7 @@ package whitecat.core.agents;
 
 import whitecat.core.Configuration;
 import whitecat.core.IProxyHandler;
+import whitecat.core.WhiteCat;
 import whitecat.core.exceptions.WCProxyException;
 
 /**
@@ -41,25 +42,16 @@ import whitecat.core.exceptions.WCProxyException;
  */
 public class ProxyHandlerFactory {
 
+    /**
+     * Provides a new proxy handler factory.
+     * @return a new proxy handler instance
+     * @throws WCProxyException
+     */
     public static IProxyHandler getProxyHandler() throws WCProxyException{
 	try{
-	    // get the configuration
-	    Configuration conf = Configuration.getInstance();
-
-	    /*
-	    // the proxy handler class name
-	    String proxyHandlerClassName = conf.getProperty( Configuration.DEFAULT_PROXY_HANDLER );
-
-	    // create the proxy handler
-	    IProxyHandler handler = (IProxyHandler) Class.forName( proxyHandlerClassName ).newInstance();
-		*/
-	    
-	    // get the proxy handler from the spring bean subsystem
-	    IProxyHandler handler = (IProxyHandler) conf.getBean( IProxyHandler.class );
-	    
-	    // all done
-	    return handler;
+	    return WhiteCat.getProxyHandler();
 	}catch(Exception e){
+	    e.printStackTrace();
 	    throw new WCProxyException("Exception caught while creating an empty proxy handler", e);
 	}
     }

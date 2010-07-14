@@ -119,7 +119,7 @@ public class RoleBoosterTest {
 	// create a new proxy and a new booster
 	AgentProxy proxy = new DBProxy();
 	WCAgent agent = new DBAgent();
-	this.booster = new RoleBooster( this.getClass().getClassLoader() );
+	this.booster = WhiteCat.getRoleBooster();
 	
 	// the proxy now should not have any role property
 	if( this.booster.hasPublicRoleAnnotation(proxy) || this.booster.hasPublicRoleInterface(proxy) )

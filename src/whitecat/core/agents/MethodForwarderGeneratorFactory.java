@@ -31,6 +31,7 @@
 package whitecat.core.agents;
 
 import whitecat.core.Configuration;
+import whitecat.core.WhiteCat;
 import whitecat.core.exceptions.WCForwarderMethodException;
 
 /**
@@ -41,23 +42,14 @@ import whitecat.core.exceptions.WCForwarderMethodException;
  */
 public class MethodForwarderGeneratorFactory {
 
+    /**
+     * Provides a new instance of the method forwarder generator.
+     * @return a new instance of the method generator
+     * @throws WCForwarderMethodException if something goes wrong
+     */
     public static IMethodForwarderGenerator getMethodForwarderGenerator() throws WCForwarderMethodException{
 	try{
-	    // get the configuration
-	    Configuration conf = Configuration.getInstance();
-	    /*
-	    // get the name of the class that must be created
-	    String className = conf.getProperty( Configuration.DEFAULT_METHOD_FORWARDER_GENERATOR );
-	    
-	    // create a new instance
-	    return (IMethodForwarderGenerator) Class.forName(className).newInstance();
-	    */
-	    
-	    // get a new instance from the spring subsystem
-	    return (IMethodForwarderGenerator) conf.getBean( IMethodForwarderGenerator.class );
-	    
-	    
-	    
+	    return WhiteCat.getMethodForwarderGenerator();
 	}catch(Exception e){
 	    e.printStackTrace();
 	    throw new WCForwarderMethodException("Exception caught while creating a forwarding generator", e);

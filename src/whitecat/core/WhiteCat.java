@@ -33,6 +33,8 @@ package whitecat.core;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 
+import whitecat.core.agents.IMethodForwarderGenerator;
+
 /**
  * This is the main class of the whole system. 
  * This class has been created to act as a front-end for the whole system.
@@ -61,8 +63,25 @@ public class WhiteCat {
      * Provides a default role booster to use.
      * @return the role booster to use for role manipulations
      */
-    public static IRoleBooster getRoleBooster(  ){
-	return (IRoleBooster) xmlBeanFactory.getBean( "IRoleBooster" );
+    public final static IRoleBooster getRoleBooster(  ){
+	return (IRoleBooster) xmlBeanFactory.getBean( IRoleBooster.class.getSimpleName() );
+    }
+    
+    /**
+     * Provides the default proxy handler for this configuration.
+     * @return a new proxy handler instance
+     */
+    public final static IProxyHandler getProxyHandler(){
+	return (IProxyHandler) xmlBeanFactory.getBean( IProxyHandler.class.getSimpleName() );
+    }
+    
+    
+    /**
+     * Returns the default method forwarder generator.
+     * @return a new method generator instance
+     */
+    public final static IMethodForwarderGenerator getMethodForwarderGenerator(){
+	return (IMethodForwarderGenerator) xmlBeanFactory.getBean( IMethodForwarderGenerator.class.getSimpleName() );
     }
 
 }

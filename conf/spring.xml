@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<!-- the default agent proxy to use -->
+	<bean id="AgentProxy" class="whitecat.core.agents.LocalAgentProxy"
+		scope="prototype">
+   	</bean>
+
+	<!-- the default proxy handler to use -->
+   	<bean id="IProxyHandler"
+   		class="whitecat.core.agents.LocalProxyHandler" scope="prototype">
+   	</bean>
+
+   	<!-- the default method forwarder generator -->
+   	<bean id="IMethodForwarderGenerator"
+   		class="whitecat.core.agents.LocalForwarderMethodGenerator"
+   		scope="prototype">
+   	</bean>
+
+   	<!-- the default role booster, the only to use, but with initialized parameters -->
+	<bean id="IRoleBooster" class="whitecat.core.RoleBooster"
+		scope="prototype">
+	
+	</bean>
+
+</beans>

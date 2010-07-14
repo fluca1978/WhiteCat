@@ -195,7 +195,9 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
     /**
      * The default constructor for this role booster.
      * Used from the spring framework.
+     * @deprecated use the WhiteCat class in order to get a new instance of the role booster
      */
+    @Deprecated
     public RoleBooster() {
 	super();
 	this.parentLoader = this.getClass().getClassLoader();
@@ -207,7 +209,10 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
      * @param proxyClassName the proxy to use
      * @param parent the parent role booster
      * @throws WCException
+     * @{@link Deprecated} use the WhiteCat class to get a new role booster instance, and configure
+     * it thru the Spring framework
      */
+    @Deprecated
     public RoleBooster(String proxyClassName, RoleBooster parent) throws WCException{
 	super();
 	try{
@@ -221,7 +226,10 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
     /**
      * Constructs this loader as a child of a parent loader.
      * @param parentLoader the parent class loader
+     * @deprecated use the WhiteCat class to get a new role booster and configure it thru the
+     * spring framework
      */
+    @Deprecated
     public RoleBooster(ClassLoader parentLoader){
 	super(parentLoader);
 	
