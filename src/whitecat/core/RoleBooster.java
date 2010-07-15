@@ -121,9 +121,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
      */
     private ClassPool myPool = null;
 
-    private String roleRemovalSubClassName;
 
-    private String roleRemovalSuperClassName;
     
     /**
      * The method forwarder generator that must be used for the current manipulation.
@@ -144,7 +142,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
      */
     private int manipulationCounter = 0;
 
-    private String annotationClassName;
+
     
     
     
@@ -490,6 +488,20 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
     }
     
     
+    /**
+     * An utility method to load the public role interface name from the role implementation.
+     * @param role the role implemenetation
+     * @return the class of the interface tied to the role
+     */
+    public final Class getPublicRoleInterfaceClass( IRole role ){
+	try {
+	    return Class.forName( this.getPublicRoleInterfaceName(role) );
+	} catch (ClassNotFoundException e) {
+	   logger.error("Cannot load the interface role class", e);
+	   return null;
+	}
+    }
+    
     /* (non-Javadoc)
      * @see whitecat.core.IRoleBooster#injectPublicRole(whitecat.core.agents.WCAgent, whitecat.core.agents.AgentProxy, whitecat.core.role.IRole)
      */
@@ -531,54 +543,53 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	// prepare the operation data
 	this.currentRoleOperation.setAgentProxy(proxy);
 	this.currentRoleOperation.setRole(role);
-	this.currentRoleOperation.setPublicRoleInterface( role.getClass() );
+	this.currentRoleOperation.setPublicRoleInterface( this.getPublicRoleInterfaceClass(role) );
 	this.currentRoleOperation.setRoleInjectionType( RoleInjectionType.ROLE_PUBLIC_INTERFACE_REMOVAL_FROM_PROXY );
 	this.currentRoleOperation.setOperationStatus( RoleOperationStatus.ROLE_OPERATION_STARTED );
 
-	    String publicRoleInterfaceName = this.getPublicRoleInterfaceName(role);
-	    
-	    // I need to find the first superclass that is not implementing the role
-	    // interface, such superclass if the class I'm looking for
-	    Class currentClass = proxy.getClass();
-	    boolean found = false;
-	    
-	    do{
-		// iterate on each interface of the current class
-		Class interfaces[] = currentClass.getInterfaces();
-		for( int i = 0; (interfaces != null) && (i < interfaces.length) && (! found); i++ )
-		    if( interfaces[i].getName().equals( publicRoleInterfaceName ) )
-			found = true;
-		
-		// if not found, go with the superclass
-		// ATTENTION: it could happen that the proxy has assumed only one role, so only one interface!
-		// In this case the class should be the superclass, because this means that the subclass/current class
-		// is the roled one!
-		if( (! found) || ( interfaces.length == 1 ) )
-		    currentClass = currentClass.getSuperclass();
-		
-	    }while( found == false );
-	    
-	    
-	    
-	    try{
-		AgentProxy newProxy = (AgentProxy) currentClass.newInstance();
-		
-		// get the proxy handler for this operation
-		IProxyHandler proxyHandler = this.currentRoleOperation.getAgentProxyHandler();
-		// initialize the handler and synchronize the proxies
-		proxyHandler.setSourceProxy( proxy );
-		proxyHandler.setDestinationProxy( newProxy );
-		proxyHandler.updateProxy();
-		
-		this.currentRoleOperation.setOperationStatus( RoleOperationStatus.ROLE_OPERATION_COMPLETED_SUCCESFUL );
-		
-		return newProxy;    
-		    
-	    }catch(Exception e){
-		logger.error("Exception caught while removing a role from a proxy", e);
-		this.currentRoleOperation.setOperationStatus( RoleOperationStatus.ROLE_OPERATION_COMPLETED_FAILURE );
-		throw new WCException(e);
-	    }
+
+	// I need to find the first superclass that is not implementing the role
+	// interface, such superclass if the class I'm looking for
+	Class currentClass = proxy.getClass();
+	boolean found = false;
+
+	do{
+	    // iterate on each interface of the current class
+	    Class interfaces[] = currentClass.getInterfaces();
+	    for( int i = 0; (interfaces != null) && (i < interfaces.length) && (! found); i++ )
+		if( interfaces[i].getName().equals( this.currentRoleOperation.getPublicRoleInterface().getName() ) )
+		    found = true;
+
+	    // if not found, go with the superclass
+	    // ATTENTION: it could happen that the proxy has assumed only one role, so only one interface!
+	    // In this case the class should be the superclass, because this means that the subclass/current class
+	    // is the roled one!
+	    if( (! found) || ( interfaces.length == 1 ) )
+		currentClass = currentClass.getSuperclass();
+
+	}while( found == false );
+
+
+
+	try{
+	    AgentProxy newProxy = (AgentProxy) currentClass.newInstance();
+
+	    // get the proxy handler for this operation
+	    IProxyHandler proxyHandler = this.currentRoleOperation.getAgentProxyHandler();
+	    // initialize the handler and synchronize the proxies
+	    proxyHandler.setSourceProxy( proxy );
+	    proxyHandler.setDestinationProxy( newProxy );
+	    proxyHandler.updateProxy();
+
+	    this.currentRoleOperation.setOperationStatus( RoleOperationStatus.ROLE_OPERATION_COMPLETED_SUCCESFUL );
+
+	    return newProxy;    
+
+	}catch(Exception e){
+	    logger.error("Exception caught while removing a role from a proxy", e);
+	    this.currentRoleOperation.setOperationStatus( RoleOperationStatus.ROLE_OPERATION_COMPLETED_FAILURE );
+	    throw new WCException(e);
+	}
 	    
 	    
     }
@@ -601,10 +612,8 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	this.currentRoleOperation.setRoleInjectionType( RoleInjectionType.ROLE_PUBLIC_INTERFACE_REMOVAL_FROM_PROXY );
 	this.currentRoleOperation.setOperationStatus( RoleOperationStatus.ROLE_OPERATION_STARTED );
 	
-	String publicRoleInterfaceName = this.getPublicRoleInterfaceName(role);
 	
-	// store the current class
-	this.currentProxyClass = proxy.getClass();
+	
 	
 	// this is a remotion
 	this.setInjectionType( RoleInjectionType.ROLE_PUBLIC_INTERFACE_REMOVAL_FROM_PROXY );
@@ -730,17 +739,10 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	// set the data for the current operation
 	this.currentRoleOperation.setAgentProxy(proxy);
 	this.currentRoleOperation.setRoleAnnotationClass( this.getPublicRoleAnnotationClass(role) );
+	this.currentRoleOperation.setPublicRoleInterface( this.getPublicRoleInterfaceClass(role) );
 	this.currentRoleOperation.setRoleInjectionType( RoleInjectionType.ROLE_ANNOTATION_ADDITION_TO_PROXY );
 	this.currentRoleOperation.setOperationStatus( RoleOperationStatus.ROLE_OPERATION_STARTED );
 	
-	
-	// get the name of the annotation for the role
-	this.annotationClassName = this.getPublicRoleAnnotationName(role);
-	this.agentProxyClassName = proxy.getClass().getName();
-	
-	
-	// this is an nnotation role ibjection
-	this.setInjectionType( RoleInjectionType.ROLE_ANNOTATION_ADDITION_TO_PROXY );
 	
 	
 
@@ -759,6 +761,13 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 
 	    // update the proxies
 	    proxyHandler.updateProxy();
+	    
+	    System.out.println("Analisi class " + newProxyClass.getClass().getName() + " di " + proxy.getClass().getName());
+	    Class superclazz = newProxyClass;
+	    do{
+		superclazz = superclazz.getSuperclass();
+		System.out.println("Superclass " + superclazz);
+	    }while( superclazz != null );
 	    
 	    // all done
 	    this.currentRoleOperation.setOperationStatus( RoleOperationStatus.ROLE_OPERATION_COMPLETED_SUCCESFUL );
@@ -810,11 +819,19 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
     
     
     /**
-     * Provides the value of the manipulationActive field.
-     * @return the manipulationActive
+     * Checks if the role booster is currently doing a manipulation.
+     * The check is performed thru the current operation, that contains the information about
+     * the status of the current operation itself.
+     * This method is used as a check in the findClass() one, so that if a manipulation is not active
+     * (i.e., started) then there is nothing to manipulate and so the class loader works as a standard
+     * class loader.
+     * @return true if there is an undergoing operation, false otherwise
      */
     private synchronized final boolean isManipulationActive() {
-        return manipulationActive;
+        if( this.currentRoleOperation == null || this.currentRoleOperation.getOperationStatus() != RoleOperationStatus.ROLE_OPERATION_STARTED )
+            return false;
+        else
+            return true;
     }
 
 
@@ -837,12 +854,12 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 		// construct the pool for loading and manipulating the classes
 		logger.info("Obtaining the proxy class from the Javassist pool...." + this.agentProxyClassName);
 		logger.info("My pool is " + pool.getClass() + " hash " + pool.hashCode());
-		baseProxyClass = pool.get(this.agentProxyClassName);
+		baseProxyClass = pool.get( this.currentRoleOperation.getAgentProxy().getClass().getName() );
 		logger.info("Base proxy class obtained from the pool " + baseProxyClass.hashCode());
 		subProxyClassName = baseProxyClass.getName();
 		
 		
-		if( this.injectionType == RoleInjectionType.ROLE_PUBLIC_INTERFACE_ADDITION_TO_PROXY ){
+		if( this.currentRoleOperation.getRoleInjectionType() == RoleInjectionType.ROLE_PUBLIC_INTERFACE_ADDITION_TO_PROXY ){
 		    // the subclass will have a name composed by a dynamic identifier
 		    // with the fixed string _roled and the id of this role engine (getID).
 		    // For instance, if the proxy is whitecat.example.DBProxy, it will become
@@ -851,36 +868,36 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 		    baseProxyClass = this.addRoleToProxyThruSubClass( pool, 				// the pool to use for loadtime manipulation
 			                                              baseProxyClass, 			// the current proxy class
 			                                              subProxyClassName, 		// the name of the subclass of the proxy that will be created
-			                                              this.publicRoleInterfaceName, 	// the name of the public role interface
-			                                              this.roleImplementationAccessKey,	// the access key to use for the retriving the role instance
-			                                              this.roleClassName,                // the name of the concrete role implementation
-			                                              this.methodForwarderGenerator	// the method forwarder generator
+			                                              this.currentRoleOperation.getPublicRoleInterface().getName(), 		// the name of the public role interface
+			                                              this.currentRoleOperation.getRoleImplementationAccessKey(),		// the access key to use for the retriving the role instance
+			                                              this.currentRoleOperation.getRole().getClass().getName(),                	// the name of the concrete role implementation
+			                                              this.currentRoleOperation.getMethodForwarderGenerator()			// the method forwarder generator
 			                                             );
 		}
 		else
-		if( this.injectionType == RoleInjectionType.ROLE_PUBLIC_INTERFACE_REMOVAL_FROM_PROXY ){
+		if( this.currentRoleOperation.getRoleInjectionType() == RoleInjectionType.ROLE_PUBLIC_INTERFACE_REMOVAL_FROM_PROXY ){
 		    
 			// get the current class of the proxy
-			Class currentClass = this.currentProxyClass;
+			Class currentClass = this.currentRoleOperation.getAgentProxy().getClass();
 			
 			Class interfaces[] = currentClass.getInterfaces();
 			for( int i = 0; (interfaces != null) && i < (interfaces.length); i++ ){
 			    Class currentInterface = interfaces[i];
 			    // is the current interface a role interface?
-			    if( ! currentInterface.getName().equals(publicRoleInterfaceName) ){
+			    if( ! currentInterface.getName().equals( this.currentRoleOperation.getPublicRoleInterface().getName() ) ){
 				// this proxy level does not have the role that must be removed,
 				// so inject the role in the new proxy class
 				    subProxyClassName += this.getSubClassNameSuffix();
-				    String interfaceName = currentInterface.getName();
-				    String roleImplementationAccessKey = this.getRoleImplementationAccessKey( interfaceName );
-				    this.methodForwarderGenerator.init(baseProxyClass.getName(), interfaceName, roleImplementationAccessKey);
-				    baseProxyClass = this.addRoleToProxyThruSubClass( pool, 				// the pool to use for loadtime manipulation
-					                                              baseProxyClass, 			// the current proxy class
-					                                              subProxyClassName, 		// the name of the subclass of the proxy that will be created
-					                                              interfaceName, 			// the name of the public role interface
-					                                              roleImplementationAccessKey,	// the access key to use for the retriving the role instance
-					                                              interfaceName,		        // the name of the concrete role implementation	
-					                                              this.methodForwarderGenerator	// the method forwarder generator
+				    String interfaceName = this.currentRoleOperation.getPublicRoleInterface().getName();
+				    String roleImplementationAccessKey = this.currentRoleOperation.getRoleImplementationAccessKey();
+				    this.currentRoleOperation.getMethodForwarderGenerator().init(baseProxyClass.getName(), interfaceName, roleImplementationAccessKey);
+				    baseProxyClass = this.addRoleToProxyThruSubClass( pool, 							// the pool to use for loadtime manipulation
+					                                              baseProxyClass, 						// the current proxy class
+					                                              subProxyClassName, 					// the name of the subclass of the proxy that will be created
+					                                              interfaceName, 						// the name of the public role interface
+					                                              roleImplementationAccessKey,				// the access key to use for the retriving the role instance
+					                                              interfaceName,		        			// the name of the concrete role implementation	
+					                                              this.currentRoleOperation.getMethodForwarderGenerator()	// the method forwarder generator
 					                                             );
 			    }
 			}
@@ -889,16 +906,16 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 
 		}
 		else
-		if( this.injectionType == RoleInjectionType.ROLE_ANNOTATION_ADDITION_TO_PROXY ){
+		if( this.currentRoleOperation.getRoleInjectionType() == RoleInjectionType.ROLE_ANNOTATION_ADDITION_TO_PROXY ){
 		    // create a subclass of the current proxy and add the role annotation to it
 		    subProxyClassName += this.getSubClassNameSuffix();
 		    bytecode = this.addRoleToProxyThruAnnotation(pool, baseProxyClass, subProxyClassName);
 		    baseProxyClass = null;
 		}
 		else
-		if( this.injectionType == RoleInjectionType.ROLE_ANNOTATION_REMOVAL_FROM_PROXY ){
+		if( this.currentRoleOperation.getRoleInjectionType() == RoleInjectionType.ROLE_ANNOTATION_REMOVAL_FROM_PROXY ){
 		    // get the current class of the proxy
-		    Class currentClass = this.currentProxyClass;
+		    Class currentClass = this.currentRoleOperation.getAgentProxy().getClass();
 		    Class originalProxyClass = null;
 		    
 		    // now start from this point in the inheritance chain, and add each
@@ -914,7 +931,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 			for( Annotation anno : currentClass.getAnnotations() ){
 			    logger.debug("Analyzing annotation " + anno );
 			    if( this.isRoleAnnotation(anno) 
-			       && (! (anno.annotationType().getName().equals(this.annotationClassName))) ){
+			       && (! (anno.annotationType().getName().equals(this.currentRoleOperation.getRoleAnnotationClass().getName()))) ){
 				logger.debug("Keeping the role annotation " + anno);
 				roleAnnotationsToKeep.add(anno);
 			    }
@@ -936,7 +953,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 			Iterator<Annotation> iter = roleAnnotationsToKeep.iterator();
 			while( iter.hasNext() ){
 			    Annotation toAdd = iter.next();
-			    this.annotationClassName = toAdd.annotationType().getName();
+			    this.currentRoleOperation.setRoleAnnotationClass( Class.forName( toAdd.annotationType().getName() ) );
 			    subProxyClassName += this.getSubClassNameSuffix();
 			    bytecode = this.addRoleToProxyThruAnnotation(pool, baseProxyClass, subProxyClassName);
 			    baseProxyClass = null;
@@ -1027,12 +1044,12 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	}
 
 	// get the class file and add the annotation
-	logger.debug("Creating the class file for the created class and adding the annotation " + this.annotationClassName);
+	logger.debug("Creating the class file for the created class and adding the annotation " + this.currentRoleOperation.getRoleAnnotationClass());
 	ClassFile classFile = newProxyClass.getClassFile();
 	ConstPool constantPool = classFile.getConstPool();
 	AnnotationsAttribute attr = new AnnotationsAttribute( constantPool, AnnotationsAttribute.visibleTag );
-	javassist.bytecode.annotation.Annotation a = new javassist.bytecode.annotation.Annotation( this.annotationClassName, constantPool );
-	a.addMemberValue("test", new StringMemberValue("ciao", constantPool) );
+	javassist.bytecode.annotation.Annotation a = new javassist.bytecode.annotation.Annotation( this.currentRoleOperation.getRoleAnnotationClass().getName(), 
+												    constantPool );
 	attr.setAnnotation(a);
 	classFile.addAttribute(attr);
 	classFile.setVersionToJava5();
@@ -1052,15 +1069,19 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 
     /**
      * This method returns true if the role engine is involved in a manipulation that
-     * includes an annotation.
+     * includes an annotation. The check is performed using the current operation, that contains and
+     * wraps all the information about the status of the currently undergoing operation.
      * @return true if the role engine is adding or removing an annotation from a role
      */
     protected final boolean isAnnotationInjection() {
-	if( this.injectionType == RoleInjectionType.ROLE_ANNOTATION_ADDITION_TO_PROXY 
-		|| this.injectionType == RoleInjectionType.ROLE_ANNOTATION_REMOVAL_FROM_PROXY )
-	    return true;
-	else
+	if( this.currentRoleOperation == null
+		|| ( this.currentRoleOperation.getRoleInjectionType() != RoleInjectionType.ROLE_ANNOTATION_ADDITION_TO_PROXY
+			&& this.currentRoleOperation.getRoleInjectionType() != RoleInjectionType.ROLE_ANNOTATION_REMOVAL_FROM_PROXY
+		)
+	)
 	    return false;
+	else
+	    return true;
     }
 
 
@@ -1392,10 +1413,6 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	    this.currentRoleOperation.setRoleInjectionType( RoleInjectionType.ROLE_ANNOTATION_REMOVAL_FROM_PROXY );
 	    this.currentRoleOperation.setOperationStatus( RoleOperationStatus.ROLE_OPERATION_STARTED );
 	    
-	    this.annotationClassName = this.getPublicRoleAnnotationName( role );
-	    this.agentProxyClassName = proxy.getClass().getName();
-	    this.currentProxyClass = proxy.getClass();
-	    this.setInjectionType( RoleInjectionType.ROLE_ANNOTATION_REMOVAL_FROM_PROXY );
 	    
 	    // use the proxy handler for this operation
 	    IProxyHandler proxyHandler = this.currentRoleOperation.getAgentProxyHandler();
