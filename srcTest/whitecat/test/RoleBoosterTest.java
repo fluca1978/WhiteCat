@@ -99,7 +99,7 @@ public class RoleBoosterTest {
 	    fail("The proxy does not have the original proxy as superclass!");
 	
 	// remove the role
-	this.booster = new RoleBooster( this.getClass().getClassLoader() );
+	this.booster = WhiteCat.getRoleBooster();
 	proxy = this.booster.removeUntilRole(agent, proxy, dba);
 	
 	// the proxy now should not have the role, so it should not implement the interface

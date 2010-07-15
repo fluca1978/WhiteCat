@@ -83,5 +83,16 @@ public class WhiteCat {
     public final static IMethodForwarderGenerator getMethodForwarderGenerator(){
 	return (IMethodForwarderGenerator) xmlBeanFactory.getBean( IMethodForwarderGenerator.class.getSimpleName() );
     }
+    
+    
+    /**
+     * Provides a new role operation. Please note that the role booster is always
+     * initialized with a new role operation, so you don't have to create one in order
+     * to manipulate a proxy.
+     * @return a new role operation
+     */
+    public final static IRoleOperation getNewRoleOperation(){
+	return (IRoleOperation) xmlBeanFactory.getBean( IRoleOperation.class.getSimpleName() );
+    }
 
 }

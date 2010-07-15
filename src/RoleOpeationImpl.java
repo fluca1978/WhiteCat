@@ -1,9 +1,9 @@
 import whitecat.core.IProxyHandler;
-import whitecat.core.IRoleOperation;
-import whitecat.core.RoleInjectionType;
-import whitecat.core.RoleOperationStatus;
+
+import whitecat.core.*;
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.IMethodForwarderGenerator;
+import whitecat.core.role.IRole;
 
 /* 
  * WhiteCat - A dynamic role injector for agents.
@@ -64,7 +64,7 @@ public class RoleOpeationImpl implements IRoleOperation {
     /**
      * The role operation status. By default it is operation enqued, that is not started yet.
      */
-    public RoleOperationStatus operationStatus = RoleOperationStatus.ROLE_OPERATION_QUEUED;
+    private RoleOperationStatus operationStatus = RoleOperationStatus.ROLE_OPERATION_QUEUED;
 
     /**
      * The agent proxy that is going to be manipulated.
@@ -74,12 +74,35 @@ public class RoleOpeationImpl implements IRoleOperation {
     /**
      * The public role class to add to the agent proxy.
      */
-    public Class publicRoleClass = null;
+    private Class publicRoleClass = null;
     
     /**
      * The public role interface to add to the agent proxy.
      */
-    public Class publicRoleInterface = null;
+    private Class publicRoleInterface = null;
+    
+    /**
+     * The operation exception in the case the operation has been unsuccesful.
+     */
+    private WCException operationException = null;
+    
+    
+    /**
+     * A string used for method forwarders to access implementation details.
+     */
+    private String methodAccessKey = null;
+    
+    
+    /**
+     * The role this operation is tied to.
+     */
+    private IRole role = null;
+    
+    
+    /**
+     * The role annotation class to use.
+     */
+    private Class annotationClass = null;
     
     
     /* (non-Javadoc)
@@ -185,8 +208,55 @@ public class RoleOpeationImpl implements IRoleOperation {
      */
     public synchronized final void setPublicRoleInterface(Class publicRoleInterface) {
         this.publicRoleInterface = publicRoleInterface;
+        
+        // consistency: each time the public role interface changes the access key should be invalidated
+        this.methodAccessKey = null;
     }
-    
+
+    public synchronized WCException getOperationException() {
+	return this.operationException;
+    }
+
+    public synchronized void setOperationException(WCException ex) {
+	this.operationException = ex;
+	
+	// consistency!
+	if( this.operationException != null )
+	    this.operationStatus = RoleOperationStatus.ROLE_OPERATION_COMPLETED_FAILURE;
+    }
+
+    public final IRole getRole() {
+	return this.role;
+    }
+
+    public final void setRole(IRole role) {
+	this.role = role;
+    }
+
+    public final synchronized String getRoleImplementationAccessKey() {
+	// if the string is not yet implemented, construct it
+	if( this.methodAccessKey == null )
+	    if( this.publicRoleInterface != null )
+		this.methodAccessKey = this.publicRoleInterface.getClass().getName();
+	    else	
+		this.methodAccessKey = "";
+	else
+	    this.methodAccessKey = "";
+	
+	
+	// all done
+	return this.methodAccessKey;
+    }
+
+    public synchronized final Class getRoleAnnotationClass() {
+	return this.annotationClass;
+    }
+
+    public synchronized final void setRoleAnnotationClass(Class annotationClass) {
+	this.annotationClass = annotationClass;	
+    }
+
+   
     
 
 }

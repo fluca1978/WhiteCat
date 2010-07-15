@@ -32,6 +32,7 @@ package whitecat.core;
 
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.IMethodForwarderGenerator;
+import whitecat.core.role.IRole;
 
 /**
  * This is an abstraction to a role operation, that is a role manipulation by a role booster
@@ -124,4 +125,66 @@ public interface IRoleOperation {
      * @param publicRoleInterface the class to use for the role operation
      */
     public void setPublicRoleInterface(Class publicRoleInterface);
+    
+    
+    /**
+     * In the case the operation has failed this method should be used to set
+     * the exception and the motivation of the failure.
+     * @param ex the exception of the failure
+     */
+    public void setOperationException( WCException ex );
+    
+    /**
+     * The operation exception of this operation, in the case it has been unsuccesful.
+     * @return the operation exception
+     */
+    public WCException getOperationException();
+    
+    
+    /**
+     * Sets the agent proxy for this operation, that is the initial agent proxy (the one that is going to be manipulated).
+     * @param proxy the agent proxy to use for the manipulation
+     */
+    public void setAgentProxy( AgentProxy proxy );
+    
+    
+    /**
+     * Provides the agent proxy for the current manipulation.
+     * @return the proxy of the agent that is going to be manipulated.
+     */
+    public AgentProxy getAgentProxy();
+    
+    
+    /**
+     * Sets the role to use for this role operation.
+     * @param role the role to use for the role operation
+     */
+    public void setRole( IRole role );
+    
+    /**
+     * Provides the role to use for this operation.
+     * @return the role to use for the operation/manipulation
+     */
+    public IRole getRole();
+    
+    /**
+     * Constrcuts an unique role implementation access key, that is a string key that will be
+     * used when the forwarding methods need to access the role reference.
+     * @return the string used internally to access the implementation methods
+     */
+    public String getRoleImplementationAccessKey();
+    
+    
+    /**
+     * Returns the annotation to use for a role operation.
+     * @return the class representing the role annotation to inject into the proxy
+     */
+    public Class getRoleAnnotationClass();
+    
+    
+    /**
+     * Sets the role annotation class to use for the operation.
+     * @param annotationClass the annotation to use for this operation
+     */
+    public void setRoleAnnotationClass( Class annotationClass );
 }

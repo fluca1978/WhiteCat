@@ -39,5 +39,6 @@ package whitecat.core;
 public enum RoleOperationStatus {
     ROLE_OPERATION_QUEUED,		// the role operation has not started yet
     ROLE_OPERATION_STARTED,		// the role operation is started
-    ROLE_OPERATION_COMPLETED		// the role operation is completed
+    ROLE_OPERATION_COMPLETED_SUCCESFUL,	// the role operation is completed with success
+    ROLE_OPERATION_COMPLETED_FAILURE	// the role operation is completed but with errors
 }

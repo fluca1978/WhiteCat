@@ -33,7 +33,8 @@
 	<property name="currentRoleOperation" ref="IRoleOperation"></property>
    	</bean>
 
-   	<bean id="IRoleOperation" class="RoleOpeationImpl">
+   	<bean id="IRoleOperation" class="RoleOpeationImpl"
+   		scope="prototype">
    		<property name="agentProxyHandler" ref="IProxyHandler"></property>
    		<property name="methodForwarderGenerator"
    			ref="IMethodForwarderGenerator">
