@@ -32,15 +32,17 @@ package whitecat.test;
 
 import static org.junit.Assert.*;
 
+
 import java.lang.annotation.Annotation;
 import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import whitecat.core.ProxyHandler;
+import whitecat.core.IProxyHandler;
 import whitecat.core.RoleBooster;
 import whitecat.core.WCException;
+import whitecat.core.WhiteCat;
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.ProxyHandlerFactory;
 import whitecat.core.agents.WCAgent;
@@ -52,6 +54,7 @@ import whitecat.example.DatabaseAdministrator;
 import whitecat.example.DatabaseUser;
 import whitecat.example.IDatabaseAdministrator;
 import whitecat.example.LoggerRole;
+import whitecat.core.*;
 
 /**
  * A test to check the working of the Role Booster.
@@ -63,7 +66,7 @@ public class RoleBoosterTest {
     /**
      * The role booster under test.
      */
-    private RoleBooster booster = null;
+    private IRoleBooster booster = null;
     
     
     /**
@@ -71,7 +74,8 @@ public class RoleBoosterTest {
      */
     @Before
     public void setUp() throws Exception {
-	this.booster = new RoleBooster( this.getClass().getClassLoader() );
+	//this.booster = new RoleBooster( this.getClass().getClassLoader() );
+	this.booster = WhiteCat.getRoleBooster();
     }
 
     @Test
@@ -95,7 +99,7 @@ public class RoleBoosterTest {
 	    fail("The proxy does not have the original proxy as superclass!");
 	
 	// remove the role
-	this.booster = new RoleBooster( this.getClass().getClassLoader() );
+	this.booster = WhiteCat.getRoleBooster();
 	proxy = this.booster.removeUntilRole(agent, proxy, dba);
 	
 	// the proxy now should not have the role, so it should not implement the interface
@@ -115,7 +119,7 @@ public class RoleBoosterTest {
 	// create a new proxy and a new booster
 	AgentProxy proxy = new DBProxy();
 	WCAgent agent = new DBAgent();
-	this.booster = new RoleBooster( this.getClass().getClassLoader() );
+	this.booster = WhiteCat.getRoleBooster();
 	
 	// the proxy now should not have any role property
 	if( this.booster.hasPublicRoleAnnotation(proxy) || this.booster.hasPublicRoleInterface(proxy) )

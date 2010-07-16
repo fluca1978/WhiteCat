@@ -32,6 +32,7 @@ package whitecat.core.agents;
 
 import javassist.CtClass;
 import javassist.CtMethod;
+import whitecat.core.IRoleOperation;
 import whitecat.core.exceptions.WCForwarderMethodException;
 import whitecat.core.role.IRole;
 
@@ -42,7 +43,7 @@ import whitecat.core.role.IRole;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class LocalForwarderMethodGenerator implements MethodForwarderGenerator {
+public class LocalForwarderMethodGenerator implements IMethodForwarderGenerator {
 
     
     /**
@@ -129,6 +130,13 @@ public class LocalForwarderMethodGenerator implements MethodForwarderGenerator {
 	
 	// store also the classname of the role
 	this.roleClassName = roleClassName;
+    }
+
+    public synchronized final void init(IRoleOperation roleOperation) {
+	this.init( roleOperation.getAgentProxy().getClass().getName(),
+		   roleOperation.getRole().getClass().getName(),
+		   roleOperation.getRoleImplementationAccessKey()
+		   );
     }
 
 }

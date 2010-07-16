@@ -30,6 +30,7 @@
  */
 package whitecat.core.agents;
 
+import whitecat.core.IRoleOperation;
 import whitecat.core.exceptions.WCForwarderMethodException;
 import whitecat.core.role.IRole;
 import javassist.CtMethod;
@@ -40,7 +41,7 @@ import javassist.CtMethod;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public interface MethodForwarderGenerator {
+public interface IMethodForwarderGenerator {
 
     
     /**
@@ -53,6 +54,15 @@ public interface MethodForwarderGenerator {
      * @param roleClassName the name of the role class, used for knowing properties of the role itself
      */
     public void init(String proxyClassName, String roleClassName, String key);
+    
+    
+    /**
+     * Initializes the method forwarder generator with the specified role operation, that must contain
+     * the proxy, the role and therefore the access key to work on.
+     * @param roleOperation the role operation this method forwarder generator will work on
+     */
+    public void init( IRoleOperation roleOperation );
+    
     
     /**
      * Generates source code for a method forwarder. Given a method in the interface,

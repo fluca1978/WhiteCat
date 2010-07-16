@@ -35,7 +35,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
 
-import whitecat.core.ProxyHandler;
+import whitecat.core.IProxyHandler;
+import whitecat.core.IRoleBooster;
 import whitecat.core.ProxyStorage;
 import whitecat.core.RoleBooster;
 import whitecat.core.agents.AgentProxy;
@@ -84,7 +85,7 @@ public class ExampleMain extends DBProxy implements Runnable, EventListener{
 
 	    //proxy.dump();
 
-	    RoleBooster engine = new RoleBooster(root);
+	    IRoleBooster engine = new RoleBooster(root);
 	    AgentProxy newproxy = engine.injectPublicRole(agent, proxy, dbaRole);
 	    
 	    if( newproxy instanceof DBProxy )
@@ -106,7 +107,7 @@ public class ExampleMain extends DBProxy implements Runnable, EventListener{
 
 
 	    // remove the role from the proxy
-	    RoleBooster engine2 = new RoleBooster(root);
+	    IRoleBooster engine2 = new RoleBooster(root);
 	    newproxy = engine2.removeUntilRole(agent, newproxy, dbaRole);
 	    System.err.println("Id del proxy " + newproxy.getAgentProxyID());
 
@@ -141,7 +142,7 @@ public class ExampleMain extends DBProxy implements Runnable, EventListener{
 	    }
 		
 	    
-	    RoleBooster engine4 = new RoleBooster(root);
+	    IRoleBooster engine4 = new RoleBooster(root);
 	    newproxy = (DBProxy) proxyClass.newInstance();
 	    
 	    //engine4.loadClass( newproxy.getClass().getName());
@@ -192,7 +193,7 @@ public class ExampleMain extends DBProxy implements Runnable, EventListener{
 
 	    
 	    
-	    ProxyHandler handler = ProxyHandlerFactory.getProxyHandler();
+	    IProxyHandler handler = ProxyHandlerFactory.getProxyHandler();
 
     
 	}

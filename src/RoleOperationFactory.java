@@ -1,3 +1,6 @@
+import whitecat.core.IRoleOperation;
+import whitecat.core.WhiteCat;
+
 /* 
  * WhiteCat - A dynamic role injector for agents.
  *
@@ -28,33 +31,21 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package whitecat.core.agents;
-
-import whitecat.core.Configuration;
-import whitecat.core.IProxyHandler;
-import whitecat.core.WhiteCat;
-import whitecat.core.exceptions.WCProxyException;
 
 /**
- * A factory that creates the proxy handlers depending on the configuration parameters.
+ * A factory to build a new operation to do with a role booster.
+ * Please note that a role booster is always initialized with a role operation,
+ * so this factory must be used only to do another operation with the same role booster.
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class ProxyHandlerFactory {
+public class RoleOperationFactory {
 
     /**
-     * Provides a new proxy handler factory.
-     * @return a new proxy handler instance
-     * @throws WCProxyException
+     * Provides a new role operation.
+     * @return a new role operation
      */
-    public static IProxyHandler getProxyHandler() throws WCProxyException{
-	try{
-	    return WhiteCat.getProxyHandler();
-	}catch(Exception e){
-	    e.printStackTrace();
-	    throw new WCProxyException("Exception caught while creating an empty proxy handler", e);
-	}
+    public static IRoleOperation getRoleOperation(){
+	return WhiteCat.getNewRoleOperation();
     }
-    
-    
 }

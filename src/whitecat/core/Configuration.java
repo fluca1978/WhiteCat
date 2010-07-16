@@ -31,12 +31,17 @@
 package whitecat.core;
 
 import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.util.Properties;
 
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
+
+import org.springframework.beans.factory.xml.XmlBeanFactory;
+import org.springframework.core.io.ClassPathResource;
+
 
 /**
  * This class handles the configuration of the running environment.
@@ -97,12 +102,47 @@ public class Configuration extends Properties {
     
     
     /**
-     * Default configuration.
+     * The spring XML bean factory.
+     */
+    private XmlBeanFactory xmlBeanFactory = null;
+    
+    /**
+     * Default configuration. Loads the spring configuration.
      */
     private Configuration(){
 	super();
-	this.reload();
+	
+
+        // configure the spring resource in order to get it available for the
+        // beans configurations. Please note that the configuration file must be
+	// in the classpath.
+        String springConfigurationPath = "spring.xml";
+        ClassPathResource classPathResource = new ClassPathResource( springConfigurationPath );
+        this.xmlBeanFactory = new XmlBeanFactory(classPathResource);
+
+	
     }
+    
+    
+    /**
+     * An utility method to get a bean given the class it has. The class simple name is
+     * used to get the bean configuration.
+     * @param clazz the class of the bean, use the interface for an inteface instance
+     * @return the bean object or null
+     */
+    public synchronized final Object getBean( Class clazz ){
+	// check arguments 
+	if( clazz == null )
+	    return null;
+	
+	// get the name of the bean
+	String beanName = clazz.getSimpleName();
+	
+	// now get the bean
+	return this.xmlBeanFactory.getBean(beanName);
+	
+    }
+    
     
     /**
      * Provides the current configuration object, an instance to the configuration

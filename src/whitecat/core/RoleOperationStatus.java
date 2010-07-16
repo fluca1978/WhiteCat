@@ -28,33 +28,17 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package whitecat.core.agents;
-
-import whitecat.core.Configuration;
-import whitecat.core.IProxyHandler;
-import whitecat.core.WhiteCat;
-import whitecat.core.exceptions.WCProxyException;
+package whitecat.core;
 
 /**
- * A factory that creates the proxy handlers depending on the configuration parameters.
+ * This enumerations is an abstraction over a single role operation status, that is
+ * the phase of the role operation as it is undergoing the role booster.
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class ProxyHandlerFactory {
-
-    /**
-     * Provides a new proxy handler factory.
-     * @return a new proxy handler instance
-     * @throws WCProxyException
-     */
-    public static IProxyHandler getProxyHandler() throws WCProxyException{
-	try{
-	    return WhiteCat.getProxyHandler();
-	}catch(Exception e){
-	    e.printStackTrace();
-	    throw new WCProxyException("Exception caught while creating an empty proxy handler", e);
-	}
-    }
-    
-    
+public enum RoleOperationStatus {
+    ROLE_OPERATION_QUEUED,		// the role operation has not started yet
+    ROLE_OPERATION_STARTED,		// the role operation is started
+    ROLE_OPERATION_COMPLETED_SUCCESFUL,	// the role operation is completed with success
+    ROLE_OPERATION_COMPLETED_FAILURE	// the role operation is completed but with errors
 }

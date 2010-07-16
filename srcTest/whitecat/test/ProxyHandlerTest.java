@@ -9,7 +9,9 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
+import whitecat.core.IProxyHandler;
 import whitecat.core.ProxyHandler;
+import whitecat.core.WhiteCat;
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.ProxyHandlerFactory;
 import whitecat.core.agents.WCAgent;
@@ -40,7 +42,7 @@ public class ProxyHandlerTest {
 	dbproxy1.setProperty2("A string test-" + dbproxy1.getProperty1());
 	
 	// create a proxy handler
-	ProxyHandler<DBProxy> handler = ProxyHandlerFactory.getProxyHandler();
+	IProxyHandler<DBProxy> handler = ProxyHandlerFactory.getProxyHandler();
 	
 	// create a new proxy
 	DBProxy dbproxy2 = new DBProxy( new DBAgent() );
@@ -83,7 +85,7 @@ public class ProxyHandlerTest {
 	    fail("Two agent proxies created equal but not yet cloned!");
 	
 	// now clone one
-	ProxyHandler handler = ProxyHandlerFactory.getProxyHandler();
+	IProxyHandler handler = WhiteCat.getProxyHandler();
 	handler.setSourceProxy( proxy1 );
 	handler.setDestinationProxy(proxy2);
 	handler.updateProxy();
