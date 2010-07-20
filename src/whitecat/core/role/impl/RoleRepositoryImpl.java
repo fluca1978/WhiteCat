@@ -31,6 +31,7 @@
 package whitecat.core.role.impl;
 
 import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.Set;
 
 import whitecat.core.exceptions.WCRoleRepositoryException;
 import whitecat.core.role.IRole;
-import whitecat.core.role.RoleRepository;
+import whitecat.core.role.IRoleRepository;
 import whitecat.core.role.descriptors.RoleDescriptor;
 
 /**
@@ -46,7 +47,7 @@ import whitecat.core.role.descriptors.RoleDescriptor;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class RoleRepositoryImpl extends RoleRepository {
+public class RoleRepositoryImpl implements IRoleRepository {
 
 
     /**
@@ -135,6 +136,10 @@ public class RoleRepositoryImpl extends RoleRepository {
 	    
     }
 
+    
+    /**
+     * Removes a role depending on its descriptor.
+     */
     public boolean removeRole(RoleDescriptor descriptor)
 	    throws WCRoleRepositoryException {
 	if( this.roles.containsKey(descriptor) ){

@@ -40,4 +40,8 @@
    			ref="IMethodForwarderGenerator">
    		</property>
    	</bean>
+   	<bean id="IRoleRepository"
+   		class="whitecat.core.role.impl.RoleRepositoryImpl"
+   		scope="singleton">
+   	</bean>
 </beans>

@@ -39,13 +39,14 @@ import whitecat.core.IProxyHandler;
 import whitecat.core.IRoleBooster;
 import whitecat.core.ProxyStorage;
 import whitecat.core.RoleBooster;
+import whitecat.core.WhiteCat;
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.ProxyHandlerFactory;
 import whitecat.core.annotation.Role;
 import whitecat.core.event.Event;
 import whitecat.core.event.EventDispatcher;
 import whitecat.core.event.EventListener;
-import whitecat.core.role.RoleRepository;
+import whitecat.core.role.IRoleRepository;
 import javassist.*;
 import whitecat.core.role.descriptors.*;
 /**
@@ -213,7 +214,7 @@ public class ExampleMain extends DBProxy implements Runnable, EventListener{
      */
     public static void main(String[] args) throws Exception{
 
-	RoleRepository repository = whitecat.core.role.RoleRepository.getInstance();
+	IRoleRepository repository = WhiteCat.getRoleRepository();
 	repository.installRole( RoleDescriptor.getInstance("Luca", "An aim", null, null, null), new DatabaseAdministrator(), true);
 	
 	ExampleMain example = new ExampleMain();

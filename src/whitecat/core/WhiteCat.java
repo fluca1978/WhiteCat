@@ -34,6 +34,7 @@ import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import whitecat.core.agents.IMethodForwarderGenerator;
+import whitecat.core.role.IRoleRepository;
 
 /**
  * This is the main class of the whole system. 
@@ -93,6 +94,15 @@ public class WhiteCat {
      */
     public final static IRoleOperation getNewRoleOperation(){
 	return (IRoleOperation) xmlBeanFactory.getBean( IRoleOperation.class.getSimpleName() );
+    }
+    
+    
+    /**
+     * Provides the unique role repository available in the system.
+     * @return the role repository implementation
+     */
+    public final static IRoleRepository getRoleRepository(){
+	return (IRoleRepository) xmlBeanFactory.getBean( IRoleRepository.class.getSimpleName() );
     }
 
 }
