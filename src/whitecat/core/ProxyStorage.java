@@ -33,12 +33,12 @@ package whitecat.core;
 import java.io.OutputStream;
 
 import java.io.PrintStream;
-import java.util.HashMap;
 import java.util.*;
 
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.AgentProxyID;
 import whitecat.core.agents.WCAgent;
+import whitecat.core.lock.AgentProxyStatus;
 
 /**
  * This class represents a map for storing the last proxy
@@ -46,7 +46,7 @@ import whitecat.core.agents.WCAgent;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class ProxyStorage extends HashMap<AgentProxyID, AgentProxy>{
+public class ProxyStorage {
 
     /**
      * A reference to myself, so that this class is used as singleton.
@@ -54,20 +54,26 @@ public class ProxyStorage extends HashMap<AgentProxyID, AgentProxy>{
     private static ProxyStorage mySelf = null;
     
     
-    /**
-     * The lock map contains a counter for the locking of role assumption operations.
-     * There is a counter instead of a boolean flag to allow nested role assumptions/releases.
-     */
-    private Map<AgentProxyID, Integer> lockMap = null;
     
+    
+    /**
+     * A map with the status of all agents. The map is indexed by the agent proxy ID, that should not change
+     * during each manipulation. The AgentProxyStatus object contains informations about the lock and the
+     * last proxy update.
+     */
+    private Map<AgentProxyID, AgentProxyStatus> proxyMap = null;
+    
+    
+    
+   
     /**
      * Creates a new proxy storage.
      */
     private ProxyStorage(){
 	super();
 	
-	// initialize the role lock counter map
-	this.lockMap = new HashMap<AgentProxyID, Integer>();
+	// initialize the map of the agent proxies
+	this.proxyMap = new HashMap<AgentProxyID, AgentProxyStatus>();
     }
     
     
@@ -87,37 +93,69 @@ public class ProxyStorage extends HashMap<AgentProxyID, AgentProxy>{
     /**
      * A method to lock the specified proxy. The method increases the locking counter
      * of the specified proxy.
-     * @param proxyToLock
+     * @param proxyToLock the proxy to lock
+     * @param lockCurrentThread true if the current thread must be locked now, false if only the status
+     * of the agent proxy must be set to locked.
+     * @param timeToLock the max amount of time to lock the thread if the lockCurrentThread flag is true. If a zero value
+     * is passed the thread waits undefinitely.
      */
-    public final  synchronized void  lockAgentProxy( AgentProxyID proxyToLock ){
+    public final  synchronized void  lockAgentProxy( AgentProxy proxyToLock, boolean lockCurrentThread, long timeToLock ){
 	// check params
 	if( proxyToLock == null )
 	    return;
 	
-	// get the current value of the counter (if it exists)
-	int lockingCounter = 0;
-	if( this.lockMap.containsKey(proxyToLock) )
-	    lockingCounter = this.lockMap.get(proxyToLock);
+	// get the id of this proxy
+	AgentProxyID id = proxyToLock.getAgentProxyID();
 	
-	// increment the locking counter
-	lockingCounter++;
+	// get the current status for the proxy id
+	AgentProxyStatus status = null;
+	if( this.proxyMap.containsKey( id ) )
+	    status = this.proxyMap.get( id );
+	else{
+	    // WARNING: if here there is a map mismatch: an agent proxy is not presence
+	    // in the storage map!!!!
+	    status = AgentProxyStatus.newInstance( proxyToLock );
+	    this.proxyMap.put( id , status);
+	}
 	
-	// place the locking counter
-	this.lockMap.put(proxyToLock, lockingCounter );
+	assert( status == null );	// should never happen
 	
+	
+	
+	// now lock the thread
+	if( lockCurrentThread )
+	    if( timeToLock > 0 )
+		status.lock( timeToLock );
+	    else
+		status.lock();
+	else
+	    status.incrementLockCount();
     }
     
     /**
      * A mehtod to unlock the specified proxy (i.e., to decrease the locking counter).
-     * @param proxyToUnlock
+     * @param proxyToUnlock the proxy to lock
+     * @param unlockThread true if the current thread must be unlocked
      */
-    public final synchronized void unlockAgentProxy( AgentProxyID proxyToUnlock ){
-	// if the proxy is in the map decrease the locking counter
-	if( this.lockMap.containsKey(proxyToUnlock) )
-	    this.lockMap.put( proxyToUnlock, this.lockMap.get(proxyToUnlock) - 1 );
+    public final synchronized void unlockAgentProxy( AgentProxy proxyToUnlock, boolean unlockThread ){
+	// check arguments
+	if( proxyToUnlock == null || ! this.proxyMap.containsKey(proxyToUnlock.getAgentProxyID()) )
+	    return;
 	
-	// unlock thread that have locked on the proxy id
-	LockManager.getInstance().notifyAll(proxyToUnlock);
+	// get the id of this proxy
+	AgentProxyID id = proxyToUnlock.getAgentProxyID();
+	
+	
+	// get the current status
+	AgentProxyStatus status = this.proxyMap.get( id );
+	assert( status == null );		// should never happen
+	
+	
+	// now unlock the agent proxy
+	if( unlockThread )
+	    status.unlockAll();
+	else
+	    status.decrementLockCount();
     }
     
     /**
@@ -125,11 +163,19 @@ public class ProxyStorage extends HashMap<AgentProxyID, AgentProxy>{
      * @param proxyToCheck
      * @return
      */
-    public synchronized final  boolean isAgentProxyLocked( AgentProxyID proxyToCheck ){
-	if( ! this.lockMap.containsKey(proxyToCheck) )
+    public synchronized final  boolean isAgentProxyLocked( AgentProxy proxyToCheck ){
+	// check arguments
+	if( proxyToCheck == null || proxyToCheck.getAgentProxyID() == null )
+	    return false;
+	
+	// get the agent proxy id
+	AgentProxyID id = proxyToCheck.getAgentProxyID();
+	
+	
+	if( ! this.proxyMap.containsKey(id) )
 	    return false;
 	else
-	    return this.lockMap.get(proxyToCheck) > 0;
+	    return this.proxyMap.get(id).isLocked();
     }
     
     
@@ -139,7 +185,97 @@ public class ProxyStorage extends HashMap<AgentProxyID, AgentProxy>{
      * @param os the output stream to use.
      */
     public synchronized void dump(PrintStream os){
-	for(AgentProxyID currentID : this.keySet() )
-	    os.println("- " + currentID + " -> " + this.get( currentID ) );
+	for(AgentProxyID currentID : this.proxyMap.keySet() )
+	    os.println("- " + currentID + " -> " + this.proxyMap.get( currentID ) );
+    }
+    
+    
+    /**
+     * Adds a new agent proxy into the map creating a new status if needed.
+     * @param proxy the agent proxy to store
+     */
+    public synchronized final void storeAgentProxy( AgentProxy proxy ){
+	// check arguments
+	if( proxy == null || proxy.getAgentProxyID() == null )
+	    return;
+	
+	// get the agent proxy id
+	AgentProxyID id = proxy.getAgentProxyID();
+	
+	// see if the agent proxy has been already stored in the map and get the status or
+	// create a new status
+	AgentProxyStatus status = null;
+	if( this.proxyMap.containsKey(id) ){
+	    status = this.proxyMap.get( id );
+	    status.setProxy(proxy);
+	}
+	else{
+	    status = AgentProxyStatus.newInstance(proxy);
+	    this.proxyMap.put(id, status);
+	}
+    }
+    
+    
+    /**
+     * A method to increment the manipulation counter for a specified proxy.
+     * @param proxy the proxy that has been manipulated
+     * @return the actual number of manipulation this proxy has done, or -1 if the proxy is not yet stored in the map
+     */
+    public synchronized final int incrementManipulationCount( AgentProxy proxy ){
+	// check arguments
+	if( proxy == null || proxy.getAgentProxyID() == null || ! this.proxyMap.containsKey(proxy.getAgentProxyID()) )
+	    return -1;
+	
+	// get the status
+	AgentProxyStatus status = this.proxyMap.get( proxy.getAgentProxyID() );
+	assert( status == null );
+	
+	// increment the manipulation count
+	status.incrementLockCount();
+	
+	// return the current lock count
+	return status.getLockCount();
+    }
+    
+    
+    /**
+     * Removes a proxy from the storage map. This is useful if the proxy has been destroyed.
+     * Before removing the proxy, the method unlocks the proxy so that waiters can be notified.
+     * @param proxy the proxy to remove
+     */
+    public synchronized final void deleteAgentProxy( AgentProxy proxy ){
+	// check arguments
+	if( proxy == null || proxy.getAgentProxyID() == null )
+	    return;
+	
+	// get the agent proxy id
+	AgentProxyID id = proxy.getAgentProxyID();
+	
+	// remove the agent proxy from the map
+	// but before that try to unlock waiters
+	if( this.proxyMap.containsKey(id) )
+	    this.proxyMap.get(id).unlock();
+	
+	
+	this.proxyMap.remove(id);
+	
+    }
+    
+    
+    /**
+     * Provides the last updated proxy in the storage for the specified id.
+     * @param id
+     * @return
+     */
+    public synchronized AgentProxy getLastUpdatedAgentProxy( AgentProxyID id ){	
+	// check arguments
+	if( id == null || this.proxyMap.containsKey(id) )
+	    throw new IllegalArgumentException("Cannot get a null-id agent proxy, or the agent proxy is not in the map!");
+	
+	// this is a blocking call on the status object!
+	return this.proxyMap.get(id).getProxy();
+	
+	
+	
     }
 }

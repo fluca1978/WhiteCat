@@ -28,33 +28,62 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package whitecat.core.annotation;
+package whitecat.test;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import whitecat.core.ProxyStorage;
+import whitecat.example.DBAgent;
+import whitecat.example.DBProxy;
+
+
+import static org.junit.Assert.*;
 
 /**
- * This annotation must be applied to any mutator method of a proxy
- * in order to avoid the execution of the method while the proxy undergoes
- * role manipulation.
+ * A test for the locking mechanism.
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Lock {
+public class LockingTest {
 
     /**
-     * Should be the method call blocking? 
-     * @return true if the method call is blocking
+     * @throws java.lang.Exception
      */
-    public String blocking() default "false";
-    
-    /**
-     * The max time to wait before unlock the method call.
-     * @return the max time to wait in milliseconds
-     */
-    public long maxTimeToWait() default 0;
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @Test
+    public void testBlocking(){
+	DBProxy proxy = new DBProxy( new DBAgent() );
+	
+	// store the proxy in the storage
+	ProxyStorage storage = ProxyStorage.getInstance();
+	storage.storeAgentProxy(proxy);
+	
+	// the proxy should not be locked now!
+	if( storage.isAgentProxyLocked(proxy) )
+	    fail("Proxy locked as soon as stored!");
+	
+	// lock the proxy
+	storage.lockAgentProxy(proxy, false, -1);
+	if(!  storage.isAgentProxyLocked(proxy) )
+	    fail("Proxy status should be locked now!");
+	
+	// do a method call to a blocking method
+	long start = System.currentTimeMillis();
+	int result = proxy.lockableMethod( 3 );
+	long end   = System.currentTimeMillis();
+	
+	if( result != 3*2 )
+	    fail("Result incorrect");
+	
+	if( (end - start) < 9000 )
+	    fail("Locking time was incorrect " + (end - start) );
+	
+	
+	
+    }
 }

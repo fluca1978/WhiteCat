@@ -109,7 +109,7 @@ public class LocalAgentProxy extends AgentProxy {
     public AgentProxy update() {
 	// return the proxy associated with the agent
 	ProxyStorage storage = ProxyStorage.getInstance();
-	return storage.get( this.getMyAgent() );
+	return storage.getLastUpdatedAgentProxy( this.getAgentProxyID() );
     }
     
     
