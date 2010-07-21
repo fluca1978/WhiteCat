@@ -35,6 +35,7 @@ import java.lang.reflect.Method;
 
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.LocalAgentProxy;
+import whitecat.core.annotation.Lock;
 
 /**
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
@@ -119,6 +120,17 @@ public class DBProxy extends LocalAgentProxy {
 	    System.out.println("\tname " + a + " class " + a.getClass() );
 	
 	
+    }
+    
+    
+    /**
+     * An example of lockable method: the method cannot be called while a manipulation is active.
+     * @param value
+     * @return
+     */
+    @Lock( blocking = "true")
+    public int lockableMethod(int value){
+	return value * 2;
     }
 
     /* (non-Javadoc)

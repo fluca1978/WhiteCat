@@ -46,5 +46,15 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Lock {
 
+    /**
+     * Should be the method call blocking? 
+     * @return true if the method call is blocking
+     */
     public String blocking() default "false";
+    
+    /**
+     * The max time to wait before unlock the method call.
+     * @return the max time to wait in milliseconds
+     */
+    public long maxTimeToWait() default 0;
 }

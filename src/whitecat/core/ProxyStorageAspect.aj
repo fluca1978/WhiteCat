@@ -82,28 +82,34 @@ public aspect ProxyStorageAspect {
     /**
      * The pointcut to intercept the execution of a locking method.
      */
-    private pointcut avoidLockedMethodInvocation( AgentProxy proxy, Lock lockingAnnotation ) : call( public @Lock * AgentProxy+.*(..) )
+    private pointcut avoidLockedMethodInvocation( AgentProxy proxy, Lock lockingAnnotation ) : call(  @Lock public * AgentProxy+.*(..) )		// call to a public method with the @Lock annotation on a proxy (or a subclass of it)
      									&&
-     									@annotation(lockingAnnotation)
+     									@annotation(lockingAnnotation)							// pass the annotation
      									&&
-     									target( proxy );
+     									target( proxy )									// pass the proxy
+     									&&
+     									(! cflow( execution( * AgentProxy+.*(..) ) ) );									// the method is called from the outside of the proxy
     
     
     /**
      * Avoid execution of a locked method.
+     * This advice checks if the method invoked aroung a proxy method has been annotated with the Lock annotation, if
+     * so the execution must be suspended until the proxy storage notifies that the proxy is no more locked.
      */
     Object around( AgentProxy proxy, Lock lockingAnnotation ) : avoidLockedMethodInvocation( proxy, lockingAnnotation ){
 	// if the proxy is locked throw an exception
-	ProxyStorage storage = ProxyStorage.getInstance();
+	IProxyStorage storage = ProxyStorage.getInstance();
 	
 	// check if the method must block until the proxy is unlocked
 	if( lockingAnnotation.blocking().equals("true") ){
 	    try{
 		// the caller must wait until the proxy has unlocked.
 		// I need to acquire a lock on the proxy id
-		AgentProxyID proxyID = proxy.getAgentProxyID();
-		while( storage.isAgentProxyLocked(proxyID) )
-		    LockManager.getInstance().wait(proxyID);
+		while( storage.isAgentProxyLocked( proxy ) )
+		    storage.lockAgentProxy(proxy, 
+			                   Boolean.parseBoolean( lockingAnnotation.blocking() ), 
+			                   lockingAnnotation.maxTimeToWait() 
+			                   );
 
 		// now proceed with the method call
 		return proceed( proxy, lockingAnnotation );
@@ -111,7 +117,7 @@ public aspect ProxyStorageAspect {
 		throw new WCProxyLockedException( proxy.getAgentProxyID() );
 	    }
 	}
-	else if( storage.isAgentProxyLocked( proxy.getAgentProxyID() ) )
+	else if( storage.isAgentProxyLocked( proxy ) )
 	    // non-blocking behavior
 	    throw new WCProxyLockedException( proxy.getAgentProxyID() );
 	else
@@ -122,40 +128,44 @@ public aspect ProxyStorageAspect {
     /**
      * Before executing a role manipulation lock the proxy.
      */
-    before( AgentProxy proxy ) : lockingPublicRoleForAddition( proxy ){
+    before( AgentProxy proxy ) : lockingPublicRoleForAddition( proxy ) 
+    				||
+    				lockingPublicRoleForRemoval( proxy )
+    				{
 	// get the proxy storage
-	ProxyStorage storage = ProxyStorage.getInstance();
+	IProxyStorage storage = ProxyStorage.getInstance();
 	
-	// lock the proxy
-	storage.lockAgentProxy( proxy.getAgentProxyID() );
+	// lock the proxy (without locking the current thread)
+	storage.lockAgentProxy( proxy, false, -1 );
     }
     
     
-    /**
-     * Before removing a role lock the proxy.
-     * @param proxy
-     */
-    before( AgentProxy proxy ) : lockingPublicRoleForRemoval( proxy ){
-	// get the proxy storage
-	ProxyStorage storage = ProxyStorage.getInstance();
-	
-	// lock the proxy
-	storage.lockAgentProxy( proxy.getAgentProxyID() );
-    }
-    
+   
     
     
     
      /**
       * Manage a public role addition.
+      * This advice stores the proxy in the proxy storage, unlocks it (if it was already present and has been
+      * locked) and notifies an event about a role manipulation.
       */
      after() returning( AgentProxy retProxy ) : addingPublicRole(){
-	 // perform basic operation for adding a role: store the role in the map
-	 this.storeRoleAddition( thisJoinPoint, retProxy );
 	 
-	 // unlock the proxy
-	 ProxyStorage storage = ProxyStorage.getInstance();
-	 storage.unlockAgentProxy( retProxy.getAgentProxyID() );
+	 // get the arguments of the join point method call
+	 Object arguments[] = thisJoinPoint.getArgs();
+	 // extract each argument
+	 WCAgent agent = (WCAgent) arguments[0];
+	 AgentProxy originalProxy = (AgentProxy) arguments[1];
+	 AgentProxyID proxyID = originalProxy.getAgentProxyID();
+	 
+	 
+	 // now store the agent proxy in the storage
+	 IProxyStorage storage = ProxyStorage.getInstance();
+	 storage.storeAgentProxy( retProxy );
+	 
+	 
+	 // unlock the proxy (unlocking also the current thread)
+	 storage.unlockAgentProxy( retProxy, true );
 
 	 
 	 // now perform the notification of events
@@ -166,14 +176,16 @@ public aspect ProxyStorageAspect {
      
      /**
       * Manage the public role removal.
+      * The proxy is stored in the agent proxy storage, then unlocked and an event is notified to all
+      * listeners.
       */
      after() returning( AgentProxy retProxy ) : removingPublicRole(){
-	 // perform basic operation for adding a role: store the role in the map
-	 this.storeAgentProxyUpdate( retProxy.getAgentProxyID(), retProxy );
+	 // store the role (updated) in the proxy storage
+	 IProxyStorage storage = ProxyStorage.getInstance();
+	 storage.storeAgentProxy(retProxy);
 	 
-	 // unlock the proxy
-	 ProxyStorage storage = ProxyStorage.getInstance();
-	 storage.unlockAgentProxy( retProxy.getAgentProxyID() );
+	 // unlock the proxy (and unlock even the current thread)
+	 storage.unlockAgentProxy( retProxy, true );
 
 	 
 	 // now perform the notification of events
@@ -182,36 +194,6 @@ public aspect ProxyStorageAspect {
      }
      
      
-     /**
-      * After a method call to add a role, this method stores the agent proxy in
-      * the storage map extracting the parameters from the join point object.
-      * @param jointPoint the join point of the method call (with the method arguments)
-      * @param retProxy the proxy that is going to be returned by the join point method call
-      */
-     private void storeRoleAddition( JoinPoint jointPoint, AgentProxy retProxy ){
-	 // get the arguments of the join point method call
-	 Object arguments[] = jointPoint.getArgs();
-	 // extract each argument
-	 WCAgent agent = (WCAgent) arguments[0];
-	 AgentProxy originalProxy = (AgentProxy) arguments[1];
-	 AgentProxyID proxyID = originalProxy.getAgentProxyID();
-	 
-	 // now store the data about the agent proxy
-	 this.storeAgentProxyUpdate(proxyID, retProxy);
-     }
+    
      
-     
-     /**
-      * Stores the specified proxy in the storage map associating it to the specified proxy id.
-      * @param proxyID the proxy id to use as key
-      * @param proxy the proxy to store
-      */
-     private void storeAgentProxyUpdate( AgentProxyID proxyID, AgentProxy proxy ){
-	 // remove the old proxy from the map
-	 ProxyStorage storage = ProxyStorage.getInstance();
-	 storage.remove( proxyID );
-	 // now store the new agent proxy
-	 storage.put( proxyID, proxy );
-	 
-     }
 }
