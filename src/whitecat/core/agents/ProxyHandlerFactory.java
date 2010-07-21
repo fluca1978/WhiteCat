@@ -30,7 +30,8 @@
  */
 package whitecat.core.agents;
 
-import whitecat.core.Configuration;
+
+
 import whitecat.core.IProxyHandler;
 import whitecat.core.WhiteCat;
 import whitecat.core.exceptions.WCProxyException;
