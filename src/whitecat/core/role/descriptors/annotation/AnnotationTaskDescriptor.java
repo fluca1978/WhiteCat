@@ -30,13 +30,45 @@
  */
 package whitecat.core.role.descriptors.annotation;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * A task descriptor defined thru an annotation.
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
+@Retention(RetentionPolicy.RUNTIME)
 public @interface AnnotationTaskDescriptor {
 
+    /**
+     * The aim of the role.
+     * @return a string description of the role aim
+     */
+    public String aim() default "";
+    
+    /**
+     * The name of the role.
+     * @return the name of the role.
+     */
+    public String name() default "";
+
+    
+    /**
+     * The keywords list separator.
+     * @return the keywords list separator, by default ','
+     */
+    public String keywordsSeparator() default ",";
+    
+    /**
+     * A list of keywords, separated by the keywordSeparator().
+     * @return the list of the keywords
+     */
+    public String keywords() default "";
+
+    
+    
+    
     /**
      * A task id, used to group tasks together to compose complex tasks.
      * @return the task id.

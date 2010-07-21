@@ -141,7 +141,7 @@ public class TaskDescriptor extends AbstractDescriptor {
      * @param toAdd the event descriptor to add
      * @return true if the descriptor has been added
      */
-    protected synchronized final boolean addEventDescriptor(EventDescriptor toAdd){
+    public synchronized final boolean addEventDescriptor(EventDescriptor toAdd){
 	return this.eventDescriptors.add(toAdd);
     }
     
@@ -283,6 +283,26 @@ public class TaskDescriptor extends AbstractDescriptor {
 	TaskDescriptor descriptor = new TaskDescriptor();
 	descriptor.setName(name);
 	descriptor.setAim(aim);
+	descriptor.setReturnType(returnType);
+	descriptor.setParameters(parameters);
+	return descriptor;
+    }
+    
+    
+    /**
+     * Builds a task descriptor fully configured.
+     * @param name the name of the descriptor
+     * @param aim the aim of the descriptor
+     * @param keywords the keywords for this descriptor
+     * @param returnType the return type of the task
+     * @param parameters the parameters for this task
+     * @return the task descriptor
+     */
+    public static final TaskDescriptor getInstance( String name, String aim, Set<String> keywords, Class returnType, List<Class> parameters ){
+	TaskDescriptor descriptor = new TaskDescriptor();
+	descriptor.setName(name);
+	descriptor.setAim(aim);
+	descriptor.setKeywords( new HashSet<String>(keywords) );
 	descriptor.setReturnType(returnType);
 	descriptor.setParameters(parameters);
 	return descriptor;

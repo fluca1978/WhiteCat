@@ -28,42 +28,25 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package whitecat.core.role.descriptors.annotation;
+package whitecat.core.role.descriptors;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import whitecat.core.role.IRole;
 
 /**
- * A descriptor for an event, defined with an annotation.
+ * A role descriptor builder is an engine that can build a role descriptor
+ * from a role. For instance, this engine can analyze the role class and get all the
+ * annotations in order to build a role descriptor.
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface AnnotationEventDescriptor {
+public interface IRoleDescriptorBuilder {
+    
+    
+    /**
+     * Builds a role descriptor automatically starting from the role implementation.
+     * @param role the role to analyze
+     * @return the role descriptor
+     */
+    public RoleDescriptor buildRoleDescriptor( IRole role );
 
-    /**
-     * The name of the event descriptor
-     * @return the name of the event descriptor
-     */
-    public String name() default "";
-    
-    
-    /**
-     * The aim of the event.
-     * @return the aim of th event
-     */
-    public String aim() default "";
-    
-    
-    /**
-     * Is the event incoming?
-     * @return true if the event is incoming
-     */
-    public boolean receiving() default false;
-    
-    /**
-     * Is the event outgoing?
-     * @return true if the event is issued
-     */
-    public boolean issuing() default false;
 }

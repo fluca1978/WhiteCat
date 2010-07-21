@@ -39,7 +39,7 @@ import java.lang.annotation.RetentionPolicy;
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AnnotationDescriptor {
+public @interface AnnotationRoleDescriptor {
 
     /**
      * The aim of the role.
