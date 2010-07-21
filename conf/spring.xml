@@ -30,7 +30,11 @@
    	<bean id="IRoleBooster" class="whitecat.core.RoleBooster"
    		scope="prototype">
 
-	<property name="currentRoleOperation" ref="IRoleOperation"></property>
+		<property name="currentRoleOperation" ref="IRoleOperation"></property>
+   	</bean>
+   	
+   	<!-- the proxy storage for the running configuration -->
+   	<bean id="IProxyStorage" class="whitecat.core.ProxyStorage" scope="singleton" factory-method="getInstance" >
    	</bean>
 
    	<bean id="IRoleOperation" class="RoleOpeationImpl"

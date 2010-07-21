@@ -114,7 +114,7 @@ public class AgentProxyStatus {
      */
     public synchronized final void setProxy(AgentProxy proxy) {
         this.proxy = proxy;
-        this.unlock();		// a new proxy should not be locked!
+        this.unlockAll();		// a new proxy should not be locked!
     }
     
     
@@ -153,9 +153,11 @@ public class AgentProxyStatus {
     /**
      * Removes all the locks on this proxy.
      */
-    public synchronized final void unlock(){
-	this.lockCount = 0;
-	this.notifyAll();
+    public final void unlockAll(){
+	synchronized ( this.lockingObject) {
+	    this.lockCount = 0;
+	    this.lockingObject.notifyAll();
+	}
     }
 
 
@@ -184,11 +186,13 @@ public class AgentProxyStatus {
      * is suspended waiting for the status to become unlocked. This means that this method call is blocking!
      * @return the proxy
      */
-    public synchronized final AgentProxy getProxy() {
+    public final AgentProxy getProxy() {
 	// if this status is locked, cannot return the agent proxy, so lock the calling thread
 	try{
-	while( this.lockCount > 0 )
-	    this.wait();
+	    synchronized( this.lockingObject ){
+		while( this.lockCount > 0 )
+		    this.lockingObject.wait();
+	    }
 	}catch(InterruptedException e){
 	    e.printStackTrace();
 	}
@@ -203,10 +207,12 @@ public class AgentProxyStatus {
      * Locks this agent proxy on its locking object.
      * The locking counter is incremented.
      */
-    public synchronized void lock(){
+    public void lock(){
 	try{
-	    this.incrementLockCount();
-	    this.lockingObject.wait();
+	    synchronized( this.lockingObject ){
+		this.incrementLockCount();
+		this.lockingObject.wait();
+	    }
 	}catch(InterruptedException e){
 	    e.printStackTrace();
 	}
@@ -217,22 +223,18 @@ public class AgentProxyStatus {
      * Locks the current thread caller for the specified time.
      * @param thresold the max time to lock for
      */
-    public synchronized void lock( long thresold ){
+    public void lock( long thresold ){
 	try{
-	    this.incrementLockCount();
-	    this.lockingObject.wait( thresold );
+	    synchronized ( this.lockingObject) {
+		this.incrementLockCount();
+		this.lockingObject.wait( thresold );
+	    }
 	}catch(InterruptedException e){
 	    e.printStackTrace();
 	}
     }
     
     
-    /**
-     * Unlocks all waiting threads.
-     */
-    public synchronized void unlockAll(){
-	this.unlock();
-	this.notifyAll();
-    }
+ 
     
 }

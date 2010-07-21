@@ -34,7 +34,10 @@ package whitecat.test;
 import org.junit.Before;
 import org.junit.Test;
 
+import whitecat.core.IProxyStorage;
 import whitecat.core.ProxyStorage;
+import whitecat.core.WhiteCat;
+import whitecat.core.agents.AgentProxy;
 import whitecat.example.DBAgent;
 import whitecat.example.DBProxy;
 
@@ -46,21 +49,33 @@ import static org.junit.Assert.*;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class LockingTest {
+public class LockingTest implements Runnable {
+    
+    
+    private long start = 0, end = 0;
+    private long sleeping = 5600;
+    private Thread unlockingThread = null;
+    
+    private IProxyStorage storage = null;
+    private DBProxy   proxy = null;
 
     /**
      * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
+	proxy = new DBProxy( new DBAgent() );
+	storage = WhiteCat.getProxyStorage();
+	
+	unlockingThread = new Thread( this );
+	unlockingThread.start();
     }
 
     @Test
     public void testBlocking(){
-	DBProxy proxy = new DBProxy( new DBAgent() );
+	
 	
 	// store the proxy in the storage
-	ProxyStorage storage = ProxyStorage.getInstance();
 	storage.storeAgentProxy(proxy);
 	
 	// the proxy should not be locked now!
@@ -73,17 +88,31 @@ public class LockingTest {
 	    fail("Proxy status should be locked now!");
 	
 	// do a method call to a blocking method
-	long start = System.currentTimeMillis();
+	start = System.currentTimeMillis();
 	int result = proxy.lockableMethod( 3 );
-	long end   = System.currentTimeMillis();
+	end   = System.currentTimeMillis();
 	
 	if( result != 3*2 )
 	    fail("Result incorrect");
 	
-	if( (end - start) < 9000 )
+	if( (end - start) < sleeping )
 	    fail("Locking time was incorrect " + (end - start) );
 	
 	
+	
+    }
+
+    public void run() {
+	
+	System.out.println("Unlocking thread sleeping for " + this.sleeping);
+	try {
+	    Thread.currentThread().sleep(sleeping);
+	} catch (InterruptedException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	System.out.println("Unlocking the proxy");
+	this.storage.unlockAgentProxy(proxy, true);
 	
     }
 }

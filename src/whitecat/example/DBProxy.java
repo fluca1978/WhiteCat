@@ -128,7 +128,7 @@ public class DBProxy extends LocalAgentProxy {
      * @param value
      * @return
      */
-    @Lock( blocking = "true", maxTimeToWait = 10000 )
+    @Lock( blocking = "true")
     public int lockableMethod(int value){
 	return value * 2;
     }

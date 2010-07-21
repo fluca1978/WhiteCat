@@ -94,5 +94,14 @@ public class WhiteCat {
     public final static IRoleOperation getNewRoleOperation(){
 	return (IRoleOperation) xmlBeanFactory.getBean( IRoleOperation.class.getSimpleName() );
     }
+    
+    
+    /**
+     * Provides the unique proxy storage for the running system.
+     * @return the proxy storage to use
+     */
+    public final static IProxyStorage getProxyStorage(){
+	return (IProxyStorage) xmlBeanFactory.getBean( IProxyStorage.class.getSimpleName() );
+    }
 
 }

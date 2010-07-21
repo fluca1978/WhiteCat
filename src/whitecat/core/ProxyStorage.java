@@ -46,7 +46,7 @@ import whitecat.core.lock.AgentProxyStatus;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class ProxyStorage {
+public class ProxyStorage implements IProxyStorage {
 
     /**
      * A reference to myself, so that this class is used as singleton.
@@ -90,37 +90,36 @@ public class ProxyStorage {
     }
     
     
-    /**
-     * A method to lock the specified proxy. The method increases the locking counter
-     * of the specified proxy.
-     * @param proxyToLock the proxy to lock
-     * @param lockCurrentThread true if the current thread must be locked now, false if only the status
-     * of the agent proxy must be set to locked.
-     * @param timeToLock the max amount of time to lock the thread if the lockCurrentThread flag is true. If a zero value
-     * is passed the thread waits undefinitely.
+    /* (non-Javadoc)
+     * @see whitecat.core.IProxyStorage#lockAgentProxy(whitecat.core.agents.AgentProxy, boolean, long)
      */
-    public final  synchronized void  lockAgentProxy( AgentProxy proxyToLock, boolean lockCurrentThread, long timeToLock ){
+    @SuppressWarnings("null")
+    public final   void  lockAgentProxy( AgentProxy proxyToLock, boolean lockCurrentThread, long timeToLock ){
 	// check params
 	if( proxyToLock == null )
 	    return;
 	
-	// get the id of this proxy
-	AgentProxyID id = proxyToLock.getAgentProxyID();
-	
-	// get the current status for the proxy id
 	AgentProxyStatus status = null;
-	if( this.proxyMap.containsKey( id ) )
-	    status = this.proxyMap.get( id );
-	else{
-	    // WARNING: if here there is a map mismatch: an agent proxy is not presence
-	    // in the storage map!!!!
-	    status = AgentProxyStatus.newInstance( proxyToLock );
-	    this.proxyMap.put( id , status);
+	
+	synchronized( this ){
+
+	    // get the id of this proxy
+	    AgentProxyID id = proxyToLock.getAgentProxyID();
+
+	    // get the current status for the proxy id
+	    status = null;
+	    if( this.proxyMap.containsKey( id ) )
+		status = this.proxyMap.get( id );
+	    else{
+		// WARNING: if here there is a map mismatch: an agent proxy is not presence
+		// in the storage map!!!!
+		status = AgentProxyStatus.newInstance( proxyToLock );
+		this.proxyMap.put( id , status);
+	    }
+
+	    assert( status == null );	// should never happen
+	
 	}
-	
-	assert( status == null );	// should never happen
-	
-	
 	
 	// now lock the thread
 	if( lockCurrentThread )
@@ -132,24 +131,28 @@ public class ProxyStorage {
 	    status.incrementLockCount();
     }
     
-    /**
-     * A mehtod to unlock the specified proxy (i.e., to decrease the locking counter).
-     * @param proxyToUnlock the proxy to lock
-     * @param unlockThread true if the current thread must be unlocked
+    /* (non-Javadoc)
+     * @see whitecat.core.IProxyStorage#unlockAgentProxy(whitecat.core.agents.AgentProxy, boolean)
      */
-    public final synchronized void unlockAgentProxy( AgentProxy proxyToUnlock, boolean unlockThread ){
-	// check arguments
-	if( proxyToUnlock == null || ! this.proxyMap.containsKey(proxyToUnlock.getAgentProxyID()) )
-	    return;
+    @SuppressWarnings("null")
+    public final  void unlockAgentProxy( AgentProxy proxyToUnlock, boolean unlockThread ){
 	
-	// get the id of this proxy
-	AgentProxyID id = proxyToUnlock.getAgentProxyID();
+	AgentProxyStatus status = null;
 	
-	
-	// get the current status
-	AgentProxyStatus status = this.proxyMap.get( id );
-	assert( status == null );		// should never happen
-	
+	synchronized( this ){
+	    // check arguments
+	    if( proxyToUnlock == null || ! this.proxyMap.containsKey(proxyToUnlock.getAgentProxyID()) )
+		return;
+
+	    // get the id of this proxy
+	    AgentProxyID id = proxyToUnlock.getAgentProxyID();
+
+
+	    // get the current status
+	    status = this.proxyMap.get( id );
+	    assert( status == null );		// should never happen
+
+	}
 	
 	// now unlock the agent proxy
 	if( unlockThread )
@@ -158,15 +161,14 @@ public class ProxyStorage {
 	    status.decrementLockCount();
     }
     
-    /**
-     * A proxy is locked if the locking counter is greater than zero.
-     * @param proxyToCheck
-     * @return
+    /* (non-Javadoc)
+     * @see whitecat.core.IProxyStorage#isAgentProxyLocked(whitecat.core.agents.AgentProxy)
      */
     public synchronized final  boolean isAgentProxyLocked( AgentProxy proxyToCheck ){
 	// check arguments
 	if( proxyToCheck == null || proxyToCheck.getAgentProxyID() == null )
 	    return false;
+	
 	
 	// get the agent proxy id
 	AgentProxyID id = proxyToCheck.getAgentProxyID();
@@ -190,9 +192,8 @@ public class ProxyStorage {
     }
     
     
-    /**
-     * Adds a new agent proxy into the map creating a new status if needed.
-     * @param proxy the agent proxy to store
+    /* (non-Javadoc)
+     * @see whitecat.core.IProxyStorage#storeAgentProxy(whitecat.core.agents.AgentProxy)
      */
     public synchronized final void storeAgentProxy( AgentProxy proxy ){
 	// check arguments
@@ -238,10 +239,8 @@ public class ProxyStorage {
     }
     
     
-    /**
-     * Removes a proxy from the storage map. This is useful if the proxy has been destroyed.
-     * Before removing the proxy, the method unlocks the proxy so that waiters can be notified.
-     * @param proxy the proxy to remove
+    /* (non-Javadoc)
+     * @see whitecat.core.IProxyStorage#deleteAgentProxy(whitecat.core.agents.AgentProxy)
      */
     public synchronized final void deleteAgentProxy( AgentProxy proxy ){
 	// check arguments
@@ -254,7 +253,7 @@ public class ProxyStorage {
 	// remove the agent proxy from the map
 	// but before that try to unlock waiters
 	if( this.proxyMap.containsKey(id) )
-	    this.proxyMap.get(id).unlock();
+	    this.proxyMap.get(id).unlockAll();
 	
 	
 	this.proxyMap.remove(id);
@@ -262,10 +261,8 @@ public class ProxyStorage {
     }
     
     
-    /**
-     * Provides the last updated proxy in the storage for the specified id.
-     * @param id
-     * @return
+    /* (non-Javadoc)
+     * @see whitecat.core.IProxyStorage#getLastUpdatedAgentProxy(whitecat.core.agents.AgentProxyID)
      */
     public synchronized AgentProxy getLastUpdatedAgentProxy( AgentProxyID id ){	
 	// check arguments
