@@ -20,13 +20,17 @@
 package whitecat.core.role.descriptors;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import whitecat.core.role.task.IRoleTask;
 
 /**
  * A descriptor for a role instance. A descriptor specified what a role does, including
- * which operation and events are tied to itself, without specifying directly what it does.
+ * which tasks and events are tied to itself, without specifying directly what it does.
  * 
  * This is an implementation of role descriptor based on what you can read in the
  * article <i> Injecting roles in Java agents through runtime bytecode manipulation IBM SYSTEMS JOURNAL, VOL 44, NO 1, 2005 </i>.
@@ -40,12 +44,15 @@ import java.util.Set;
 public class RoleDescriptor extends AbstractDescriptor {
     
     /**
-     * A list of operations that are tied to this role.
+     * A map that contains all the tasks this role can execute.
+     * An IRoleTask is the executable unit of a role, and is described
+     * by a task descriptor that provides information about what the task does
+     * by a semantic way.
      */
-    private List<OperationDescriptor> operationDescriptors = null;
+    private Map<IRoleTask, TaskDescriptor> tasks = null;
     
     /**
-     * A list of events untied from a particular operation of this role.
+     * A list of events untied from a particular task of this role.
      */
     private List<EventDescriptor> eventDscriptors = null;
 
@@ -53,7 +60,7 @@ public class RoleDescriptor extends AbstractDescriptor {
      * This method can be used to set the value of the eventDscriptors field,
      * providing thus read access to the eventDscriptors property. Please note that this
      * method will return only the events associated to this role descriptor, not the role
-     * of the operations.
+     * of the tasks.
      * @return the eventDscriptors value.
      */
     public final  List<EventDescriptor> getEventDscriptors() {
@@ -61,37 +68,40 @@ public class RoleDescriptor extends AbstractDescriptor {
     }
 
     /**
-     * This method can be used to set the value of the operationDescriptors field,
-     * providing thus read access to the operationDescriptors property.
-     * @return the operationDescriptors value.
+     * This method can be used to get all the available task descriptors.
+     * @return a list with the available task descriptors
      */
-    public final  List<OperationDescriptor> getOperationDescriptors() {
-        return new LinkedList<OperationDescriptor>(operationDescriptors);
+    public final  List<TaskDescriptor> getTaskDescriptors() {
+        LinkedList<TaskDescriptor> descriptors = new LinkedList<TaskDescriptor>();
+        for( IRoleTask task : this.tasks.keySet() )
+            descriptors.add( this.tasks.get(task) );
+        
+        return descriptors;
     }
 
     
     /**
      * Provides all the event descriptors contained in this role descriptor, that is the
      * descriptors tied to the role itself as well as the event descriptors tied to each single
-     * operation.
+     * task.
      * @return the list of all the event descriptor, with no particular order. Please note that the same
      * event could be included several time in the list, since it could be embedded by either the role
-     * or one (or more) operations.
+     * or one (or more) task.
      */
     public final synchronized List<EventDescriptor> getAllEventDescriptors(){
 	LinkedList<EventDescriptor> descriptors = new LinkedList<EventDescriptor>(this.eventDscriptors);
-	for( OperationDescriptor op : this.operationDescriptors )
-	    descriptors.addAll( op.getEventDescriptors() );
+	for( IRoleTask rt : this.tasks.keySet() )
+	    descriptors.addAll( this.tasks.get(rt).getEventDescriptors() );
 	
 	return descriptors;
     }
     
     /**
-     * How many operation descriptors this role descriptor has.
-     * @return the number of operation descriptors
+     * How many tasks this role descriptor (and therefore this role) has.
+     * @return the number of tasks
      */
-    public final synchronized int operationDescriptorsCount(){
-	return this.operationDescriptors.size();
+    public final synchronized int tasksCount(){
+	return ( this.tasks == null ? 0 : this.tasks.size() );
     }
     
     /**
@@ -104,15 +114,15 @@ public class RoleDescriptor extends AbstractDescriptor {
 
     /**
      * Returns the total number of event descriptors, including those directly tied to the
-     * role descriptor and thos tied to each operation.
+     * role descriptor and those tied to each task.
      * @return the total count of the event descriptors contained in this role
      */
     public final synchronized int eventDescriptorsTotalCount(){
 	int count = 0;
 	count += this.eventDscriptors.size();
 	
-	for( OperationDescriptor op : this.operationDescriptors )
-	    count += op.eventDescriptorsCount();
+	for( IRoleTask rt : this.tasks.keySet() )
+	    count += this.tasks.get( rt ).eventDescriptorsCount();
 	
 	return count;
     }
@@ -127,15 +137,7 @@ public class RoleDescriptor extends AbstractDescriptor {
         this.eventDscriptors = eventDscriptors;
     }
 
-    /**
-     * This method can be used to set the value of the operationDescriptors field, providing
-     * thus write access to the operationDescriptors property.
-     * @param operationDescriptors the operationDescriptors to set with the specified value.
-     */
-    protected synchronized final void setOperationDescriptors(
-    	List<OperationDescriptor> operationDescriptors) {
-        this.operationDescriptors = operationDescriptors;
-    }
+    
     
     
     /**
@@ -150,16 +152,16 @@ public class RoleDescriptor extends AbstractDescriptor {
      * Factory method to create a role descriptor.
      * @param name the name of the role
      * @param aim the aim of the role 
-     * @param operations the list of operations tied to such role
+     * @param tasks the list of tasks tied to such role
      * @param events the events directly tied to the role
      * @param keywords the list of keywords for the role
      * @return the role descriptor.
      */
-    public static final RoleDescriptor getInstance(String name, String aim, List<OperationDescriptor> operations, List<EventDescriptor> events, Set<String> keywords){
+    public static final RoleDescriptor getInstance(String name, String aim, Map<IRoleTask, TaskDescriptor> tasks, List<EventDescriptor> events, Set<String> keywords){
 	RoleDescriptor descriptor = new RoleDescriptor();
 	descriptor.setName(name);
 	descriptor.setAim(aim);
-	descriptor.setOperationDescriptors(operations);
+	descriptor.tasks = new HashMap<IRoleTask, TaskDescriptor>( tasks );
 	descriptor.setEventDscriptors(events);
 	descriptor.setKeywords(keywords);
 	

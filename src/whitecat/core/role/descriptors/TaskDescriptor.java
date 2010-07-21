@@ -25,21 +25,24 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * A descriptor for a role operation. A role operation is something an agent can perform
- * while it ows (plays) the role that contains such operation. The operation descriptor
- * describes what an operation does but not how.
- *
- * This is an implementation of operation descriptor based on what you can read in the
- * article <i> Injecting roles in Java agents through runtime bytecode manipulation IBM SYSTEMS JOURNAL, VOL 44, NO 1, 2005 </i>.
- * The main difference between this implementation and the one presented in the above article
- * is for a better modularity and adoption of collections instead of arrays.
+import whitecat.core.role.task.IRoleTask;
 
+/**
+ * A descriptor for a role task. A role task is something that the owner of a role
+ * (i.e., an agent playing it) can execute in order to reach the role aim (or one of the
+ * role aims). A task descriptor contains informations about what a task does, from
+ * a descriptive (meta-information) point of view. 
+ *
+ * This is somewhat similar to the implementation of operation descriptor described in the
+ * article <i> Injecting roles in Java agents through runtime bytecode manipulation IBM SYSTEMS JOURNAL, VOL 44, NO 1, 2005 </i>.
  * @author Luca Ferrari - cat4hire@users.sourceforge.net
  *
  *
  */
-public class OperationDescriptor extends AbstractDescriptor {
+public class TaskDescriptor extends AbstractDescriptor {
+    
+    
+    
 
     /**
      * A list of events that are tied to this operation (e.g., events that are sent
@@ -50,20 +53,20 @@ public class OperationDescriptor extends AbstractDescriptor {
     private List<EventDescriptor> eventDescriptors = new LinkedList<EventDescriptor>();
     
     /**
-     * The return type of the operation, by default a void.
+     * The return type of the task, by default a void.
      */
     private Class returnType = java.lang.Void.class;
     
     
     /**
-     * A list of parameters for the current operation.
-     * It is a list and not a set because the operation can have duplicated parameters
+     * A list of parameters for the current task
+     * It is a list and not a set because the task can have duplicated parameters
      * in different positions.
      */
     private List<Class> parameters = new LinkedList<Class>();
     
     /**
-     * A set of unique permissions associated to the operation.
+     * A set of unique permissions associated to the task.
      */
     private Set<Permission> permissions = new HashSet<Permission>();
 
@@ -124,7 +127,7 @@ public class OperationDescriptor extends AbstractDescriptor {
     }
     
     /**
-     * Removes the specified permisssion from the set of this operation descriptor.
+     * Removes the specified permisssion from the set of this task descriptor.
      * @param toRemove the permission to remove
      * @return true if the permission has been removed, false otherwise (maybe the permission
      * is not included in the set).
@@ -223,7 +226,7 @@ public class OperationDescriptor extends AbstractDescriptor {
      * Default constructor, used for serialization.
      *
      */
-    private OperationDescriptor(){
+    private TaskDescriptor(){
 	super();
     }
     
@@ -234,10 +237,10 @@ public class OperationDescriptor extends AbstractDescriptor {
      * @overrides @see it.unimo.polaris.rolex.roles.AbstractDescriptor#equals(java.lang.Object)
      */
     public boolean equals(Object o){
-	if( ! (o instanceof OperationDescriptor) )
+	if( ! (o instanceof TaskDescriptor) )
 	    return false;
 	else{
-	    OperationDescriptor desc = (OperationDescriptor) o;
+	    TaskDescriptor desc = (TaskDescriptor) o;
 
 	    // if super object are equals then test the properties of this object
 	    if( super.equals(desc) )
@@ -269,15 +272,15 @@ public class OperationDescriptor extends AbstractDescriptor {
     
 
     /**
-     * Provides an instance of a specified OperationDescriptor.
-     * @param name the name of the operation
-     * @param aim the aim of the operation descriptor
-     * @param returnType the return type of the operation descriptor
-     * @param parameters the list of parameters of the operation descriptor
-     * @return the operation descritpor
+     * Provides an instance of a specified task descriptor..
+     * @param name the name of the task
+     * @param aim the aim of the task descriptor
+     * @param returnType the return type of the task descriptor
+     * @param parameters the list of parameters of the tsk descriptor
+     * @return the task descriptor
      */
-    public static final OperationDescriptor getInstance(String name, String aim, Class returnType, List<Class> parameters){
-	OperationDescriptor descriptor = new OperationDescriptor();
+    public static final TaskDescriptor getInstance(String name, String aim, Class returnType, List<Class> parameters){
+	TaskDescriptor descriptor = new TaskDescriptor();
 	descriptor.setName(name);
 	descriptor.setAim(aim);
 	descriptor.setReturnType(returnType);
@@ -286,7 +289,7 @@ public class OperationDescriptor extends AbstractDescriptor {
     }
 
     /**
-     * The number of events tied to this operation descriptor.
+     * The number of events tied to this task descriptor.
      * @return the number of event descriptors
      */
     public synchronized int eventDescriptorsCount() {

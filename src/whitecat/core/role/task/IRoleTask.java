@@ -82,8 +82,17 @@ public interface IRoleTask {
      * main task. This allows the task to be composed by several simpler tasks.
      * Please note that there should be a check to avoid loops and adding several times
      * the same task.
+     * Please note that the tasks will be executed in the order they are added!
      * @param toAdd the task to add to this one
      * @return true if the sub task has been added, false otherwise
      */
     public boolean addSubTask( IRoleTask toAdd );
+    
+    /**
+     * Removes a task from the list of subtasks. This also means that the execution order
+     * will change accordingly.
+     * @param toRemove the task to remove
+     * @return true if the task has been removed, false otherwise
+     */
+    public boolean removeSubTask( IRoleTask toRemove );
 }

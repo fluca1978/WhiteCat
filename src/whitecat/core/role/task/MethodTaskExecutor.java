@@ -153,4 +153,16 @@ public class MethodTaskExecutor implements IRoleTask, IRole {
 	this.parameters.clear();
     }
 
+
+
+    public synchronized boolean removeSubTask(IRoleTask toRemove) {
+	if( this.subTasks.contains(toRemove) ){
+	    this.subTasks.remove(toRemove);
+	    return true;
+	}
+	else
+	    return false;
+	    
+    }
+
 }
