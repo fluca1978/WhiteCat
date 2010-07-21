@@ -213,9 +213,6 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
     public RoleBooster(ClassLoader parentLoader){
 	super(parentLoader);
 	
-	// save the configuration default proxy
-	Configuration conf = Configuration.getInstance();
-	this.agentProxyClassName = conf.getProperty( Configuration.DEFAULT_AGENT_PROXY );
     }
     
     /**
@@ -597,7 +594,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	    // do not initialize it, it will be done in the find class method
 	    this.setMethodForwarderGenerator(mGenerator);
     
-	    Class currentClass = this.findClass( this.agentProxyClassName );
+	    Class currentClass = this.findClass( this.currentRoleOperation.getAgentProxy().getClass().getName() );
 	    AgentProxy newProxy = (AgentProxy) currentClass.newInstance();
 	    
 	    // get a proxy handler to handle copies
@@ -650,12 +647,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	    this.currentRoleOperation.setRoleInjectionType( RoleInjectionType.ROLE_PUBLIC_INTERFACE_ADDITION_TO_PROXY );
 	    this.currentRoleOperation.setOperationStatus( RoleOperationStatus.ROLE_OPERATION_STARTED );
 	    
-	    this.agentProxyClassName = proxy.getClass().getName();
-	    this.publicRoleInterfaceName = publicRoleInterface.getName();
-	    this.roleClassName = role.getClass().getName();
-	    this.manipulationActive = true;
-	    this.roleImplementationAccessKey = this.getRoleImplementationAccessKey( this.publicRoleInterfaceName );
-	    
+
 
 	    
 	    // obtain the proxy handler for this operation
@@ -673,7 +665,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	    
 	    
 	    
-	    Class newProxyClass = this.findClass( this.agentProxyClassName );
+	    Class newProxyClass = this.findClass( this.currentRoleOperation.getAgentProxy().getClass().getName() );
 	    AgentProxy newProxy = (AgentProxy) newProxyClass.newInstance();
 	    // copy the proxy status
 	    newProxy.initializeByCopy( proxy );
@@ -746,12 +738,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	    // update the proxies
 	    proxyHandler.updateProxy();
 	    
-	    System.out.println("Analisi class " + newProxyClass.getClass().getName() + " di " + proxy.getClass().getName());
-	    Class superclazz = newProxyClass;
-	    do{
-		superclazz = superclazz.getSuperclass();
-		System.out.println("Superclass " + superclazz);
-	    }while( superclazz != null );
+
 	    
 	    // all done
 	    this.currentRoleOperation.setOperationStatus( RoleOperationStatus.ROLE_OPERATION_COMPLETED_SUCCESFUL );
@@ -765,40 +752,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	}
     }
     
-    /**
-     * The current agent proxy name, that is the class of the agent proxy that
-     * the loader is manipulating or will be manipulating later.
-     */
-    private String agentProxyClassName = "whitecat.core.agents.AgentProxy";
-    
-    
-    /**
-     * The role interface to apply to the proxy class.
-     */
-    private String publicRoleInterfaceName = null;
-    
-    /**
-     * The role class name, used to be placed into an hash map within the 
-     * proxy.
-     */
-    private String roleClassName = null;
-    
-    /**
-     * The key used to store the class within the hashmap of the proxy.
-     */
-    private String roleImplementationAccessKey = null;
-    
-    /**
-     * Indicates if the class loading involves a bytecode manipulation or not.
-     */
-    private boolean manipulationActive = false;
-    
-    /**
-     * Indicates if the role must be added or not to the agent proxy.
-     */
-    private boolean roleAddition = true;
 
-    private Class currentProxyClass;
     
     
     
@@ -836,7 +790,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 		
 		
 		// construct the pool for loading and manipulating the classes
-		logger.info("Obtaining the proxy class from the Javassist pool...." + this.agentProxyClassName);
+		logger.info("Obtaining the proxy class from the Javassist pool...." + this.currentRoleOperation.getAgentProxy().getClass().getName());
 		logger.info("My pool is " + pool.getClass() + " hash " + pool.hashCode());
 		baseProxyClass = pool.get( this.currentRoleOperation.getAgentProxy().getClass().getName() );
 		logger.info("Base proxy class obtained from the pool " + baseProxyClass.hashCode());
@@ -1136,16 +1090,17 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
     private CtClass addRoleToProxy(ClassPool pool, CtClass baseProxyClass)
 	    throws NotFoundException, CannotCompileException {
 	// get the role interface as it is
-	logger.debug("Loading the CtClass object for the public role interface " + this.publicRoleInterfaceName);
-	CtClass roleInterface = pool.get(this.publicRoleInterfaceName);
+	String publicRoleInterfaceName = this.currentRoleOperation.getPublicRoleInterface().getClass().getName();
+	logger.debug("Loading the CtClass object for the public role interface " + publicRoleInterfaceName );
+	CtClass roleInterface = pool.get(  publicRoleInterfaceName  );
 
 	// add the public role interface
 	logger.debug("Adding the interface to the proxy class...");
 	baseProxyClass.addInterface(roleInterface);
 
 	// I need to add to the proxy a variable to store the role reference
-	this.roleImplementationAccessKey = "_hiddenRole_" + this.publicRoleInterfaceName + this.hashCode();
-	logger.debug("The role implementation reference will be stored with the key " + this.roleImplementationAccessKey);
+	String roleImplementationAccessKey = "_hiddenRole_" + publicRoleInterfaceName + this.hashCode();
+	logger.debug("The role implementation reference will be stored with the key " + roleImplementationAccessKey);
 
 	// iterate over each method of the interface
 	for( CtMethod interfaceMethod : roleInterface.getDeclaredMethods() ){
@@ -1173,10 +1128,10 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	    if( ! "void".equals(interfaceMethod.getReturnType().getName()) )
 		methodCode.append(" return ");
 	    methodCode.append(" ((");
-	    methodCode.append( this.roleClassName );
+	    methodCode.append( this.currentRoleOperation.getRole().getClass().getName() );
 	    methodCode.append(" ) ");
 	    methodCode.append(" this.roleMap.get(\"");
-	    methodCode.append( this.roleImplementationAccessKey );
+	    methodCode.append( roleImplementationAccessKey );
 	    methodCode.append("\")).");
 	    methodCode.append(interfaceMethod.getName());
 	    methodCode.append("($$); }");
