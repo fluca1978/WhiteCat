@@ -54,7 +54,7 @@ public class RoleDescriptor extends AbstractDescriptor {
     /**
      * A list of events untied from a particular task of this role.
      */
-    private List<EventDescriptor> eventDscriptors = null;
+    private List<EventDescriptor> eventDescriptors = null;
 
     /**
      * This method can be used to set the value of the eventDscriptors field,
@@ -64,7 +64,7 @@ public class RoleDescriptor extends AbstractDescriptor {
      * @return the eventDscriptors value.
      */
     public final  List<EventDescriptor> getEventDscriptors() {
-        return new LinkedList<EventDescriptor>(eventDscriptors);
+        return new LinkedList<EventDescriptor>(eventDescriptors);
     }
 
     /**
@@ -89,7 +89,11 @@ public class RoleDescriptor extends AbstractDescriptor {
      * or one (or more) task.
      */
     public final synchronized List<EventDescriptor> getAllEventDescriptors(){
-	LinkedList<EventDescriptor> descriptors = new LinkedList<EventDescriptor>(this.eventDscriptors);
+	LinkedList<EventDescriptor> descriptors = new LinkedList<EventDescriptor>();
+	
+	if( this.eventDescriptors != null && this.eventDescriptors.size() > 0 )
+	    descriptors.addAll( this.eventDescriptors );
+	
 	for( IRoleTask rt : this.tasks.keySet() )
 	    descriptors.addAll( this.tasks.get(rt).getEventDescriptors() );
 	
@@ -104,12 +108,37 @@ public class RoleDescriptor extends AbstractDescriptor {
 	return ( this.tasks == null ? 0 : this.tasks.size() );
     }
     
+    
+    /**
+     * Provides the role descriptor from a task object.
+     * @param task the task that is going to be executed
+     * @return the role descriptor associated
+     */
+    public final synchronized TaskDescriptor getTaskDescriptor( IRoleTask task ){
+	return this.tasks.get(task);
+    }
+    
+    /**
+     * Provides the list of tasks
+     * @return the list of all available tasks for this role descriptor
+     */
+    public final synchronized List<IRoleTask> getTasks(){
+	List<IRoleTask> tasks = new LinkedList<IRoleTask>();
+	
+	for( IRoleTask task : this.tasks.keySet() )
+	    tasks.add(task);
+	
+	return tasks;
+	
+    }
+    
+    
     /**
      * The number of the event descriptors directly tied to this role descriptor.
      * @return the number of event descriptors tied to this role descriptor.
      */
     public final synchronized int eventDescriptorsCount(){
-	return this.eventDscriptors.size();
+	return this.eventDescriptors.size();
     }
 
     /**
@@ -119,7 +148,7 @@ public class RoleDescriptor extends AbstractDescriptor {
      */
     public final synchronized int eventDescriptorsTotalCount(){
 	int count = 0;
-	count += this.eventDscriptors.size();
+	count += this.eventDescriptors.size();
 	
 	for( IRoleTask rt : this.tasks.keySet() )
 	    count += this.tasks.get( rt ).eventDescriptorsCount();
@@ -134,7 +163,7 @@ public class RoleDescriptor extends AbstractDescriptor {
      */
     protected synchronized final void setEventDscriptors(
     	List<EventDescriptor> eventDscriptors) {
-        this.eventDscriptors = eventDscriptors;
+        this.eventDescriptors = eventDscriptors;
     }
 
     

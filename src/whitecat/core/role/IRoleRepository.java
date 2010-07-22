@@ -3,6 +3,7 @@ package whitecat.core.role;
 import java.util.List;
 
 import whitecat.core.exceptions.WCRoleRepositoryException;
+import whitecat.core.role.descriptors.IRoleDescriptorBuilder;
 import whitecat.core.role.descriptors.RoleDescriptor;
 
 public interface IRoleRepository {
@@ -20,6 +21,18 @@ public interface IRoleRepository {
      */
     public boolean installRole(RoleDescriptor descriptor, IRole role,
 	    boolean overrideIfExists) throws WCRoleRepositoryException;
+    
+    
+    /**
+     * Install a role in the repository without a role descriptor.
+     * This method can be used only if the role repository is using a good role descriptor builder
+     * that can infer the role descriptor analyzing the role itself.
+     * @param role the role to install
+     * @param overrideIfExsist true if the role must override any other instance in the repository
+     * @return true if the role has been added, false otherwise
+     * @throws WCRoleRepositoryException if something goes wrong (e.g., the role descriptor builder cannot build the role descriptor)
+     */
+    public boolean installRole( IRole role, boolean overrideIfExsist ) throws WCRoleRepositoryException;
 
     /**
      * Removes a role from the repository.
@@ -55,5 +68,14 @@ public interface IRoleRepository {
      */
     public List<RoleDescriptor> getAvailableRoleDescriptors()
 	    throws WCRoleRepositoryException;
+    
+    
+    /**
+     * Sets a role descriptor builder, if needed.
+     * The role descriptor builder is used to add a role descriptor when a new role is installed
+     * without a role descriptor.
+     * @param builder the builder to use to specify the role descriptor
+     */
+    public void setRoleDescriptorBuilder( IRoleDescriptorBuilder builder );
 
 }

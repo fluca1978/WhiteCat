@@ -33,6 +33,15 @@
    		class="whitecat.core.agents.LocalForwarderMethodGenerator"
    		scope="prototype">
    	</bean>
+   	
+   	
+   	<!-- the default role descriptor builder -->
+   	<bean id="IRoleDescriptorBuilder"
+   		class="whitecat.core.role.impl.AnnotationRoleDescriptorBuilder"
+   		scope="prototype">
+   	</bean>
+   	
+   	
 
    	<!-- the default role booster, the only to use, but with initialized parameters -->
    	<bean id="IRoleBooster" class="whitecat.core.RoleBooster"
@@ -55,5 +64,7 @@
    	<bean id="IRoleRepository"
    		class="whitecat.core.role.impl.RoleRepositoryImpl"
    		scope="singleton">
+   		
+   		<property name="roleDescriptorBuilder" ref="IRoleDescriptorBuilder"></property>
    	</bean>
 </beans>

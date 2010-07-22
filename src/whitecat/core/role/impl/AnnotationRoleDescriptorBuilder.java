@@ -178,7 +178,7 @@ public class AnnotationRoleDescriptorBuilder implements IRoleDescriptorBuilder {
 	if( ad.keywords() != null && ad.keywords().length() > 0 ){
 	    StringTokenizer tokenizer = new StringTokenizer( ad.keywords(), ad.keywordsSeparator() );
 	    while( tokenizer.hasMoreTokens() )
-		keywords.add( tokenizer.nextToken() );
+		keywords.add( tokenizer.nextToken().trim() );
 	}
 	
 	return keywords;
@@ -195,7 +195,7 @@ public class AnnotationRoleDescriptorBuilder implements IRoleDescriptorBuilder {
 	if( ad.keywords() != null && ad.keywords().length() > 0 ){
 	    StringTokenizer tokenizer = new StringTokenizer( ad.keywords(), ad.keywordsSeparator() );
 	    while( tokenizer.hasMoreTokens() )
-		keywords.add( tokenizer.nextToken() );
+		keywords.add( tokenizer.nextToken().trim() );
 	}
 	
 	return keywords;

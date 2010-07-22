@@ -31,10 +31,13 @@
 package whitecat.core;
 
 import org.springframework.beans.factory.xml.XmlBeanFactory;
-import org.springframework.core.io.ClassPathResource;
 
+import org.springframework.core.io.ClassPathResource;
+import whitecat.core.*;
+import whitecat.core.IRoleBooster;
 import whitecat.core.agents.IMethodForwarderGenerator;
 import whitecat.core.role.IRoleRepository;
+import whitecat.core.role.descriptors.IRoleDescriptorBuilder;
 
 /**
  * This is the main class of the whole system. 
@@ -111,6 +114,15 @@ public class WhiteCat {
      */
     public final static IProxyStorage getProxyStorage(){
 	return (IProxyStorage) xmlBeanFactory.getBean( IProxyStorage.class.getSimpleName() );
+    }
+    
+    
+    /**
+     * Provides the default role descriptor builder for the system.
+     * @return the role descriptor builder
+     */
+    public final static IRoleDescriptorBuilder getRoleDescriptorBuilder(){
+	return (IRoleDescriptorBuilder) xmlBeanFactory.getBean( IRoleDescriptorBuilder.class.getSimpleName() );
     }
 
 }

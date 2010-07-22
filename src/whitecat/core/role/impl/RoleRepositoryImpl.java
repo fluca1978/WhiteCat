@@ -40,6 +40,7 @@ import java.util.Set;
 import whitecat.core.exceptions.WCRoleRepositoryException;
 import whitecat.core.role.IRole;
 import whitecat.core.role.IRoleRepository;
+import whitecat.core.role.descriptors.IRoleDescriptorBuilder;
 import whitecat.core.role.descriptors.RoleDescriptor;
 
 /**
@@ -49,6 +50,11 @@ import whitecat.core.role.descriptors.RoleDescriptor;
  */
 public class RoleRepositoryImpl implements IRoleRepository {
 
+    
+    /**
+     * A role descriptor builder used to build descriptors when no one is provided.
+     */
+    private IRoleDescriptorBuilder roleDescriptorBuilder = null;
 
     /**
      * An hashmap with the installed roles. The map is keyed by the descriptors
@@ -147,6 +153,28 @@ public class RoleRepositoryImpl implements IRoleRepository {
 	    return true;
 	}
 	else return false;
+    }
+
+    public synchronized void setRoleDescriptorBuilder(IRoleDescriptorBuilder builder) {
+	this.roleDescriptorBuilder = builder;
+    }
+
+    public synchronized  boolean installRole(IRole role, boolean overrideIfExsist)
+	    throws WCRoleRepositoryException {
+	// check arguments
+	if( role == null )
+	    return false;
+	
+	if( this.roleDescriptorBuilder == null )
+	    throw new WCRoleRepositoryException("Cannot install a role without the role descriptor and a descriptor builder");
+	
+	// get the role descriptor
+	RoleDescriptor desc = this.roleDescriptorBuilder.buildRoleDescriptor(role);
+	if( desc == null )
+	    throw new WCRoleRepositoryException("Cannot build the descriptor for the specified role");
+	
+	// now install the role
+	return this.installRole(desc, role, overrideIfExsist);
     }
 
 }
