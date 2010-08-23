@@ -30,7 +30,7 @@
  */
 package whitecat.example;
 
-import whitecat.core.annotation.Role;
+import whitecat.core.annotations.ROLE;
 import whitecat.core.role.IPublicRole;
 
 /**
@@ -38,7 +38,7 @@ import whitecat.core.role.IPublicRole;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-@Role()
+@ROLE()
 public interface ILogger extends IPublicRole {
 
     /**

@@ -32,14 +32,14 @@ package whitecat.example;
 
 import whitecat.core.role.IPublicRole;
 import whitecat.core.role.IRole;
-import whitecat.core.annotation.*;
+import whitecat.core.annotations.*;
 
 /**
  * The public part of the database administrator.
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-@Role()
+@ROLE()
 public interface IDatabaseAdministrator 
 extends IPublicRole	// this is a public role and so
 		// extends the public role interface

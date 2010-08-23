@@ -33,14 +33,14 @@ package whitecat.example;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import whitecat.core.annotation.Role;
-import whitecat.core.annotation.RoleAnnotation;
+import whitecat.core.annotations.ROLE;
+import whitecat.core.annotations.ROLEANNOTATION;
 
 /**
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-@Role()
+@ROLE()
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DBRoleAnnotation {
 

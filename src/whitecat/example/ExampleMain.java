@@ -42,7 +42,7 @@ import whitecat.core.RoleBooster;
 import whitecat.core.WhiteCat;
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.ProxyHandlerFactory;
-import whitecat.core.annotation.Role;
+import whitecat.core.annotations.ROLE;
 import whitecat.core.event.Event;
 import whitecat.core.event.EventDispatcher;
 import whitecat.core.event.EventListener;
@@ -184,7 +184,7 @@ public class ExampleMain extends DBProxy implements Runnable, EventListener{
 	    
 	    for(Annotation a : newproxy.getClass().getAnnotations()){
 		System.out.println("Annotation => " + a);
-		if( a.getClass().isAnnotationPresent(whitecat.core.annotation.Role.class) )
+		if( a.getClass().isAnnotationPresent(whitecat.core.annotations.ROLE.class) )
 		    System.out.println("\n\tRole annotation found " + a);
 		
 		for( Annotation b : a.getClass().getAnnotations() )

@@ -28,7 +28,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package whitecat.core.annotation;
+package whitecat.core.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -36,25 +36,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation must be applied to any mutator method of a proxy
- * in order to avoid the execution of the method while the proxy undergoes
- * role manipulation.
+ * This annotation is the base for all the role-tied annotation. This annotation
+ * is used to indicate a type, applied to a class, that specifies that the class is a role and
+ * should thus be used accordingly.
+ *
+ * Each component of the annotation roles should be annotated thru this annotation itself. 
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Lock {
+@Target(ElementType.TYPE)
+public @interface ROLE {
 
-    /**
-     * Should be the method call blocking? 
-     * @return true if the method call is blocking
-     */
-    public String blocking() default "false";
-    
-    /**
-     * The max time to wait before unlock the method call.
-     * @return the max time to wait in milliseconds
-     */
-    public long maxTimeToWait() default 0;
 }

@@ -71,7 +71,7 @@ import whitecat.core.agents.ProxyHandlerFactory;
 import whitecat.core.agents.WCAgent;
 import whitecat.core.role.IManipulatedClass;
 import whitecat.core.role.IRole;
-import whitecat.core.annotation.*;
+import whitecat.core.annotations.*;
 import whitecat.core.exceptions.WCForwarderMethodException;
 import whitecat.example.DBProxy;
 import whitecat.example.DatabaseAdministrator;
@@ -307,8 +307,8 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
      * @return true if the proxy has the role with the specified settings
      */
     private final boolean hasPublicRole(AgentProxy roled, boolean annotation){
-	if( this.hasRoleAnnotation(roled, PublicRole.class) ){
-	    PublicRole pRole = (PublicRole) roled.getClass().getAnnotation(PublicRole.class);
+	if( this.hasRoleAnnotation(roled, PUBLICROLE.class) ){
+	    PUBLICROLE pRole = (PUBLICROLE) roled.getClass().getAnnotation(PUBLICROLE.class);
 	    if( annotation )
 		return ( ! pRole.roleAnnotation().equals("") );
 	    else
@@ -342,7 +342,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
      * a role annotation
      */
     public final boolean hasRoleAnnotation(AgentProxy proxy){
-	return this.hasRoleAnnotation(proxy, Role.class );
+	return this.hasRoleAnnotation(proxy, ROLE.class );
     }
     
     /* (non-Javadoc)
@@ -354,7 +354,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	
 	Class annotationType = annotation.annotationType();
 	for(Annotation subAnnotation : annotationType.getAnnotations() )
-	    if( subAnnotation.annotationType().equals(Role.class) )
+	    if( subAnnotation.annotationType().equals(ROLE.class) )
 		return true;
 	
 	return false;
@@ -373,7 +373,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	
 	// get the annotation role, it must a public role annotation (@PublicRole)
 	
-	PublicRole annotation = (PublicRole) proxy.getClass().getAnnotation(PublicRole.class);
+	PUBLICROLE annotation = (PUBLICROLE) proxy.getClass().getAnnotation(PUBLICROLE.class);
 	return annotation.roleInterface();
     }
     
@@ -388,7 +388,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	    return "";
 	
 	// get the annotation from the proxy and return the annotation class name
-	PublicRole annotation = (PublicRole) proxy.getClass().getAnnotation(PublicRole.class);
+	PUBLICROLE annotation = (PUBLICROLE) proxy.getClass().getAnnotation(PUBLICROLE.class);
 	return annotation.roleAnnotation();
     }
     
@@ -404,7 +404,7 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
 	    return "";
 	
 	// get the annotation role, it must a public role annotation (@PublicRole)
-	PublicRole annotation = (PublicRole) proxy.getClass().getAnnotation(PublicRole.class);
+	PUBLICROLE annotation = (PUBLICROLE) proxy.getClass().getAnnotation(PUBLICROLE.class);
 	return annotation.roleClass();
     }
     
@@ -417,12 +417,12 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
      */
     public final String getPublicRoleInterfaceName(IRole role){
 	// check arguments
-	if( role == null || (! ( role.getClass().isAnnotationPresent(PublicRole.class) )))
+	if( role == null || (! ( role.getClass().isAnnotationPresent(PUBLICROLE.class) )))
 	    return null;
 	
 	// get all the annotation of this class and search for a public role
 	// annotation
-	PublicRole pRole = (PublicRole) role.getClass().getAnnotation(PublicRole.class);
+	PUBLICROLE pRole = (PUBLICROLE) role.getClass().getAnnotation(PUBLICROLE.class);
 	return pRole.roleInterface();
     }
     
@@ -435,11 +435,11 @@ public class RoleBooster extends SecureClassLoader implements IRoleBooster{
      */
     public final String getPublicRoleAnnotationName(IRole role){
 	//check arguments
-	if( role == null || (! ( role.getClass().isAnnotationPresent(PublicRole.class))) )
+	if( role == null || (! ( role.getClass().isAnnotationPresent(PUBLICROLE.class))) )
 	    return null;
 	
 	// get the annotation
-	PublicRole pRole = (PublicRole) role.getClass().getAnnotation(PublicRole.class);
+	PUBLICROLE pRole = (PUBLICROLE) role.getClass().getAnnotation(PUBLICROLE.class);
 	return pRole.roleAnnotation();
     }
     

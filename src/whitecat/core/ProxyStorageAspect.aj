@@ -34,7 +34,7 @@ import org.aspectj.lang.JoinPoint;
 
 import whitecat.core.*;
 import whitecat.core.agents.*;
-import whitecat.core.annotation.Lock;
+import whitecat.core.annotations.Lock;
 import whitecat.core.event.EventDispatcher;
 import whitecat.core.event.EventType;
 import whitecat.core.exceptions.WCProxyLockedException;

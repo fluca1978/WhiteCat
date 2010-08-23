@@ -35,7 +35,7 @@ import java.lang.reflect.Method;
 
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.LocalAgentProxy;
-import whitecat.core.annotation.Lock;
+import whitecat.core.annotations.Lock;
 
 /**
  * @author Luca Ferrari - cat4hire (at) sourceforge.net

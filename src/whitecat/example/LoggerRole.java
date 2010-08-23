@@ -30,18 +30,18 @@
  */
 package whitecat.example;
 
-import whitecat.core.annotation.PublicRole;
-import whitecat.core.annotation.Role;
+import whitecat.core.annotations.PUBLICROLE;
+import whitecat.core.annotations.ROLE;
 
 /**
  * An example of logger role.
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-@Role()
+@ROLE()
 		// here I specify the part of the role that can be visible
 		// to outsider and that will be applied to the proxy
-@PublicRole(roleInterface  = "whitecat.example.ILogger",
+@PUBLICROLE(roleInterface  = "whitecat.example.ILogger",
     	    roleAnnotation = "whitecat.example.DBRoleAnnotation" 
            )
 public class LoggerRole implements ILogger{

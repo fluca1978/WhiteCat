@@ -30,8 +30,8 @@
  */
 package whitecat.example;
 
-import whitecat.core.annotation.PublicRole;
-import whitecat.core.annotation.Role;
+import whitecat.core.annotations.PUBLICROLE;
+import whitecat.core.annotations.ROLE;
 
 /**
  * An example of role. This role implements a database administrator, and thus
@@ -40,11 +40,11 @@ import whitecat.core.annotation.Role;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-@Role()		// to mark this as a role object
+@ROLE()		// to mark this as a role object
 
 		// here I specify the part of the role that can be visible
 		// to outsider and that will be applied to the proxy
-@PublicRole(roleInterface = "whitecat.example.IDatabaseAdministrator",
+@PUBLICROLE(roleInterface = "whitecat.example.IDatabaseAdministrator",
             roleAnnotation = "whitecat.example.ExampleRoleAnnotation"
            )
 public class DatabaseAdministrator 

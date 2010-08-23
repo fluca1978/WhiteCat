@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation;
 
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.WCAgent;
-import whitecat.core.annotation.Role;
+import whitecat.core.annotations.ROLE;
 import whitecat.core.role.IRole;
 
 public interface IRoleBooster {

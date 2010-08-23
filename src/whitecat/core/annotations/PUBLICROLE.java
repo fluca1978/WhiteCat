@@ -28,20 +28,41 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package whitecat.core.annotation;
+package whitecat.core.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
- * An annotation used to mark a class as having a role.
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
+@ROLE()
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface RoleAnnotation {
+@Target(ElementType.TYPE)
+public @interface PUBLICROLE{
 
+    /**
+     * The class for this role. This must always be specified for a role.
+     * @return the fully qualified role class name
+     */
+    public String roleClass() default "";
+    
+    /**
+     * The fully qualified role interface name (if present and available). If not specified
+     * the role has no public visibility part (i.e., a proxy cannot be see thru the role it is
+     * playing).
+     * @return the fully qualified role interface name
+     */
+    public String roleInterface() default "";
+    
+    /**
+     * The annotation to be applied to the proxy class, if the role must be visible
+     * from an external point of view but not available with its services.
+     * @return the fully qualified name of the annotation class
+     */
+    public String roleAnnotation() default "";
 }

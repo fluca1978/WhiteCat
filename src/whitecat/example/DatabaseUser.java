@@ -33,7 +33,7 @@ package whitecat.example;
 import java.math.*;
 import java.util.Random;
 
-import whitecat.core.annotation.Role;
+import whitecat.core.annotations.ROLE;
 import whitecat.core.role.IRole;
 
 /**
@@ -42,7 +42,7 @@ import whitecat.core.role.IRole;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-@Role()
+@ROLE()
 @DBRoleAnnotation()
 public class DatabaseUser implements IRole {
 

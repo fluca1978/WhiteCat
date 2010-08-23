@@ -28,41 +28,33 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package whitecat.core.annotation;
+package whitecat.core.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
+ * This annotation must be applied to any mutator method of a proxy
+ * in order to avoid the execution of the method while the proxy undergoes
+ * role manipulation.
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-@Role()
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface PublicRole{
+@Target(ElementType.METHOD)
+public @interface Lock {
 
     /**
-     * The class for this role. This must always be specified for a role.
-     * @return the fully qualified role class name
+     * Should be the method call blocking? 
+     * @return true if the method call is blocking
      */
-    public String roleClass() default "";
+    public String blocking() default "false";
     
     /**
-     * The fully qualified role interface name (if present and available). If not specified
-     * the role has no public visibility part (i.e., a proxy cannot be see thru the role it is
-     * playing).
-     * @return the fully qualified role interface name
+     * The max time to wait before unlock the method call.
+     * @return the max time to wait in milliseconds
      */
-    public String roleInterface() default "";
-    
-    /**
-     * The annotation to be applied to the proxy class, if the role must be visible
-     * from an external point of view but not available with its services.
-     * @return the fully qualified name of the annotation class
-     */
-    public String roleAnnotation() default "";
+    public long maxTimeToWait() default 0;
 }

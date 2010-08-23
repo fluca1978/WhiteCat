@@ -28,7 +28,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package whitecat.core.annotation;
+package whitecat.core.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -36,17 +36,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is the base for all the role-tied annotation. This annotation
- * is used to indicate a type, applied to a class, that specifies that the class is a role and
- * should thus be used accordingly.
- *
- * Each component of the annotation roles should be annotated thru this annotation itself. 
- * 
+ * An annotation used to mark a class as having a role.
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Role {
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface ROLEANNOTATION {
 
 }
