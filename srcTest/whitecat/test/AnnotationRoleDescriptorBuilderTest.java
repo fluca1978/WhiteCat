@@ -99,6 +99,12 @@ public class AnnotationRoleDescriptorBuilderTest {
 	    
 	}
 	
+	// build another role description and check if it is the same
+	RoleDescriptor desc2 = builder.buildRoleDescriptor( role );
+	if( ! desc.equals(desc2) ||  desc.hashCode() != desc2.hashCode() )
+	    fail("Two descriptor are different but the role is the same");
+	
+	
 	// get the tasks
 	for( IRoleTask task : desc.getTasks() ){
 	    // check the type of the task
