@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import whitecat.core.IProxyStorage;
-import whitecat.core.ProxyStorage;
+import whitecat.core.ProxyStorageImpl;
 import whitecat.core.WhiteCat;
 import whitecat.core.agents.AgentProxy;
 import whitecat.example.DBAgent;

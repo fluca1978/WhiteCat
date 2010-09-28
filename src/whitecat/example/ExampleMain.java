@@ -36,8 +36,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
 
 import whitecat.core.IProxyHandler;
+import whitecat.core.IProxyStorage;
 import whitecat.core.IRoleBooster;
-import whitecat.core.ProxyStorage;
+import whitecat.core.ProxyStorageImpl;
 import whitecat.core.RoleBooster;
 import whitecat.core.WhiteCat;
 import whitecat.core.agents.AgentProxy;
@@ -205,8 +206,8 @@ public class ExampleMain extends DBProxy implements Runnable, EventListener{
 	
 	
 	// dump the map
-	ProxyStorage storage = ProxyStorage.getInstance();
-	storage.dump( System.out );
+	IProxyStorage storage = WhiteCat.getProxyStorage();
+	((ProxyStorageImpl)storage).dump( System.out );
     }
     
     /**

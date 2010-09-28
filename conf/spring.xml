@@ -41,6 +41,13 @@
    		scope="prototype">
    	</bean>
    	
+   	<!-- the default proxy storage  -->
+   	<bean id="IProxyStorage"
+   		class="whitecat.core.ProxyStorageImpl"
+   		factory-method="getInstance"
+   		scope="singleton">
+   	</bean>
+   	
    	
 
    	<!-- the default role booster, the only to use, but with initialized parameters -->
@@ -50,9 +57,6 @@
 		<property name="currentRoleOperation" ref="IRoleOperation"></property>
    	</bean>
    	
-   	<!-- the proxy storage for the running configuration -->
-   	<bean id="IProxyStorage" class="whitecat.core.ProxyStorage" scope="singleton" factory-method="getInstance" >
-   	</bean>
 
    	<bean id="IRoleOperation" class="RoleOpeationImpl"
    		scope="prototype">

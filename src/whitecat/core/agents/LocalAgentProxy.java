@@ -33,7 +33,8 @@ package whitecat.core.agents;
 import java.util.HashMap;
 
 import whitecat.core.IProxyStorage;
-import whitecat.core.ProxyStorage;
+import whitecat.core.ProxyStorageImpl;
+import whitecat.core.WhiteCat;
 import whitecat.core.role.IRole;
 
 /**
@@ -109,7 +110,7 @@ public class LocalAgentProxy extends AgentProxy {
     @Override
     public AgentProxy update() {
 	// return the proxy associated with the agent
-	IProxyStorage storage = ProxyStorage.getInstance();
+	IProxyStorage storage = WhiteCat.getProxyStorage();
 	return storage.getLastUpdatedAgentProxy( this.getAgentProxyID() );
     }
     

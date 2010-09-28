@@ -98,7 +98,7 @@ public aspect ProxyStorageAspect {
      */
     Object around( AgentProxy proxy, Lock lockingAnnotation ) : avoidLockedMethodInvocation( proxy, lockingAnnotation ){
 	// if the proxy is locked throw an exception
-	IProxyStorage storage = ProxyStorage.getInstance();
+	IProxyStorage storage = WhiteCat.getProxyStorage();
 	
 	// check if the method must block until the proxy is unlocked
 	if( lockingAnnotation.blocking().equals("true") ){
@@ -133,7 +133,7 @@ public aspect ProxyStorageAspect {
     				lockingPublicRoleForRemoval( proxy )
     				{
 	// get the proxy storage
-	IProxyStorage storage = ProxyStorage.getInstance();
+	IProxyStorage storage = WhiteCat.getProxyStorage();
 	
 	// lock the proxy (without locking the current thread)
 	storage.lockAgentProxy( proxy, false, -1 );
@@ -160,7 +160,7 @@ public aspect ProxyStorageAspect {
 	 
 	 
 	 // now store the agent proxy in the storage
-	 IProxyStorage storage = ProxyStorage.getInstance();
+	 IProxyStorage storage = WhiteCat.getProxyStorage();
 	 storage.storeAgentProxy( retProxy );
 	 
 	 
@@ -181,7 +181,7 @@ public aspect ProxyStorageAspect {
       */
      after() returning( AgentProxy retProxy ) : removingPublicRole(){
 	 // store the role (updated) in the proxy storage
-	 IProxyStorage storage = ProxyStorage.getInstance();
+	 IProxyStorage storage = WhiteCat.getProxyStorage();
 	 storage.storeAgentProxy(retProxy);
 	 
 	 // unlock the proxy (and unlock even the current thread)

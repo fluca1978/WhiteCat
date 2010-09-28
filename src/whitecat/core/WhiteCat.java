@@ -124,5 +124,4 @@ public class WhiteCat {
     public final static IRoleDescriptorBuilder getRoleDescriptorBuilder(){
 	return (IRoleDescriptorBuilder) xmlBeanFactory.getBean( IRoleDescriptorBuilder.class.getSimpleName() );
     }
-
 }

@@ -46,12 +46,12 @@ import whitecat.core.lock.AgentProxyStatus;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class ProxyStorage implements IProxyStorage {
+public class ProxyStorageImpl implements IProxyStorage {
 
     /**
      * A reference to myself, so that this class is used as singleton.
      */
-    private static ProxyStorage mySelf = null;
+    private static ProxyStorageImpl mySelf = null;
     
     
     
@@ -69,7 +69,7 @@ public class ProxyStorage implements IProxyStorage {
     /**
      * Creates a new proxy storage.
      */
-    private ProxyStorage(){
+    private ProxyStorageImpl(){
 	super();
 	
 	// initialize the map of the agent proxies
@@ -82,9 +82,9 @@ public class ProxyStorage implements IProxyStorage {
      * it whitin the application.
      * @return the proxy storage.
      */
-    public synchronized static ProxyStorage getInstance(){
+    public synchronized static ProxyStorageImpl getInstance(){
 	if( mySelf == null )
-	    mySelf = new ProxyStorage();
+	    mySelf = new ProxyStorageImpl();
 	
 	return mySelf;
     }
