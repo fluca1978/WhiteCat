@@ -68,7 +68,13 @@ public class RoleRepositoryTest {
 	// install a new role
 	DatabaseAdministrator role = new DatabaseAdministrator();
 	RoleDescriptor desc = new RoleDescriptor(){
+	    public int hashCode(){
+		return -1;
+	    }
 	    
+	    public boolean equals(Object o ){
+		return o.hashCode() == this.hashCode();
+	    }
 	};
 	
 	boolean result = repository.installRole(desc, role, false);
@@ -83,7 +89,7 @@ public class RoleRepositoryTest {
 	// remove the role
 	result = repository.removeRole(desc);
 	if( result == false ||  repository.getAvailableRoleDescriptors().contains(desc) )
-	    fail("Role not removed from the repository!");
+	    fail("Role not removed from the repository! " + result);
 	
 	// search again for the role
 	backRole = repository.findRole(desc);
