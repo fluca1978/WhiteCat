@@ -81,6 +81,12 @@ public class RoleRepositoryTest {
 	if( result == false || ! repository.getAvailableRoleDescriptors().contains(desc) )
 	    fail("Role not installed or not available in the repository!");
 	
+	// get back the role descriptor for a role and see if it matches
+	RoleDescriptor descback = repository.getRoleDescriptor(role);
+	if( descback.equals(desc) == false )
+	    fail("Cannot get back the right role descriptor");
+	
+	
 	// get back the role
 	IRole backRole = repository.findRole(desc);
 	if( ! backRole.equals( role ) )

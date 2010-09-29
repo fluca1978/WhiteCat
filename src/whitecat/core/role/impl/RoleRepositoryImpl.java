@@ -177,4 +177,22 @@ public class RoleRepositoryImpl implements IRoleRepository {
 	return this.installRole(desc, role, overrideIfExsist);
     }
 
+    @Override
+    public synchronized final RoleDescriptor getRoleDescriptor(IRole role) {
+	// check arguments
+	if( role == null || this.roles.isEmpty() || this.roles.containsValue(role) == false )
+	    return null;
+	
+	// now search the key for the specified role
+	for( RoleDescriptor desc : this.roles.keySet() ){
+	    IRole keyRole = this.roles.get(desc);
+	    if( keyRole.equals(role) )
+		return desc;
+	}
+	    
+	
+	return null;
+
+    }
+
 }

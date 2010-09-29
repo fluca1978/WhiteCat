@@ -77,5 +77,13 @@ public interface IRoleRepository {
      * @param builder the builder to use to specify the role descriptor
      */
     public void setRoleDescriptorBuilder( IRoleDescriptorBuilder builder );
+    
+    /**
+     * Provides the role descriptor associated to the specified role. If the role
+     * is not installed, a null value is returned.
+     * @param role the associated descriptor to the specified role
+     * @return
+     */
+    public RoleDescriptor getRoleDescriptor( IRole role );
 
 }
