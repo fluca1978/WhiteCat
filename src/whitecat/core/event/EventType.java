@@ -42,5 +42,6 @@ public enum EventType {
     VISIBILE_ROLE_ADDED,	/* a visible role has been added */
     VISIBLE_ROLE_REMOVED,	/* a visibile role has been removed */
     PRIVATE_ROLE_ADDED,		/* a private role has been added */
-    PRIVATE_ROLE_REMOVED;	/* a private role has been removed */
+    PRIVATE_ROLE_REMOVED, 	/* a private role has been removed */
+    PUBLIC_ROLE_REMOVING;	/* a public role is being removed */
 }

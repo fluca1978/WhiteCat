@@ -210,7 +210,29 @@ public aspect ProxyStorageAspect {
 	 eventDispatcher.fireEvent( retProxy.getAgentProxyID(), EventType.PUBLIC_ROLE_REMOVED, roleDescriptor );
      }
      
-     
+
+     /**
+      * Manage the public role removal just before it happens.
+      * The proxy is stored in the agent proxy storage, then unlocked and an event is notified to all
+      * listeners.
+      */
+     before()  : removingPublicRole(){
+	 
+	// get the arguments of the join point method call
+	 Object arguments[] = thisJoinPoint.getArgs();
+	 // extract each argument
+	 WCAgent agent = (WCAgent) arguments[0];
+	 AgentProxy originalProxy = (AgentProxy) arguments[1];
+	 AgentProxyID proxyID = originalProxy.getAgentProxyID();
+	 IRole removedRole = (IRole) arguments[2];
+	 RoleDescriptor roleDescriptor = roleRepository.getRoleDescriptor(removedRole);
+	 
+
+	 
+	 // now perform the notification of events
+	 EventDispatcher eventDispatcher = EventDispatcher.getInstance();
+	 eventDispatcher.fireEvent( proxyID, EventType.PUBLIC_ROLE_REMOVING, roleDescriptor );
+     }
     
      
 }
