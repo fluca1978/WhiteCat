@@ -34,10 +34,10 @@ import org.springframework.beans.factory.xml.XmlBeanFactory;
 
 import org.springframework.core.io.ClassPathResource;
 import whitecat.core.*;
-import whitecat.core.IRoleBooster;
 import whitecat.core.agents.IMethodForwarderGenerator;
 import whitecat.core.role.IRoleRepository;
 import whitecat.core.role.descriptors.IRoleDescriptorBuilder;
+import whitecat.core.role.task.scheduling.ITaskExecutionResult;
 
 /**
  * This is the main class of the whole system. 
@@ -123,5 +123,13 @@ public class WhiteCat {
      */
     public final static IRoleDescriptorBuilder getRoleDescriptorBuilder(){
 	return (IRoleDescriptorBuilder) xmlBeanFactory.getBean( IRoleDescriptorBuilder.class.getSimpleName() );
+    }
+    
+    /**
+     * Provides the task execution result instance to use for a specific task.
+     * @return the implementation of a task execution result
+     */
+    public final static ITaskExecutionResult getTaskExecutionResult(){
+	return (ITaskExecutionResult) xmlBeanFactory.getBean( ITaskExecutionResult.class.getSimpleName() );
     }
 }

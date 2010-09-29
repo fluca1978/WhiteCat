@@ -49,6 +49,14 @@
    	</bean>
    	
    	
+   	
+   	<!-- the default task execution result  -->
+   	<bean id="ITaskExecutionResult"
+   		class="whitecat.core.role.task.scheduling.TaskExecutionResultImpl"
+   		
+   		scope="prototype">
+   	</bean>
+   	
 
    	<!-- the default role booster, the only to use, but with initialized parameters -->
    	<bean id="IRoleBooster" class="whitecat.core.RoleBooster"
