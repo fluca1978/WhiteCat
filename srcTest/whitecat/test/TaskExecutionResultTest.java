@@ -41,7 +41,7 @@ import org.junit.Assert.*;
 
 import whitecat.core.WCException;
 import whitecat.core.WhiteCat;
-import whitecat.core.role.task.scheduling.ITaskExecutionResult;
+import whitecat.core.role.task.ITaskExecutionResult;
 
 /**
  * A test for the execution result.

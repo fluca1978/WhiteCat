@@ -52,7 +52,7 @@
    	
    	<!-- the default task execution result  -->
    	<bean id="ITaskExecutionResult"
-   		class="whitecat.core.role.task.scheduling.TaskExecutionResultImpl"
+   		class="whitecat.core.role.task.TaskExecutionResultImpl"
    		
    		scope="prototype">
    	</bean>

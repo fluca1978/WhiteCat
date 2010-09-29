@@ -37,7 +37,7 @@ import whitecat.core.*;
 import whitecat.core.agents.IMethodForwarderGenerator;
 import whitecat.core.role.IRoleRepository;
 import whitecat.core.role.descriptors.IRoleDescriptorBuilder;
-import whitecat.core.role.task.scheduling.ITaskExecutionResult;
+import whitecat.core.role.task.ITaskExecutionResult;
 
 /**
  * This is the main class of the whole system. 
