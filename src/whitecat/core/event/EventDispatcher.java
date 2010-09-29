@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import whitecat.core.agents.AgentProxyID;
+import whitecat.core.role.descriptors.RoleDescriptor;
 
 /**
  * The event dispatcher, dispatches events to the components that have registered
@@ -142,9 +143,10 @@ public class EventDispatcher {
      * an event about a change in a proxy or an agent.
      * @param proxyID the id of the proxy
      * @param type the type of the event
+     * @param roleDescriptor the role descriptor the firing event refers to
      * @return the number of listeners notified.
      */
-    public int fireEvent( AgentProxyID proxyID, EventType type ){
+    public int fireEvent( AgentProxyID proxyID, EventType type, RoleDescriptor roleDescriptor ){
 	// check arguments
 	if( proxyID == null || type == null
 	   || this.registeredListeners == null
@@ -156,7 +158,7 @@ public class EventDispatcher {
 	
 	for( EventListener currentListener : this.registeredListeners.get( proxyID ) ){
 	    // create a new event
-	    Event event = Event.createEvent(proxyID, type);
+	    Event event = Event.createEvent(proxyID, type, roleDescriptor);
 	    // notify the listener
 	    currentListener.handleEvent(event);
 	    // increment the counter of the notified listener
