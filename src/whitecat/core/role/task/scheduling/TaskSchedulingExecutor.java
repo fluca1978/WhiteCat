@@ -28,7 +28,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package whitecat.core.role.task;
+package whitecat.core.role.task.scheduling;
 
 /**
  * Indicates who can execute a task, that is a specific agent or

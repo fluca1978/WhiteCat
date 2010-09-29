@@ -28,7 +28,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package whitecat.core.role.task;
+package whitecat.core.role.task.scheduling;
 
 /**
  * Defines when a task must be scheduled for execution.
