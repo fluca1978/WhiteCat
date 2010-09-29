@@ -197,4 +197,13 @@ public class RoleDescriptor extends AbstractDescriptor {
 	return descriptor;
     }
     
+    /**
+     * Searches for a specific task among those of this role descriptor.
+     * @param task the task to search for
+     * @return true if the task is included
+     */
+    public final synchronized boolean containsTask( IRoleTask task ){
+	return this.tasks.containsKey(task);	    
+    }
+    
 }
