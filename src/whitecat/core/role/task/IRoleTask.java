@@ -47,10 +47,11 @@ public interface IRoleTask {
 
     /**
      * Executes this task (and all its sub-tasks) returning the result.
-     * @return the result of the task (and subtasks) execution
+     * @return the result of the task (and subtasks) execution wrapped by a role task
+     * execution result
      * @throws WCException if something goes wrong with the task execution
      */
-    public Object execute() throws WCException;
+    public ITaskExecutionResult execute() throws WCException;
     
     
     /**

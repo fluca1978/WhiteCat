@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import whitecat.core.WCException;
+import whitecat.core.WhiteCat;
 import whitecat.core.role.IRole;
 
 /**
@@ -98,7 +99,7 @@ public class MethodTaskExecutor implements IRoleTask, IRole {
     /* (non-Javadoc)
      * @see whitecat.core.role.task.IRoleTask#execute()
      */
-    public Object execute() throws WCException {
+    public ITaskExecutionResult execute() throws WCException {
 	// check arguments
 	if( this.methodToExecute == null )
 	    throw new WCException("Cannot execute a task without the method to invoke!");
@@ -107,8 +108,11 @@ public class MethodTaskExecutor implements IRoleTask, IRole {
 	try {
 	    // execute the method: if there are not subtasks, do only this,
 	    // otherwise invoke all the subtasks and keep them in an array
-	    if( this.subTasks.size() == 0 )
-		return this.methodToExecute.invoke( this.parameters.toArray() );
+	    if( this.subTasks.size() == 0 ){
+		ITaskExecutionResult resultWrapper = WhiteCat.getTaskExecutionResult();
+		resultWrapper.setResult( this.methodToExecute.invoke( this.parameters.toArray() ) );
+		return resultWrapper;
+	    }
 	    else{
 		Object[] returns = new Object[ this.subTasks.size() + 1 ];
 		returns[0] = this.methodToExecute.invoke( this.parameters.toArray() );
@@ -122,7 +126,9 @@ public class MethodTaskExecutor implements IRoleTask, IRole {
 		    
 		
 		// all done
-		return returns;
+		ITaskExecutionResult resultWrapper = WhiteCat.getTaskExecutionResult();
+		resultWrapper.setResult( returns );
+		return resultWrapper;
 	    }
 	} catch (IllegalArgumentException e) {
 	    throw new WCException("Wrong number of parameters or type!");
