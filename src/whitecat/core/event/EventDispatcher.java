@@ -59,6 +59,11 @@ public class EventDispatcher {
      */
     private HashMap< AgentProxyID, List<EventListener> > registeredListeners = new HashMap< AgentProxyID, List<EventListener> >();
     
+    /**
+     * A list of listener that will be notified for each event, no matter what
+     * agent proxy id is generating the event.
+     */
+    private List<EventListener> globalEventListeners = new LinkedList<EventListener>();
     
     
     /**
@@ -73,9 +78,35 @@ public class EventDispatcher {
     }
     
     
+    /**
+     * Adds a global event listener, that is a listener that will be notified
+     * for each role event no matter what is the agent and the proxy the event
+     * is related to.
+     * @param listener the listener to add
+     * @return true if the listener is added
+     */
+    public final synchronized boolean addGlobalEventListener( EventListener listener ){
+	if( ! this.globalEventListeners.contains(listener) ){
+	    this.globalEventListeners.add( listener );
+	    return true;
+	}
+	else
+	    return false;
+    }
     
-    
-    
+    /**
+     * Removes a global event listener from the queue.
+     * @param listener the listener to remove
+     * @return true if the listener is removed
+     */
+    public final synchronized boolean removeGlobalEventListener( EventListener listener ){
+	if( ! this.globalEventListeners.contains(listener) )
+	    return false;
+	else{
+	    this.globalEventListeners.remove( listener );
+	    return true;
+	}
+    }
     
     
     /**
@@ -141,16 +172,16 @@ public class EventDispatcher {
     /**
      * Notifies the listeners registered for a specific proxy of
      * an event about a change in a proxy or an agent.
+     * If a set of global listeners is present, they are notified too.
      * @param proxyID the id of the proxy
      * @param type the type of the event
      * @param roleDescriptor the role descriptor the firing event refers to
-     * @return the number of listeners notified.
+     * @return the number of listeners notified (including the global ones).
      */
-    public int fireEvent( AgentProxyID proxyID, EventType type, RoleDescriptor roleDescriptor ){
+    public synchronized int fireEvent( AgentProxyID proxyID, EventType type, RoleDescriptor roleDescriptor ){
 	// check arguments
 	if( proxyID == null || type == null
-	   || this.registeredListeners == null
-	   || this.registeredListeners.containsKey( proxyID ) == false)
+	   || (this.registeredListeners.isEmpty() && this.globalEventListeners.isEmpty()) )
 	    return 0;
 	
 	// the counter of the notified events
@@ -165,6 +196,15 @@ public class EventDispatcher {
 	    notified ++;
 	}
 	
+	// notify also the global event listener
+	for( EventListener currentListener : this.globalEventListeners ){
+	    // create a new event
+	    Event event = Event.createEvent(proxyID, type, roleDescriptor);
+	    // notify the listener
+	    currentListener.handleEvent(event);
+	    // increment the counter of the notified listener
+	    notified ++;
+	}
 	
 	// all done
 	return notified;
