@@ -50,6 +50,8 @@ import whitecat.core.event.EventListener;
 import whitecat.core.role.IRoleRepository;
 import javassist.*;
 import whitecat.core.role.descriptors.*;
+import whitecat.core.role.task.IRoleTask;
+import whitecat.core.role.task.scheduling.ITaskScheduler;
 /**
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
@@ -71,6 +73,7 @@ public class ExampleMain extends DBProxy implements Runnable, EventListener{
 
 	    Class roleClass = root.loadClass("whitecat.example.DatabaseAdministrator");
 	    DatabaseAdministrator dbaRole = (DatabaseAdministrator) roleClass.newInstance();
+	    
 	    Class agentClass = root.loadClass("whitecat.example.DBAgent");
 	    DBAgent agent = (DBAgent) agentClass.newInstance();
 	    Class proxyClass = root.loadClass("whitecat.example.DBProxy");

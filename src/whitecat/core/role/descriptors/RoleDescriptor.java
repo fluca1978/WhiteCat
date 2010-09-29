@@ -125,8 +125,9 @@ public class RoleDescriptor extends AbstractDescriptor {
     public final synchronized List<IRoleTask> getTasks(){
 	List<IRoleTask> tasks = new LinkedList<IRoleTask>();
 	
-	for( IRoleTask task : this.tasks.keySet() )
-	    tasks.add(task);
+	if( this.tasks != null )
+	    for( IRoleTask task : this.tasks.keySet() )
+		tasks.add(task);
 	
 	return tasks;
 	
@@ -190,7 +191,11 @@ public class RoleDescriptor extends AbstractDescriptor {
 	RoleDescriptor descriptor = new RoleDescriptor();
 	descriptor.setName(name);
 	descriptor.setAim(aim);
-	descriptor.tasks = new HashMap<IRoleTask, TaskDescriptor>( tasks );
+	if( tasks == null )
+	    descriptor.tasks = new HashMap<IRoleTask, TaskDescriptor>();
+	else
+	    descriptor.tasks = new HashMap<IRoleTask, TaskDescriptor>( tasks );
+	
 	descriptor.setEventDscriptors(events);
 	descriptor.setKeywords(keywords);
 	

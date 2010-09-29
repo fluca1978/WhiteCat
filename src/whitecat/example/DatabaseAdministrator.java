@@ -68,6 +68,12 @@ implements IDatabaseAdministrator
 	return true;
     }
     
+    
+    public boolean doMaintainance(){
+	System.out.println("\n\t-----> DOING SOMETHING ADMINISTRATIVE <-----\n");
+	return true;
+    }
+    
     /**
      * Private service, that is a service that cannot be called thru the proxy of an agent.
      * @param databaseName the database to reindex.

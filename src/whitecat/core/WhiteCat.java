@@ -38,6 +38,7 @@ import whitecat.core.agents.IMethodForwarderGenerator;
 import whitecat.core.role.IRoleRepository;
 import whitecat.core.role.descriptors.IRoleDescriptorBuilder;
 import whitecat.core.role.task.ITaskExecutionResult;
+import whitecat.core.role.task.scheduling.ITaskScheduler;
 
 /**
  * This is the main class of the whole system. 
@@ -131,5 +132,13 @@ public class WhiteCat {
      */
     public final static ITaskExecutionResult getTaskExecutionResult(){
 	return (ITaskExecutionResult) xmlBeanFactory.getBean( ITaskExecutionResult.class.getSimpleName() );
+    }
+    
+    /**
+     * Provides the task scheduler for this installation.
+     * @return the task scheduler
+     */
+    public final static ITaskScheduler getTaskScheduler(){
+	return (ITaskScheduler) xmlBeanFactory.getBean( ITaskScheduler.class.getSimpleName() );
     }
 }

@@ -67,6 +67,12 @@ public class MethodTaskExecutor implements IRoleTask, IRole {
      */
     private List parameters = null;
     
+    /**
+     * The role on which the task will be executed. This must be a running instance
+     * of the role.
+     */
+    private IRole executingRole = null;
+    
     
     /**
      * Default constructor.
@@ -95,6 +101,29 @@ public class MethodTaskExecutor implements IRoleTask, IRole {
     public synchronized final void setMethodToExecute(Method methodToExecute) {
         this.methodToExecute = methodToExecute;
     }
+    
+    
+
+    /**
+     * Provides the value of the executingRole field.
+     * @return the executingRole
+     */
+    public synchronized final IRole getExecutingRole() {
+        return this.executingRole;
+    }
+
+
+
+    /**
+     * Sets the value of the executingRole field as specified
+     * by the value of executingRole.
+     * @param executingRole the executingRole to set
+     */
+    public synchronized final void setExecutingRole(IRole executingRole) {
+        this.executingRole = executingRole;
+    }
+
+
 
     /* (non-Javadoc)
      * @see whitecat.core.role.task.IRoleTask#execute()
@@ -110,7 +139,11 @@ public class MethodTaskExecutor implements IRoleTask, IRole {
 	    // otherwise invoke all the subtasks and keep them in an array
 	    if( this.subTasks.size() == 0 ){
 		ITaskExecutionResult resultWrapper = WhiteCat.getTaskExecutionResult();
-		resultWrapper.setResult( this.methodToExecute.invoke( this.parameters.toArray() ) );
+		if( this.parameters.isEmpty() )
+		    resultWrapper.setResult( this.methodToExecute.invoke( this.executingRole ) );
+		else
+		    resultWrapper.setResult( this.methodToExecute.invoke( this.executingRole, this.parameters.toArray() ) );
+		
 		return resultWrapper;
 	    }
 	    else{
@@ -171,4 +204,33 @@ public class MethodTaskExecutor implements IRoleTask, IRole {
 	    
     }
 
+
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+	if( !(obj instanceof MethodTaskExecutor) )
+	    return false;
+	else{
+	    MethodTaskExecutor mte = (MethodTaskExecutor) obj;
+	    return (mte.methodToExecute.equals(methodToExecute));
+	}
+	    
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+	return methodToExecute.hashCode();
+    }
+
+    
+    
+    
 }

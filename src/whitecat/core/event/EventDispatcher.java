@@ -186,14 +186,16 @@ public class EventDispatcher {
 	
 	// the counter of the notified events
 	int notified = 0;
-	
-	for( EventListener currentListener : this.registeredListeners.get( proxyID ) ){
-	    // create a new event
-	    Event event = Event.createEvent(proxyID, type, roleDescriptor);
-	    // notify the listener
-	    currentListener.handleEvent(event);
-	    // increment the counter of the notified listener
-	    notified ++;
+
+	if( ! this.registeredListeners.isEmpty() ){
+	    for( EventListener currentListener : this.registeredListeners.get( proxyID ) ){
+		// create a new event
+		Event event = Event.createEvent(proxyID, type, roleDescriptor);
+		// notify the listener
+		currentListener.handleEvent(event);
+		// increment the counter of the notified listener
+		notified ++;
+	    }
 	}
 	
 	// notify also the global event listener

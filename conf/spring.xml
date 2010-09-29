@@ -15,6 +15,11 @@
 		scope="prototype">
    	</bean>
    	
+   	<!-- the default task scheduler -->
+	<bean id="ITaskScheduler" class="whitecat.core.role.task.scheduling.TaskSchedulerImpl"
+		scope="prototype">
+   	</bean>
+   	
    	
    	<!-- the default role task implementation -->
 	<bean id="IRoleTask" class="whitecat.core.role.task.MethodTaskExecutor"

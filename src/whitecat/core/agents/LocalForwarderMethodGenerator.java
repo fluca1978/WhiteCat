@@ -113,7 +113,7 @@ public class LocalForwarderMethodGenerator implements IMethodForwarderGenerator 
 	    methodCode.append(interfaceMethod.getName());
 	    methodCode.append("($$); }");
 
-	    System.out.println("CODICE GEENRATO " + methodCode);
+	    
 	    // all done
 	    return methodCode.toString();
 

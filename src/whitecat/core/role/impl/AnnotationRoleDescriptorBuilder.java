@@ -96,6 +96,7 @@ public class AnnotationRoleDescriptorBuilder implements IRoleDescriptorBuilder {
 		// construct a task executor thru reflection
 		executor = new MethodTaskExecutor();
 		executor.setMethodToExecute(method);
+		executor.setExecutingRole(role);
 		String taskID = atd.taskID();
 		
 		// must this task need to be added to another task?

@@ -59,20 +59,20 @@ public aspect ProxyStorageAspect {
     /**
      * A pointcut to intercept the injection of a public role to an agent and its proxy.
      */
-    private pointcut addingPublicRole() :  call( public final synchronized AgentProxy injectPublicRole(WCAgent, AgentProxy, IRole) throws WCException );
+    private pointcut addingPublicRole() :  call( public  AgentProxy IRoleBooster.injectPublicRole(WCAgent, AgentProxy, IRole) throws WCException );
 									
 
     /**
      * A pointcut that intercepts the removal of a public role over an agent and its proxy.
      */
-    private pointcut removingPublicRole() : call( public AgentProxy RoleBooster.removePublicRole( WCAgent, AgentProxy, IRole) throws WCException );
+    private pointcut removingPublicRole() : call( public AgentProxy IRoleBooster.removePublicRole( WCAgent, AgentProxy, IRole) throws WCException );
     
 
     
     /**
      * A pointcut to define the locking of a public role manipulation.
      */
-    private pointcut lockingPublicRoleForAddition( AgentProxy proxy ) : call( public final synchronized AgentProxy injectPublicRole(WCAgent, AgentProxy, IRole) throws WCException )
+    private pointcut lockingPublicRoleForAddition( AgentProxy proxy ) : call( public  AgentProxy IRoleBooster.injectPublicRole(WCAgent, AgentProxy, IRole) throws WCException )
                                                              &&
                                                              args( proxy );
     
@@ -80,7 +80,7 @@ public aspect ProxyStorageAspect {
     /**
      * A pointcut for role removal.
      */
-    private pointcut lockingPublicRoleForRemoval( AgentProxy proxy ) : call( public final synchronized AgentProxy removePublicRole(WCAgent, AgentProxy, IRole) throws WCException )
+    private pointcut lockingPublicRoleForRemoval( AgentProxy proxy ) : call( public AgentProxy IRoleBooster.removePublicRole(WCAgent, AgentProxy, IRole) throws WCException )
     										&&
     									args( proxy );
 

@@ -166,10 +166,16 @@ public class TaskSchedulerImpl implements ITaskScheduler, EventListener {
 	if( event == null )
 	    return;
 	
+
+	
 	// get the agent proxy and the role this event is related to
 	AgentProxyID srcProxyID = event.getAgentProxyID();
 	EventType eType = event.getEventType();
 	RoleDescriptor descriptor = event.getRoleDescriptor();
+	if( descriptor == null )
+	    // cannot proceed!
+	    return;
+	
 	
 	try{
 
@@ -177,6 +183,8 @@ public class TaskSchedulerImpl implements ITaskScheduler, EventListener {
 	    // and that has been scheduled for the execution
 	    for( IRoleTask executableTask : this.scheduledTasks.keySet() ){
 
+
+		
 		ScheduledTask scheduledTaskData = this.scheduledTasks.get( executableTask );
 
 		// for each scheduled task to be executed, see if it belongs

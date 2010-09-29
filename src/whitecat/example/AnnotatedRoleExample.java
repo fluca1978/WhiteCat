@@ -30,6 +30,8 @@
  */
 package whitecat.example;
 
+import whitecat.core.annotations.PUBLICROLE;
+import whitecat.core.annotations.ROLE;
 import whitecat.core.role.IRole;
 import whitecat.core.role.descriptors.annotation.AnnotationEventDescriptor;
 import whitecat.core.role.descriptors.annotation.AnnotationRoleDescriptor;
@@ -41,12 +43,20 @@ import whitecat.core.role.descriptors.annotation.AnnotationTaskDescriptor;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
+@ROLE()		// to mark this as a role object
+
+// here I specify the part of the role that can be visible
+// to outsider and that will be applied to the proxy
+@PUBLICROLE(roleInterface = "whitecat.example.AnnotatedPublicRoleInterface",
+roleAnnotation = "whitecat.example.ExampleRoleAnnotation"
+)
+
 @AnnotationRoleDescriptor(
 	aim = "Example AIM",
 	name = "Example NAME",
 	keywords = "keyword1, keyword2, keyword 3"
 	)
-public class AnnotatedRoleExample implements IRole {
+public class AnnotatedRoleExample implements IRole, AnnotatedPublicRoleInterface {
 
     /**
      * A simple task. Does nothing on the value, returns it as it was provided.
@@ -94,6 +104,7 @@ public class AnnotatedRoleExample implements IRole {
 	    receiving = false
     )
     public String exampleTask3(){
+	System.out.println("Executing task 3");
 	return "Task3";
     }
     

@@ -38,8 +38,12 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import whitecat.core.IRoleBooster;
+import whitecat.core.WCException;
 import whitecat.core.WhiteCat;
+import whitecat.core.agents.AgentProxy;
 import whitecat.core.exceptions.WCRoleRepositoryException;
+import whitecat.core.exceptions.WCSchedulingException;
 import whitecat.core.role.IRole;
 import whitecat.core.role.IRoleRepository;
 import whitecat.core.role.descriptors.EventDescriptor;
@@ -48,7 +52,12 @@ import whitecat.core.role.descriptors.RoleDescriptor;
 import whitecat.core.role.descriptors.TaskDescriptor;
 import whitecat.core.role.task.IRoleTask;
 import whitecat.core.role.task.MethodTaskExecutor;
+import whitecat.core.role.task.scheduling.ITaskScheduler;
+import whitecat.core.role.task.scheduling.TaskSchedulingExecutor;
+import whitecat.core.role.task.scheduling.TaskSchedulingInstant;
 import whitecat.example.AnnotatedRoleExample;
+import whitecat.example.DBAgent;
+import whitecat.example.DBProxy;
 
 /**
  * A test for the annotation builder role descriptor.
@@ -185,4 +194,43 @@ public class AnnotationRoleDescriptorBuilderTest {
 
     }
 
+    
+    @Test
+    public void testScheduling() throws InstantiationException, IllegalAccessException, WCException, ClassNotFoundException{
+	// get the role
+	IRole role = new AnnotatedRoleExample();
+	
+	// get the builder
+	IRoleDescriptorBuilder builder = WhiteCat.getRoleDescriptorBuilder();
+	
+	if( builder == null )
+	    fail("Got a null role descriptor builder! ");
+	
+	// build the role descriptor
+	RoleDescriptor desc = builder.buildRoleDescriptor( role );
+	
+	// install the role into the repository
+	IRoleRepository repository = WhiteCat.getRoleRepository();
+	repository.installRole(desc, role, true);
+	
+	// get a scheduler
+	ITaskScheduler scheduler = WhiteCat.getTaskScheduler();
+	for( IRoleTask task : desc.getTasks() ){
+	    System.out.println("Scheduling the task " + task + " from role descriptor " + desc);
+	    scheduler.scheduleTask(task, null, TaskSchedulingExecutor.EXECUTE_BY_ANY_AGENT, TaskSchedulingInstant.SCHEDULE_AT_ROLE_ASSUMPTION, WhiteCat.getTaskExecutionResult() );
+	}
+
+	// now force a role assumption
+	Class agentClass = this.getClass().getClassLoader().loadClass("whitecat.example.DBAgent");
+	DBAgent agent = (DBAgent) agentClass.newInstance();
+	Class proxyClass = this.getClass().getClassLoader().loadClass("whitecat.example.DBProxy");
+	DBProxy proxy = (DBProxy) proxyClass.newInstance();
+	proxy.setMyAgent(agent);
+
+	IRoleBooster engine = WhiteCat.getRoleBooster();
+	AgentProxy newproxy = engine.injectPublicRole(agent, proxy, role);
+	System.out.println("New role assumed " + newproxy.getClass() + " vs " + proxy.getClass());
+	
+    }
+    
 }

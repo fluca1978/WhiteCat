@@ -64,7 +64,7 @@ public class DBProxy extends LocalAgentProxy {
      * by the value of myAgent.
      * @param myAgent the myAgent to set
      */
-    protected synchronized final void setMyAgent(DBAgent myAgent) {
+    public synchronized final void setMyAgent(DBAgent myAgent) {
         this.myAgent = myAgent;
     }
 
