@@ -39,6 +39,7 @@ import whitecat.core.event.EventDispatcher;
 import whitecat.core.event.EventType;
 import whitecat.core.exceptions.WCProxyLockedException;
 import whitecat.core.role.*;
+import whitecat.core.role.descriptors.RoleDescriptor;
 
 /**
  * This aspect drives the proxy storage mechanism, ensuring that
@@ -49,7 +50,11 @@ import whitecat.core.role.*;
  */
 public aspect ProxyStorageAspect {
 
-									
+    /**
+     * The role repository of the running system.
+     */
+    private IRoleRepository roleRepository = WhiteCat.getRoleRepository();
+    
     
     /**
      * A pointcut to intercept the injection of a public role to an agent and its proxy.
@@ -157,6 +162,8 @@ public aspect ProxyStorageAspect {
 	 WCAgent agent = (WCAgent) arguments[0];
 	 AgentProxy originalProxy = (AgentProxy) arguments[1];
 	 AgentProxyID proxyID = originalProxy.getAgentProxyID();
+	 IRole addedRole = (IRole) arguments[2];
+	 RoleDescriptor roleDescriptor = roleRepository.getRoleDescriptor(addedRole);
 	 
 	 
 	 // now store the agent proxy in the storage
@@ -170,7 +177,7 @@ public aspect ProxyStorageAspect {
 	 
 	 // now perform the notification of events
 	 EventDispatcher eventDispatcher = EventDispatcher.getInstance();
-	 eventDispatcher.fireEvent( retProxy.getAgentProxyID(), EventType.PUBLIC_ROLE_ADDED );
+	 eventDispatcher.fireEvent( retProxy.getAgentProxyID(), EventType.PUBLIC_ROLE_ADDED, roleDescriptor );
      }
      
      
@@ -186,11 +193,21 @@ public aspect ProxyStorageAspect {
 	 
 	 // unlock the proxy (and unlock even the current thread)
 	 storage.unlockAgentProxy( retProxy, true );
+	 
+	// get the arguments of the join point method call
+	 Object arguments[] = thisJoinPoint.getArgs();
+	 // extract each argument
+	 WCAgent agent = (WCAgent) arguments[0];
+	 AgentProxy originalProxy = (AgentProxy) arguments[1];
+	 AgentProxyID proxyID = originalProxy.getAgentProxyID();
+	 IRole removedRole = (IRole) arguments[2];
+	 RoleDescriptor roleDescriptor = roleRepository.getRoleDescriptor(removedRole);
+	 
 
 	 
 	 // now perform the notification of events
 	 EventDispatcher eventDispatcher = EventDispatcher.getInstance();
-	 eventDispatcher.fireEvent( retProxy.getAgentProxyID(), EventType.PUBLIC_ROLE_REMOVED );
+	 eventDispatcher.fireEvent( retProxy.getAgentProxyID(), EventType.PUBLIC_ROLE_REMOVED, roleDescriptor );
      }
      
      
