@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="srcTest"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/aglets-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/aspectjrt.jar"/>
+	<classpathentry kind="lib" path="lib/aspectjweaver.jar" sourcepath="/sviluppo/java/src/aspectj/">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/sviluppo/java/src/aspectj/doc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/javassist.jar" sourcepath="/sviluppo/java/src/javassist-3.13.GA/src/main">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/sviluppo/java/src/javassist-3.13.GA/html/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="lib/equinox.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/sviluppo/java/spring-framework-3.0.1.RELEASE-A/dist/org.springframework.beans-3.0.1.RELEASE-A.jar"/>
+	<classpathentry kind="lib" path="/sviluppo/java/spring-framework-3.0.1.RELEASE-A/dist/org.springframework.core-3.0.1.RELEASE-A.jar"/>
+	<classpathentry kind="lib" path="/sviluppo/java/jars/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="conf"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>

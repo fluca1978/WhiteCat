@@ -33,8 +33,11 @@ package whitecat.core.role.task.scheduling;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.eclipse.osgi.framework.eventmgr.EventDispatcher;
 
+import whitecat.core.RoleBooster;
 import whitecat.core.WCException;
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.AgentProxyID;
@@ -57,6 +60,17 @@ import whitecat.core.role.task.ITaskExecutionResult;
  */
 public class TaskSchedulerImpl implements ITaskScheduler, EventListener {
 
+    /**
+     * The logger for this class loader.
+     */
+    private static Logger logger = org.apache.log4j.Logger.getLogger(TaskScheduler.class);
+    
+    // configure the logger
+    static{
+	DOMConfigurator.configure("conf/log4j.xml");
+    }
+
+    
     
     /** 
      * A role descriptor contains a set of tasks, but here we need to find
@@ -65,7 +79,7 @@ public class TaskSchedulerImpl implements ITaskScheduler, EventListener {
      * contains the task specified.
      *
      */
-    private Map<IRoleTask, ScheduledTask> scheduledTasks = new HashMap< IRoleTask, ScheduledTask>();
+    private Map<IRoleTask, ScheduledTaskData> scheduledTasks = new HashMap< IRoleTask, ScheduledTaskData>();
     
     
     /**
@@ -73,7 +87,7 @@ public class TaskSchedulerImpl implements ITaskScheduler, EventListener {
      * All the fields are public, this is intended to be used a C-like
      * struct.
      */
-    class ScheduledTask{
+    class ScheduledTaskData{
 	public IRoleTask toExecute = null;
 	public AgentProxyID executor = null;
 	public TaskSchedulingExecutor executorMatchPolicy = null;
@@ -81,10 +95,10 @@ public class TaskSchedulerImpl implements ITaskScheduler, EventListener {
 	ITaskExecutionResult result = null;
 	
 	public boolean equals( Object o ){
-	    if( !(o instanceof ScheduledTask) )
+	    if( !(o instanceof ScheduledTaskData) )
 		return false;
 	    else{
-		ScheduledTask st = (ScheduledTask) o;
+		ScheduledTaskData st = (ScheduledTaskData) o;
 		return ( st.toExecute.equals( toExecute) && st.executor.equals( executor ) 
 			&& st.executionInstantPolicy.equals( executionInstantPolicy ) && st.executorMatchPolicy.equals( executionInstantPolicy ) 
 			);
@@ -117,7 +131,7 @@ public class TaskSchedulerImpl implements ITaskScheduler, EventListener {
 				ITaskExecutionResult result)
 							    throws WCSchedulingException {
 	// build a scheduled task object
-	ScheduledTask singleTask = new ScheduledTask();
+	ScheduledTaskData singleTask = new ScheduledTaskData();
 	singleTask.toExecute = toExecute;
 	singleTask.executionInstantPolicy = executionInstantPolicy;
 	singleTask.executorMatchPolicy = executorMatchPolicy;
@@ -145,7 +159,7 @@ public class TaskSchedulerImpl implements ITaskScheduler, EventListener {
 				       ITaskExecutionResult result) {
 	
 	// build a scheduled task object
-	ScheduledTask singleTask = new ScheduledTask();
+	ScheduledTaskData singleTask = new ScheduledTaskData();
 	singleTask.toExecute = toExecute;
 	singleTask.executionInstantPolicy = executionInstantPolicy;
 	singleTask.executorMatchPolicy = executorMatchPolicy;
@@ -185,7 +199,7 @@ public class TaskSchedulerImpl implements ITaskScheduler, EventListener {
 
 
 		
-		ScheduledTask scheduledTaskData = this.scheduledTasks.get( executableTask );
+		ScheduledTaskData scheduledTaskData = this.scheduledTasks.get( executableTask );
 
 		// for each scheduled task to be executed, see if it belongs
 		// to the role descriptor that generated the event
@@ -202,25 +216,40 @@ public class TaskSchedulerImpl implements ITaskScheduler, EventListener {
 			){
 
 			// ok to execute the task on this agent
+			// check the event conditions
 
-			if( eType.equals( EventType.PUBLIC_ROLE_ADDED ) && scheduledTaskData.executionInstantPolicy.equals( TaskSchedulingInstant.SCHEDULE_AT_ROLE_ASSUMPTION) ){
-			    // ok, we have to execute the task after the role assumption, so it is time
-			    // time to execute the task
-			    scheduledTaskData.result = executableTask.execute();
-			}
-			else if( eType.equals( EventType.PUBLIC_ROLE_REMOVING ) && scheduledTaskData.executionInstantPolicy.equals( TaskSchedulingInstant.SCHEDULE_AT_ROLE_RELEASE) ){
-			    // ok, we have to execute before the role release, so it is
-			    // time to execute the task
-			    scheduledTaskData.result = executableTask.execute();
+			if( (eType.equals( EventType.PUBLIC_ROLE_ADDED ) && scheduledTaskData.executionInstantPolicy.equals( TaskSchedulingInstant.SCHEDULE_AT_ROLE_ASSUMPTION) )	// role assumption
+				||
+				( eType.equals( EventType.PUBLIC_ROLE_REMOVING ) && scheduledTaskData.executionInstantPolicy.equals( TaskSchedulingInstant.SCHEDULE_AT_ROLE_RELEASE) )	// role release
+				){
+			    // execute the task for this event
+			    this.execute(scheduledTaskData);
 			}
 		    }
 		}
 	    }
 	}
 	catch(WCException e ){
-
+	    // ops, the execution of the task has gone bad!
+	    logger.error("Something bad happened while executing a task ", e);
 	}
 
     }
 
+    
+    /**
+     * Executes a specific task starting from its internal data. This is an utility method
+     * that contains the logic to exeucte a single task. It requires that the task data
+     * and its main fields are not null!
+     * @param scheduledTaskData the data of the task to execute
+     */
+    private final void execute( ScheduledTaskData scheduledTaskData ) throws WCException{	
+	assert( scheduledTaskData != null );
+	assert( scheduledTaskData.result != null );
+	assert( scheduledTaskData.toExecute != null );
+	
+	// executed the task and place the result
+	scheduledTaskData.result = scheduledTaskData.toExecute.execute();
+    }
+    
 }
