@@ -19,9 +19,9 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/equinox.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="/sviluppo/java/spring-framework-3.0.1.RELEASE-A/dist/org.springframework.beans-3.0.1.RELEASE-A.jar"/>
-	<classpathentry kind="lib" path="/sviluppo/java/spring-framework-3.0.1.RELEASE-A/dist/org.springframework.core-3.0.1.RELEASE-A.jar"/>
 	<classpathentry kind="lib" path="/sviluppo/java/jars/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="conf"/>
+	<classpathentry kind="lib" path="/sviluppo/java/spring-framework-3.0.4.RELEASE/dist/org.springframework.beans-3.0.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/sviluppo/java/spring-framework-3.0.4.RELEASE/dist/org.springframework.core-3.0.4.RELEASE.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

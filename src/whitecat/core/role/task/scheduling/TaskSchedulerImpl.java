@@ -63,7 +63,7 @@ public class TaskSchedulerImpl implements ITaskScheduler, EventListener {
     /**
      * The logger for this class loader.
      */
-    private static Logger logger = org.apache.log4j.Logger.getLogger(TaskScheduler.class);
+    private static Logger logger = org.apache.log4j.Logger.getLogger(ITaskScheduler.class);
     
     // configure the logger
     static{
