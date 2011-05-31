@@ -12,7 +12,7 @@
  * same idea of BlackCat.
  * 
  *
- * Copyright (C) Luca Ferrari 2008-2010 - cat4hire@users.sourceforge.net
+ * Copyright (C) Luca Ferrari 2008-2011 - cat4hire@users.sourceforge.net
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
