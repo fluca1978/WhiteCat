@@ -11,6 +11,14 @@
  * This new approach exploits a completely different implementation, keeping the
  * same idea of BlackCat.
  * 
+ * See also the following paper for a better introduction to WhiteCat:
+ *    L. Ferrari, and H., Zhu, 
+ *    Autonomous Role Discovery for Collaborating Agents
+ *    Software Practice and Experience
+ *    2011
+ *
+ *
+ * 
  *
  * Copyright (C) Luca Ferrari 2008-2011 - cat4hire@users.sourceforge.net
  *

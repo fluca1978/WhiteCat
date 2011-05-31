@@ -7,12 +7,20 @@ import whitecat.core.WhiteCat;
  * This project represents a new implementation of the so called BlackCat,
  * a project I made during my thesis degree. For more information about such project please see:
  * 
- *   G., L. Ferrari, L. Leonardi,
+ *   L. Ferrari et al.
  *   Injecting Roles in Java Agents Through Run-Time Bytecode Manipulation
  *   IBM Systems Journal, Vol. 44, No. 1, pp.185-208, 2005
  *
  * This new approach exploits a completely different implementation, keeping the
  * same idea of BlackCat.
+ * 
+ * See also the following paper for a better introduction to WhiteCat:
+ *    L. Ferrari, and H., Zhu, 
+ *    Autonomous Role Discovery for Collaborating Agents
+ *    Software Practice and Experience
+ *    2011
+ *
+ *
  * 
  *
  * Copyright (C) Luca Ferrari 2008-2011 - cat4hire@users.sourceforge.net
