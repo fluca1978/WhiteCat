@@ -71,7 +71,7 @@
    	</bean>
 
 
-   	<bean id="IRoleOperation" class="whitecat.core.role.operation.RoleOpeationImpl"
+   	<bean id="IRoleOperation" class="whitecat.core.role.operation.RoleOperationImpl"
    		scope="prototype">
    		<property name="agentProxyHandler" ref="IProxyHandler"></property>
    		<property name="methodForwarderGenerator"
