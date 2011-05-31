@@ -1,3 +1,4 @@
+package whitecat.core.role.operation;
 import whitecat.core.IRoleOperation;
 import whitecat.core.WhiteCat;
 

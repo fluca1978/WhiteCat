@@ -1,3 +1,4 @@
+package whitecat.core.role.operation;
 import whitecat.core.IProxyHandler;
 
 import whitecat.core.*;
@@ -51,7 +52,7 @@ import whitecat.core.role.IRole;
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
  *
  */
-public class RoleOpeationImpl implements IRoleOperation {
+public class RoleOperationImpl implements IRoleOperation {
 
     /**
      * The role injection type of this operation.

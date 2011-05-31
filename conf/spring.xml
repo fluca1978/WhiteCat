@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-<!-- 
+<!--
 	This is the main configuration file for the spring framework as used by WhiteCat.
 	The convention is that each configurable bean should be identified by its class
 	simple name, so that you can get an instance using the bean getClass().getSimpleName().
@@ -14,19 +14,19 @@
 	<bean id="AgentProxy" class="whitecat.core.agents.LocalAgentProxy"
 		scope="prototype">
    	</bean>
-   	
+
    	<!-- the default task scheduler -->
 	<bean id="ITaskScheduler" class="whitecat.core.role.task.scheduling.TaskSchedulerImpl"
 		scope="prototype">
    	</bean>
-   	
-   	
+
+
    	<!-- the default role task implementation -->
 	<bean id="IRoleTask" class="whitecat.core.role.task.MethodTaskExecutor"
 		scope="prototype">
    	</bean>
-   	
-   	
+
+
 
 	<!-- the default proxy handler to use -->
    	<bean id="IProxyHandler"
@@ -38,30 +38,30 @@
    		class="whitecat.core.agents.LocalForwarderMethodGenerator"
    		scope="prototype">
    	</bean>
-   	
-   	
+
+
    	<!-- the default role descriptor builder -->
    	<bean id="IRoleDescriptorBuilder"
    		class="whitecat.core.role.impl.AnnotationRoleDescriptorBuilder"
    		scope="prototype">
    	</bean>
-   	
+
    	<!-- the default proxy storage  -->
    	<bean id="IProxyStorage"
    		class="whitecat.core.ProxyStorageImpl"
    		factory-method="getInstance"
    		scope="singleton">
    	</bean>
-   	
-   	
-   	
+
+
+
    	<!-- the default task execution result  -->
    	<bean id="ITaskExecutionResult"
    		class="whitecat.core.role.task.TaskExecutionResultImpl"
-   		
+
    		scope="prototype">
    	</bean>
-   	
+
 
    	<!-- the default role booster, the only to use, but with initialized parameters -->
    	<bean id="IRoleBooster" class="whitecat.core.RoleBooster"
@@ -69,9 +69,9 @@
 
 		<property name="currentRoleOperation" ref="IRoleOperation"></property>
    	</bean>
-   	
 
-   	<bean id="IRoleOperation" class="RoleOpeationImpl"
+
+   	<bean id="IRoleOperation" class="whitecat.core.role.operation.RoleOpeationImpl"
    		scope="prototype">
    		<property name="agentProxyHandler" ref="IProxyHandler"></property>
    		<property name="methodForwarderGenerator"
@@ -81,7 +81,7 @@
    	<bean id="IRoleRepository"
    		class="whitecat.core.role.impl.RoleRepositoryImpl"
    		scope="singleton">
-   		
+
    		<property name="roleDescriptorBuilder" ref="IRoleDescriptorBuilder"></property>
    	</bean>
 </beans>
