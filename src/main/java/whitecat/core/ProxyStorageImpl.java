@@ -125,7 +125,7 @@ public class ProxyStorageImpl implements IProxyStorage {
 		this.proxyMap.put( id , status);
 	    }
 
-	    assert( status == null );	// should never happen
+	    assert( status != null );	// should never be null
 	
 	}
 	
@@ -158,7 +158,7 @@ public class ProxyStorageImpl implements IProxyStorage {
 
 	    // get the current status
 	    status = this.proxyMap.get( id );
-	    assert( status == null );		// should never happen
+	    assert( status != null );		// should never be null
 
 	}
 	
