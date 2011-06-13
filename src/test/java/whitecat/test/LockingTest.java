@@ -103,7 +103,7 @@ public class LockingTest implements Runnable {
 		if( result != 3*2 )
 			fail("Result incorrect");
 
-		if( (end - start) < sleeping  )
+		if( (end - start) < sleeping *9/10 )
 			fail("Locking time was incorrect " + (end - start) + " " + end + " " + start );
 
 
