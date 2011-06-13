@@ -1,0 +1,156 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+			     http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>WhiteCat</groupId>
+  <artifactId>WhiteCat</artifactId>
+  <packaging>jar</packaging>
+  <version>0.4-STABLE</version>
+  <name>WhiteCat - Making Agent Roles Perceivable</name>
+  <url>http://sourceforge.net/projects/whitecat/</url>
+  
+  
+  <build>
+    <!-- force 1.5 source compilation -->
+    <plugins>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-compiler-plugin</artifactId>
+	<configuration>
+	  <source>1.5</source>
+	  <target>1.5</target>
+	</configuration>
+      </plugin>
+
+<!--
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+        <version>1.3.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>       
+              <goal>test-compile</goal>  
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+-->      
+    </plugins> 
+    
+    <!-- force the tests to have access to the same resource
+	 as the main sources -->
+    <testResources>
+      <testResource>
+	<directory>src/main/resources</directory>
+      </testResource>
+    </testResources>
+    
+
+    <!-- aspectj source folder -->
+<!--    <aspectSourceDirectory>src/main/aspectj</aspectSourceDirectory>
+-->
+    
+  </build>
+  
+  <repositories>
+    <repository>
+      <id>org.sonatype.forge</id>
+      <url>http://repository.sonatype.org/content/groups/forge/</url>
+    </repository>
+  </repositories>
+
+
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <version>1.6.2</version>
+    </dependency>
+    
+
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.2</version>
+      
+    </dependency>
+    
+    <dependency>
+      <groupId>aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    
+    
+    
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.15</version>
+      <exclusions>
+	<exclusion>
+	  <groupId>javax.mail</groupId>
+	  <artifactId>mail</artifactId>
+	</exclusion>
+	<exclusion>
+	  <groupId>javax.jms</groupId>
+	  <artifactId>jms</artifactId>
+	</exclusion>
+	<exclusion>
+	  <groupId>com.sun.jdmk</groupId>
+	  <artifactId>jmxtools</artifactId>
+	</exclusion>
+	<exclusion>
+	  <groupId>com.sun.jmx</groupId>
+	  <artifactId>jmxri</artifactId>
+	</exclusion>
+      </exclusions>
+      
+    </dependency>
+    
+
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>3.0.5.RELEASE</version>
+    </dependency>
+    
+    
+<!--
+    <dependency>
+      <groupId>org.eclipse.equinox</groupId>
+      <artifactId>org.eclipse.osgi</artifactId>
+      <version>3.5.1</version>
+    </dependency>
+-->
+
+    <dependency>
+      <groupId>org.eclipse.equinox</groupId>
+      <artifactId>osgi</artifactId>
+      <version>3.1.1</version>
+    </dependency>
+
+
+
+    
+    <dependency>
+      <groupId>javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <version>3.12.1.GA</version>
+    </dependency>
+
+
+
+  </dependencies>
+ 
+</project>
