@@ -41,87 +41,95 @@ package whitecat.core.agents;
 import java.util.HashMap;
 
 import whitecat.core.IProxyStorage;
-import whitecat.core.ProxyStorageImpl;
 import whitecat.core.WhiteCat;
 import whitecat.core.role.IRole;
 
 /**
  * A local proxy, that is a proxy that handles an agent locally.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class LocalAgentProxy extends AgentProxy {
 
-    /**
-     * The agent this proxy is handling.
-     */
-    private WCAgent myAgent = null;
-    
-    /**
-     * Default constructor, used by the role engine for instantiating
-     * a new proxy after a role manipulation.
-     */
-    public LocalAgentProxy(){
-	super();
-    }
+	/**
+	 * The agent this proxy is handling.
+	 */
+	private WCAgent						myAgent	= null;
 
-    /**
-     * Sets the value of the myAgent field as specified
-     * by the value of myAgent.
-     * @param myAgent the myAgent to set
-     */
-    protected synchronized final void setMyAgent(WCAgent myAgent) {
-        this.myAgent = myAgent;
-    }
+	/**
+	 * A map that stores the references to the public role implementation.
+	 */
+	protected HashMap<String, IRole>	roleMap	= new HashMap<String, IRole>();
 
-    /**
-     * Provides the value of the myAgent field.
-     * @return the myAgent
-     */
-    protected synchronized final WCAgent getMyAgent() {
-        return myAgent;
-    }
-    
-    
-    /**
-     * A map that stores the references to the public role implementation.
-     */
-    protected HashMap<String, IRole> roleMap = new HashMap<String, IRole>();
-    
-    /**
-     * Places a new role implementation into the map of public role implementations.
-     * @param key the key for the role
-     * @param role the role implementation reference
-     * @return true if the role has been added
-     */
-    public final boolean addRoleImplementationReference(String key, IRole role){
-	//check arguments
-	if( key == null || role == null )
-	    return false;
-	
-	this.roleMap.put(key, role);
-	return true;
-    }
+	/**
+	 * Default constructor, used by the role engine for instantiating a new
+	 * proxy after a role manipulation.
+	 */
+	public LocalAgentProxy() {
+		super();
+	}
 
-    /* (non-Javadoc)
-     * @see whitecat.core.agents.AgentProxy#initializeByCopy(whitecat.core.agents.AgentProxy)
-     */
-    @Override
-    public void initializeByCopy(AgentProxy proxy) {
-	super.initializeByCopy(proxy);
-	
-	if( proxy instanceof LocalAgentProxy )
-	    this.roleMap.putAll( ((LocalAgentProxy)proxy).roleMap );
-	    
-    }
+	/**
+	 * Places a new role implementation into the map of public role
+	 * implementations.
+	 * 
+	 * @param key
+	 *            the key for the role
+	 * @param role
+	 *            the role implementation reference
+	 * @return true if the role has been added
+	 */
+	public final boolean addRoleImplementationReference(final String key,
+														final IRole role) {
+		// check arguments
+		if ((key == null) || (role == null))
+			return false;
 
-    @Override
-    public AgentProxy update() {
-	// return the proxy associated with the agent
-	IProxyStorage storage = WhiteCat.getProxyStorage();
-	return storage.getLastUpdatedAgentProxy( this.getAgentProxyID() );
-    }
-    
-    
+		roleMap.put( key, role );
+		return true;
+	}
+
+	/**
+	 * Provides the value of the myAgent field.
+	 * 
+	 * @return the myAgent
+	 */
+	protected synchronized final WCAgent getMyAgent() {
+		return myAgent;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.agents.AgentProxy#initializeByCopy(whitecat.core.agents
+	 * .AgentProxy)
+	 */
+	@Override
+	public void initializeByCopy(final AgentProxy proxy) {
+		super.initializeByCopy( proxy );
+
+		if (proxy instanceof LocalAgentProxy)
+			roleMap.putAll( ((LocalAgentProxy) proxy).roleMap );
+
+	}
+
+	/**
+	 * Sets the value of the myAgent field as specified by the value of myAgent.
+	 * 
+	 * @param myAgent
+	 *            the myAgent to set
+	 */
+	protected synchronized final void setMyAgent(final WCAgent myAgent) {
+		this.myAgent = myAgent;
+	}
+
+	@Override
+	public AgentProxy update() {
+		// return the proxy associated with the agent
+		final IProxyStorage storage = WhiteCat.getProxyStorage();
+		return storage.getLastUpdatedAgentProxy( getAgentProxyID() );
+	}
 
 }

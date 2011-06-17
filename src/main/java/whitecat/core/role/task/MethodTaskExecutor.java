@@ -51,194 +51,190 @@ import whitecat.core.WhiteCat;
 import whitecat.core.role.IRole;
 
 /**
- * A IRoleTask executor that performs a task as a single method call.
- * This executor can be used with Java reflection, passing the method object
- * to use as a task.
+ * A IRoleTask executor that performs a task as a single method call. This
+ * executor can be used with Java reflection, passing the method object to use
+ * as a task.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class MethodTaskExecutor implements IRoleTask, IRole {
 
-    /**
-     * The method to execute as task.
-     */
-    private Method methodToExecute = null;
-    
-    
-    /**
-     * Collection of uniques tasks to execute within this one.
-     */
-    private Set<IRoleTask> subTasks = null;
-    
-    /**
-     * A list of parameters to use when executing this task.
-     */
-    private List parameters = null;
-    
-    /**
-     * The role on which the task will be executed. This must be a running instance
-     * of the role.
-     */
-    private IRole executingRole = null;
-    
-    
-    /**
-     * Default constructor.
-     */
-    public MethodTaskExecutor(){
-	super();
-	this.parameters = new LinkedList();
-	this.subTasks   = new HashSet<IRoleTask>();
-    }
-    
-    
-    
-    /**
-     * Provides the value of the methodToExecute field.
-     * @return the methodToExecute
-     */
-    public synchronized final Method getMethodToExecute() {
-        return this.methodToExecute;
-    }
+	/**
+	 * The method to execute as task.
+	 */
+	private Method			methodToExecute	= null;
 
-    /**
-     * Sets the value of the methodToExecute field as specified
-     * by the value of methodToExecute.
-     * @param methodToExecute the methodToExecute to set
-     */
-    public synchronized final void setMethodToExecute(Method methodToExecute) {
-        this.methodToExecute = methodToExecute;
-    }
-    
-    
+	/**
+	 * Collection of uniques tasks to execute within this one.
+	 */
+	private Set<IRoleTask>	subTasks		= null;
 
-    /**
-     * Provides the value of the executingRole field.
-     * @return the executingRole
-     */
-    public synchronized final IRole getExecutingRole() {
-        return this.executingRole;
-    }
+	/**
+	 * A list of parameters to use when executing this task.
+	 */
+	private List			parameters		= null;
 
+	/**
+	 * The role on which the task will be executed. This must be a running
+	 * instance of the role.
+	 */
+	private IRole			executingRole	= null;
 
+	/**
+	 * Default constructor.
+	 */
+	public MethodTaskExecutor() {
+		super();
+		parameters = new LinkedList();
+		subTasks = new HashSet<IRoleTask>();
+	}
 
-    /**
-     * Sets the value of the executingRole field as specified
-     * by the value of executingRole.
-     * @param executingRole the executingRole to set
-     */
-    public synchronized final void setExecutingRole(IRole executingRole) {
-        this.executingRole = executingRole;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.role.task.IRoleTask#addSubTask(whitecat.core.role.task.
+	 * IRoleTask)
+	 */
+	public synchronized final boolean addSubTask(final IRoleTask toAdd) {
+		if (!subTasks.contains( toAdd )){
+			subTasks.add( toAdd );
+			return true;
+		}else return false;
+	}
 
+	public synchronized final void addTaskParameter(final Object parameter) {
+		parameters.add( parameter );
+	}
 
-
-    /* (non-Javadoc)
-     * @see whitecat.core.role.task.IRoleTask#execute()
-     */
-    public ITaskExecutionResult execute() throws WCException {
-	// check arguments
-	if( this.methodToExecute == null )
-	    throw new WCException("Cannot execute a task without the method to invoke!");
-	
-	
-	try {
-	    // execute the method: if there are not subtasks, do only this,
-	    // otherwise invoke all the subtasks and keep them in an array
-	    if( this.subTasks.size() == 0 ){
-		ITaskExecutionResult resultWrapper = WhiteCat.getTaskExecutionResult();
-		if( this.parameters.isEmpty() )
-		    resultWrapper.setResult( this.methodToExecute.invoke( this.executingRole ) );
-		else
-		    resultWrapper.setResult( this.methodToExecute.invoke( this.executingRole, this.parameters.toArray() ) );
-		
-		return resultWrapper;
-	    }
-	    else{
-		Object[] returns = new Object[ this.subTasks.size() + 1 ];
-		returns[0] = this.methodToExecute.invoke( this.parameters.toArray() );
-		
-		Iterator<IRoleTask> iter = this.subTasks.iterator();
-		int i = 1;
-		while( iter.hasNext() ){
-		    returns[i] = iter.next().execute();
-		    i++;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof MethodTaskExecutor))
+			return false;
+		else{
+			final MethodTaskExecutor mte = (MethodTaskExecutor) obj;
+			return (mte.methodToExecute.equals( methodToExecute ));
 		}
-		    
-		
-		// all done
-		ITaskExecutionResult resultWrapper = WhiteCat.getTaskExecutionResult();
-		resultWrapper.setResult( returns );
-		return resultWrapper;
-	    }
-	} catch (IllegalArgumentException e) {
-	    throw new WCException("Wrong number of parameters or type!");
-	} catch (IllegalAccessException e) {
-	    throw new WCException("Cannot invoke the method!");
-	} catch (InvocationTargetException e) {
-	    throw new WCException("Cannot invoke the method on the target !");
+
 	}
-    }
 
-    /* (non-Javadoc)
-     * @see whitecat.core.role.task.IRoleTask#addSubTask(whitecat.core.role.task.IRoleTask)
-     */
-    public synchronized final boolean addSubTask(IRoleTask toAdd) {
-	if( ! this.subTasks.contains(toAdd) ){
-	    this.subTasks.add(toAdd);
-	    return true;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see whitecat.core.role.task.IRoleTask#execute()
+	 */
+	public ITaskExecutionResult execute() throws WCException {
+		// check arguments
+		if (methodToExecute == null)
+			throw new WCException(
+					"Cannot execute a task without the method to invoke!" );
+
+		try{
+			// execute the method: if there are not subtasks, do only this,
+			// otherwise invoke all the subtasks and keep them in an array
+			if (subTasks.size() == 0){
+				final ITaskExecutionResult resultWrapper = WhiteCat
+						.getTaskExecutionResult();
+				if (parameters.isEmpty())
+					resultWrapper.setResult( methodToExecute
+							.invoke( executingRole ) );
+				else resultWrapper.setResult( methodToExecute.invoke(
+						executingRole,
+						parameters.toArray() ) );
+
+				return resultWrapper;
+			}else{
+				final Object[] returns = new Object[subTasks.size() + 1];
+				returns[0] = methodToExecute.invoke( parameters.toArray() );
+
+				final Iterator<IRoleTask> iter = subTasks.iterator();
+				int i = 1;
+				while (iter.hasNext()){
+					returns[i] = iter.next().execute();
+					i++;
+				}
+
+				// all done
+				final ITaskExecutionResult resultWrapper = WhiteCat
+						.getTaskExecutionResult();
+				resultWrapper.setResult( returns );
+				return resultWrapper;
+			}
+		}catch (final IllegalArgumentException e){
+			throw new WCException( "Wrong number of parameters or type!" );
+		}catch (final IllegalAccessException e){
+			throw new WCException( "Cannot invoke the method!" );
+		}catch (final InvocationTargetException e){
+			throw new WCException( "Cannot invoke the method on the target !" );
+		}
 	}
-	else
-	    return false;
-    }
 
-    public synchronized final void addTaskParameter(Object parameter) {
-	this.parameters.add( parameter );
-    }
-
-    public synchronized final void resetParameters() {
-	this.parameters.clear();
-    }
-
-
-
-    public synchronized boolean removeSubTask(IRoleTask toRemove) {
-	if( this.subTasks.contains(toRemove) ){
-	    this.subTasks.remove(toRemove);
-	    return true;
+	/**
+	 * Provides the value of the executingRole field.
+	 * 
+	 * @return the executingRole
+	 */
+	public synchronized final IRole getExecutingRole() {
+		return executingRole;
 	}
-	else
-	    return false;
-	    
-    }
 
-
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-	if( !(obj instanceof MethodTaskExecutor) )
-	    return false;
-	else{
-	    MethodTaskExecutor mte = (MethodTaskExecutor) obj;
-	    return (mte.methodToExecute.equals(methodToExecute));
+	/**
+	 * Provides the value of the methodToExecute field.
+	 * 
+	 * @return the methodToExecute
+	 */
+	public synchronized final Method getMethodToExecute() {
+		return methodToExecute;
 	}
-	    
-    }
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return methodToExecute.hashCode();
+	}
 
+	public synchronized boolean removeSubTask(final IRoleTask toRemove) {
+		if (subTasks.contains( toRemove )){
+			subTasks.remove( toRemove );
+			return true;
+		}else return false;
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-	return methodToExecute.hashCode();
-    }
+	}
 
-    
-    
-    
+	public synchronized final void resetParameters() {
+		parameters.clear();
+	}
+
+	/**
+	 * Sets the value of the executingRole field as specified by the value of
+	 * executingRole.
+	 * 
+	 * @param executingRole
+	 *            the executingRole to set
+	 */
+	public synchronized final void setExecutingRole(final IRole executingRole) {
+		this.executingRole = executingRole;
+	}
+
+	/**
+	 * Sets the value of the methodToExecute field as specified by the value of
+	 * methodToExecute.
+	 * 
+	 * @param methodToExecute
+	 *            the methodToExecute to set
+	 */
+	public synchronized final void setMethodToExecute(	final Method methodToExecute) {
+		this.methodToExecute = methodToExecute;
+	}
+
 }

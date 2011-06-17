@@ -40,8 +40,9 @@ package whitecat.example;
 
 /**
  * An interface just to make the role public.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public interface AnnotatedPublicRoleInterface {
 

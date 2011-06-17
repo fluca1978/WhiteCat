@@ -39,14 +39,17 @@
 package whitecat.core.role.task.scheduling;
 
 /**
- * Defines when a task must be scheduled for execution.
- * The time for the execution depends on when a role is assumed or released.
+ * Defines when a task must be scheduled for execution. The time for the
+ * execution depends on when a role is assumed or released.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public enum TaskSchedulingInstant {
-    
-    SCHEDULE_AT_ROLE_ASSUMPTION,	// the task must be executed when the role is assumed
-    SCHEDULE_AT_ROLE_RELEASE		// the task must be executed when the role is released
+
+	SCHEDULE_AT_ROLE_ASSUMPTION, // the task must be executed when the role is
+									// assumed
+	SCHEDULE_AT_ROLE_RELEASE
+	// the task must be executed when the role is released
 
 }

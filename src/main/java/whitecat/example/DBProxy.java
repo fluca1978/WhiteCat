@@ -41,115 +41,120 @@ package whitecat.example;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.LocalAgentProxy;
 import whitecat.core.annotations.Lock;
 
 /**
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @ProxyAnnotation()
 public class DBProxy extends LocalAgentProxy {
-    
-    private int property1 = 10;
-    private String property2 = "AGENTPROXY_NEW";
-    private DBAgent myAgent = null;
-    
-    
-    public DBProxy(DBAgent agent){
-	super();
-	this.myAgent = agent;
-    }
-    
-    public DBProxy(){
-	this(null);
-    }
-    
 
-    /**
-     * Sets the value of the myAgent field as specified
-     * by the value of myAgent.
-     * @param myAgent the myAgent to set
-     */
-    public synchronized final void setMyAgent(DBAgent myAgent) {
-        this.myAgent = myAgent;
-    }
+	private int		property1	= 10;
+	private String	property2	= "AGENTPROXY_NEW";
+	private DBAgent	myAgent		= null;
 
-    /**
-     * Provides the value of the property1 field.
-     * @return the property1
-     */
-    public synchronized final int getProperty1() {
-        return property1;
-    }
+	public DBProxy() {
+		this( null );
+	}
 
-    /**
-     * Sets the value of the property1 field as specified
-     * by the value of property1.
-     * @param property1 the property1 to set
-     */
-    public synchronized final void setProperty1(int property1) {
-        this.property1 = property1;
-    }
+	public DBProxy(final DBAgent agent) {
+		super();
+		myAgent = agent;
+	}
 
-    /**
-     * Provides the value of the property2 field.
-     * @return the property2
-     */
-    public synchronized final String getProperty2() {
-        return property2;
-    }
+	/**
+	 * Dumps the content of the properties.
+	 */
+	public void dump() {
+		System.out.println( "AgentProxy " + this.getClass() + " hashcode "
+				+ this.getClass().hashCode() );
+		System.out.println( "Property 1 = " + property1 );
+		System.out.println( "Property 2 = " + property2 );
+		System.out.println( "Agent owned = " + myAgent );
 
-    /**
-     * Sets the value of the property2 field as specified
-     * by the value of property2.
-     * @param property2 the property2 to set
-     */
-    public synchronized final void setProperty2(String property2) {
-        this.property2 = property2;
-    }
+		System.out.println( "Method list: " );
+		for (final Method m : this.getClass().getMethods())
+			System.out.println( "\tname " + m.getName() + "\tmodifier "
+					+ m.getModifiers() );
 
-    /**
-     * Dumps the content of the properties.
-     */
-    public void dump(){
-	System.out.println("AgentProxy " + this.getClass() + " hashcode " + this.getClass().hashCode());
-	System.out.println("Property 1 = " + this.property1);
-	System.out.println("Property 2 = " + this.property2);
-	System.out.println("Agent owned = " + this.myAgent);
-	
-	System.out.println("Method list: ");
-	for( Method m : this.getClass().getMethods() )
-	    System.out.println("\tname " + m.getName() + "\tmodifier " + m.getModifiers());
-	
-	System.out.println("Annotation List:");
-	for( Annotation a : this.getClass().getAnnotations() )
-	    System.out.println("\tname " + a + " class " + a.getClass() );
-	
-	
-    }
-    
-    
-    /**
-     * An example of lockable method: the method cannot be called while a manipulation is active.
-     * @param value
-     * @return
-     */
-    @Lock( blocking = "true")
-    public int lockableMethod(int value){
-	return value * 2;
-    }
+		System.out.println( "Annotation List:" );
+		for (final Annotation a : this.getClass().getAnnotations())
+			System.out.println( "\tname " + a + " class " + a.getClass() );
 
-    /* (non-Javadoc)
-     * @see whitecat.core.agents.AgentProxy#update()
-     */
-/*    public AgentProxy update() {
-	DBProxy proxy = new DBProxy(this.myAgent);
-	proxy.property1 = this.property1;
-	proxy.property2 = this.property2;
-	proxy.myAgent = this.myAgent;
-	return proxy;
-    }
-*/
+	}
+
+	/**
+	 * Provides the value of the property1 field.
+	 * 
+	 * @return the property1
+	 */
+	public synchronized final int getProperty1() {
+		return property1;
+	}
+
+	/**
+	 * Provides the value of the property2 field.
+	 * 
+	 * @return the property2
+	 */
+	public synchronized final String getProperty2() {
+		return property2;
+	}
+
+	/**
+	 * An example of lockable method: the method cannot be called while a
+	 * manipulation is active.
+	 * 
+	 * @param value
+	 * @return
+	 */
+	@Lock(blocking = "true")
+	public int lockableMethod(final int value) {
+		return value * 2;
+	}
+
+	/**
+	 * Sets the value of the myAgent field as specified by the value of myAgent.
+	 * 
+	 * @param myAgent
+	 *            the myAgent to set
+	 */
+	public synchronized final void setMyAgent(final DBAgent myAgent) {
+		this.myAgent = myAgent;
+	}
+
+	/**
+	 * Sets the value of the property1 field as specified by the value of
+	 * property1.
+	 * 
+	 * @param property1
+	 *            the property1 to set
+	 */
+	public synchronized final void setProperty1(final int property1) {
+		this.property1 = property1;
+	}
+
+	/**
+	 * Sets the value of the property2 field as specified by the value of
+	 * property2.
+	 * 
+	 * @param property2
+	 *            the property2 to set
+	 */
+	public synchronized final void setProperty2(final String property2) {
+		this.property2 = property2;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see whitecat.core.agents.AgentProxy#update()
+	 */
+	/*
+	 * public AgentProxy update() { DBProxy proxy = new DBProxy(this.myAgent);
+	 * proxy.property1 = this.property1; proxy.property2 = this.property2;
+	 * proxy.myAgent = this.myAgent; return proxy; }
+	 */
 }

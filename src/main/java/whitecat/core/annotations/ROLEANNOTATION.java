@@ -45,8 +45,9 @@ import java.lang.annotation.Target;
 
 /**
  * An annotation used to mark a class as having a role.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

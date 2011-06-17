@@ -40,34 +40,35 @@ package whitecat.core;
 
 /**
  * All the supported types of role injection.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public enum RoleInjectionType {
 
-    /**
-     * Role addition: the role public interface must be added to the proxy.
-     */
-    ROLE_PUBLIC_INTERFACE_ADDITION_TO_PROXY,	
-    
-    /**
-     * Role removal: the role public interface must be removed from the proxy.
-     */
-    ROLE_PUBLIC_INTERFACE_REMOVAL_FROM_PROXY,
-    
-    /**
-     * Role addition: the role annotation must be added to the proxy.
-     */
-    ROLE_ANNOTATION_ADDITION_TO_PROXY,
-    
-    /**
-     * Role removal: the role annotation must be removed from the proxy.
-     */
-    ROLE_ANNOTATION_REMOVAL_FROM_PROXY,
-    
-    /**
-     * Nothing to do.
-     */
-    NONE
-    
+	/**
+	 * Role addition: the role public interface must be added to the proxy.
+	 */
+	ROLE_PUBLIC_INTERFACE_ADDITION_TO_PROXY,
+
+	/**
+	 * Role removal: the role public interface must be removed from the proxy.
+	 */
+	ROLE_PUBLIC_INTERFACE_REMOVAL_FROM_PROXY,
+
+	/**
+	 * Role addition: the role annotation must be added to the proxy.
+	 */
+	ROLE_ANNOTATION_ADDITION_TO_PROXY,
+
+	/**
+	 * Role removal: the role annotation must be removed from the proxy.
+	 */
+	ROLE_ANNOTATION_REMOVAL_FROM_PROXY,
+
+	/**
+	 * Nothing to do.
+	 */
+	NONE
+
 }

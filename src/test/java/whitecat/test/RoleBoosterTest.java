@@ -38,122 +38,110 @@
  */
 package whitecat.test;
 
-import static org.junit.Assert.*;
-
-
-import java.lang.annotation.Annotation;
-import java.util.Random;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import whitecat.core.IProxyHandler;
-import whitecat.core.RoleBooster;
+import whitecat.core.IRoleBooster;
 import whitecat.core.WCException;
 import whitecat.core.WhiteCat;
 import whitecat.core.agents.AgentProxy;
-import whitecat.core.agents.ProxyHandlerFactory;
 import whitecat.core.agents.WCAgent;
-import whitecat.core.exceptions.WCProxyException;
 import whitecat.core.role.IRole;
 import whitecat.example.DBAgent;
 import whitecat.example.DBProxy;
 import whitecat.example.DatabaseAdministrator;
-import whitecat.example.DatabaseUser;
 import whitecat.example.IDatabaseAdministrator;
 import whitecat.example.LoggerRole;
-import whitecat.core.*;
 
 /**
  * A test to check the working of the Role Booster.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class RoleBoosterTest {
 
-    /**
-     * The role booster under test.
-     */
-    private IRoleBooster booster = null;
-    
-    
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-	//this.booster = new RoleBooster( this.getClass().getClassLoader() );
-	this.booster = WhiteCat.getRoleBooster();
-    }
+	/**
+	 * The role booster under test.
+	 */
+	private IRoleBooster	booster	= null;
 
-    @Test
-    public void testPublicRoleInjection() throws WCException {
-	// an agent proxy now should not have any public role interface
-	AgentProxy proxy = new DBProxy();
-	if( this.booster.hasPublicRoleInterface(proxy) )
-	    fail("A new created proxy should not have any public role interface!");
-	
-	// now inject a role
-	WCAgent agent = new DBAgent();
-	DatabaseAdministrator dba = new DatabaseAdministrator();
-	proxy = (DBProxy) this.booster.injectPublicRole( agent, proxy, dba );
-	
-	// the proxy must implement the role interface
-	if( !(proxy instanceof IDatabaseAdministrator) )
-	    fail("The proxy has not the idatabase administrator interface!");
-	
-	// the proxy must have the original class as parent class
-	if( !( proxy.getClass().getSuperclass().equals( DBProxy.class) ) )
-	    fail("The proxy does not have the original proxy as superclass!");
-	
-	// remove the role
-	this.booster = WhiteCat.getRoleBooster();
-	proxy = this.booster.removeUntilRole(agent, proxy, dba);
-	
-	// the proxy now should not have the role, so it should not implement the interface
-	if( (proxy instanceof IDatabaseAdministrator) )
-	    fail("The proxy has still the public role!");
-	
-	
-	// the proxy class now should be the original one
-	if( ! proxy.getClass().equals( DBProxy.class ) )
-	    fail("The agent proxy without the role is not the same as we start with!");
-	
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		// this.booster = new RoleBooster( this.getClass().getClassLoader() );
+		booster = WhiteCat.getRoleBooster();
+	}
 
-    
-    @Test
-    public void testVisibleRoleInjection() throws WCException {
-	// create a new proxy and a new booster
-	AgentProxy proxy = new DBProxy();
-	WCAgent agent = new DBAgent();
-	this.booster = WhiteCat.getRoleBooster();
-	
-	// the proxy now should not have any role property
-	if( this.booster.hasPublicRoleAnnotation(proxy) || this.booster.hasPublicRoleInterface(proxy) )
-	    fail("Unmanipulated proxy with interface/annotation for a role!");
-	
-	// create a visible role
-	IRole visibleRole = new LoggerRole();
-	
-	// inject the visible role
-	proxy = this.booster.injectVisibleRole( agent, proxy, visibleRole );
-	
+	@Test
+	public void testPublicRoleInjection() throws WCException {
+		// an agent proxy now should not have any public role interface
+		AgentProxy proxy = new DBProxy();
+		if (booster.hasPublicRoleInterface( proxy ))
+			fail( "A new created proxy should not have any public role interface!" );
 
-	
-	// 1) the new proxy must have the original class as parent
-	if( proxy.getClass().equals( DBProxy.class) || (! proxy.getClass().getSuperclass().equals( DBProxy.class ) ) )
-	    fail("The proxy with the public role has not the right inheritance chain!");
-	
-	// 2) the new proxy should have a role annotation but not a public one
-	if(  this.booster.hasPublicRoleAnnotation(proxy) )
-	    fail("The proxy with the visible role has a public role annotation!");
-	
-	if( ! this.booster.hasRoleAnnotation(proxy) )
-	    fail("The proxy does not have a role annotation!" );
-	
-    }
-    
-    
-  
+		// now inject a role
+		final WCAgent agent = new DBAgent();
+		final DatabaseAdministrator dba = new DatabaseAdministrator();
+		proxy = booster.injectPublicRole( agent, proxy, dba );
+
+		// the proxy must implement the role interface
+		if (!(proxy instanceof IDatabaseAdministrator))
+			fail( "The proxy has not the idatabase administrator interface!" );
+
+		// the proxy must have the original class as parent class
+		if (!(proxy.getClass().getSuperclass().equals( DBProxy.class )))
+			fail( "The proxy does not have the original proxy as superclass!" );
+
+		// remove the role
+		booster = WhiteCat.getRoleBooster();
+		proxy = booster.removeUntilRole( agent, proxy, dba );
+
+		// the proxy now should not have the role, so it should not implement
+		// the interface
+		if ((proxy instanceof IDatabaseAdministrator))
+			fail( "The proxy has still the public role!" );
+
+		// the proxy class now should be the original one
+		if (!proxy.getClass().equals( DBProxy.class ))
+			fail( "The agent proxy without the role is not the same as we start with!" );
+
+	}
+
+	@Test
+	public void testVisibleRoleInjection() throws WCException {
+		// create a new proxy and a new booster
+		AgentProxy proxy = new DBProxy();
+		final WCAgent agent = new DBAgent();
+		booster = WhiteCat.getRoleBooster();
+
+		// the proxy now should not have any role property
+		if (booster.hasPublicRoleAnnotation( proxy )
+				|| booster.hasPublicRoleInterface( proxy ))
+			fail( "Unmanipulated proxy with interface/annotation for a role!" );
+
+		// create a visible role
+		final IRole visibleRole = new LoggerRole();
+
+		// inject the visible role
+		proxy = booster.injectVisibleRole( agent, proxy, visibleRole );
+
+		// 1) the new proxy must have the original class as parent
+		if (proxy.getClass().equals( DBProxy.class )
+				|| (!proxy.getClass().getSuperclass().equals( DBProxy.class )))
+			fail( "The proxy with the public role has not the right inheritance chain!" );
+
+		// 2) the new proxy should have a role annotation but not a public one
+		if (booster.hasPublicRoleAnnotation( proxy ))
+			fail( "The proxy with the visible role has a public role annotation!" );
+
+		if (!booster.hasRoleAnnotation( proxy ))
+			fail( "The proxy does not have a role annotation!" );
+
+	}
+
 }

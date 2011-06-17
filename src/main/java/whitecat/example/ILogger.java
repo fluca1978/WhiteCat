@@ -43,16 +43,19 @@ import whitecat.core.role.IPublicRole;
 
 /**
  * The public interface of a logger role.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @ROLE()
 public interface ILogger extends IPublicRole {
 
-    /**
-     * Logs a message.
-     * @param msg the message to log
-     * @return true if the message has been logged, false otherwise
-     */
-    public boolean log(String msg);
+	/**
+	 * Logs a message.
+	 * 
+	 * @param msg
+	 *            the message to log
+	 * @return true if the message has been logged, false otherwise
+	 */
+	public boolean log(String msg);
 }

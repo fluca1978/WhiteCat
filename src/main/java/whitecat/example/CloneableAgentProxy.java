@@ -47,93 +47,101 @@ import whitecat.core.agents.WCAgent;
 
 /**
  * An example of a cloneable agent proxy.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class CloneableAgentProxy extends LocalAgentProxy implements
-	IClonableAgentProxy {
+		IClonableAgentProxy {
 
-    // the extended state of the agent proxy
-    private String stringVariable  = null;
-    private int    integerVariable = 0;
-    private int[]  integerArray    = null;
-    
-    public CloneableAgentProxy( WCAgent agent ){
-	super();
-	super.setMyAgent(agent);
-	
-	Random ran = new Random();
-	int random = ran.nextInt();
-	while( random < 0 )
-	    random += 1000;
-	while( random > 10000 )
-	    random /= 100;
-	
-	this.stringVariable = "StringVariable " + random;
-	this.integerVariable = random;
-	
-	this.integerArray = new int[ this.integerVariable ];
-	for( int i = 0; i < this.integerArray.length; i++ )
-	    this.integerArray[i] = ran.nextInt(); 
-	
-    }
-    
-    
-    /* (non-Javadoc)
-     * @see whitecat.core.agents.AgentProxy#update()
-     */
-    @Override
-    public AgentProxy update() {
-	// TODO Auto-generated method stub
-	return null;
-    }
+	// the extended state of the agent proxy
+	private String	stringVariable	= null;
+	private int		integerVariable	= 0;
+	private int[]	integerArray	= null;
 
-    /* (non-Javadoc)
-     * @see whitecat.core.agents.IClonableAgentProxy#cloneAgentProxyState(whitecat.core.agents.IClonableAgentProxy)
-     */
-    public void cloneAgentProxyState(IClonableAgentProxy sourceAgentProxy) {
-	// check if the agent proxy is of my same type!
-	if( !(sourceAgentProxy instanceof CloneableAgentProxy) )
-	    return;
-	
-	CloneableAgentProxy sourceProxy = (CloneableAgentProxy) sourceAgentProxy;
-	
-	// copy each single variable of the extended state
-	this.stringVariable = new String( sourceProxy.stringVariable );
-	this.integerVariable = sourceProxy.integerVariable;
-	this.integerArray = new int[ sourceProxy.integerArray.length ];
-	System.arraycopy( sourceProxy.integerArray, 0, this.integerArray, 0, sourceProxy.integerArray.length );
-	
+	public CloneableAgentProxy(final WCAgent agent) {
+		super();
+		super.setMyAgent( agent );
 
-    }
+		final Random ran = new Random();
+		int random = ran.nextInt();
+		while (random < 0)
+			random += 1000;
+		while (random > 10000)
+			random /= 100;
 
+		stringVariable = "StringVariable " + random;
+		integerVariable = random;
 
-    /**
-     * Provides the value of the stringVariable field.
-     * @return the stringVariable
-     */
-    public synchronized final String getStringVariable() {
-        return this.stringVariable;
-    }
+		integerArray = new int[integerVariable];
+		for (int i = 0; i < integerArray.length; i++)
+			integerArray[i] = ran.nextInt();
 
+	}
 
-    /**
-     * Provides the value of the integerVariable field.
-     * @return the integerVariable
-     */
-    public synchronized final int getIntegerVariable() {
-        return this.integerVariable;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.agents.IClonableAgentProxy#cloneAgentProxyState(whitecat
+	 * .core.agents.IClonableAgentProxy)
+	 */
+	public void cloneAgentProxyState(final IClonableAgentProxy sourceAgentProxy) {
+		// check if the agent proxy is of my same type!
+		if (!(sourceAgentProxy instanceof CloneableAgentProxy))
+			return;
 
+		final CloneableAgentProxy sourceProxy = (CloneableAgentProxy) sourceAgentProxy;
 
-    /**
-     * Provides the value of the integerArray field.
-     * @return the integerArray
-     */
-    public synchronized final int[] getIntegerArray() {
-        return this.integerArray;
-    }
-    
-    
+		// copy each single variable of the extended state
+		stringVariable = new String( sourceProxy.stringVariable );
+		integerVariable = sourceProxy.integerVariable;
+		integerArray = new int[sourceProxy.integerArray.length];
+		System.arraycopy(
+				sourceProxy.integerArray,
+				0,
+				integerArray,
+				0,
+				sourceProxy.integerArray.length );
+
+	}
+
+	/**
+	 * Provides the value of the integerArray field.
+	 * 
+	 * @return the integerArray
+	 */
+	public synchronized final int[] getIntegerArray() {
+		return integerArray;
+	}
+
+	/**
+	 * Provides the value of the integerVariable field.
+	 * 
+	 * @return the integerVariable
+	 */
+	public synchronized final int getIntegerVariable() {
+		return integerVariable;
+	}
+
+	/**
+	 * Provides the value of the stringVariable field.
+	 * 
+	 * @return the stringVariable
+	 */
+	public synchronized final String getStringVariable() {
+		return stringVariable;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see whitecat.core.agents.AgentProxy#update()
+	 */
+	@Override
+	public AgentProxy update() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

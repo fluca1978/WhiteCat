@@ -43,35 +43,38 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * A descriptor for an event, defined with an annotation.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AnnotationEventDescriptor {
 
-    /**
-     * The name of the event descriptor
-     * @return the name of the event descriptor
-     */
-    public String name() default "";
-    
-    
-    /**
-     * The aim of the event.
-     * @return the aim of th event
-     */
-    public String aim() default "";
-    
-    
-    /**
-     * Is the event incoming?
-     * @return true if the event is incoming
-     */
-    public boolean receiving() default false;
-    
-    /**
-     * Is the event outgoing?
-     * @return true if the event is issued
-     */
-    public boolean issuing() default false;
+	/**
+	 * The aim of the event.
+	 * 
+	 * @return the aim of th event
+	 */
+	public String aim() default "";
+
+	/**
+	 * Is the event outgoing?
+	 * 
+	 * @return true if the event is issued
+	 */
+	public boolean issuing() default false;
+
+	/**
+	 * The name of the event descriptor
+	 * 
+	 * @return the name of the event descriptor
+	 */
+	public String name() default "";
+
+	/**
+	 * Is the event incoming?
+	 * 
+	 * @return true if the event is incoming
+	 */
+	public boolean receiving() default false;
 }

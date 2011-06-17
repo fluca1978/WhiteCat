@@ -44,25 +44,28 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation must be applied to any mutator method of a proxy
- * in order to avoid the execution of the method while the proxy undergoes
- * role manipulation.
+ * This annotation must be applied to any mutator method of a proxy in order to
+ * avoid the execution of the method while the proxy undergoes role
+ * manipulation.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Lock {
 
-    /**
-     * Should be the method call blocking? 
-     * @return true if the method call is blocking
-     */
-    public String blocking() default "false";
-    
-    /**
-     * The max time to wait before unlock the method call.
-     * @return the max time to wait in milliseconds
-     */
-    public long maxTimeToWait() default 0;
+	/**
+	 * Should be the method call blocking?
+	 * 
+	 * @return true if the method call is blocking
+	 */
+	public String blocking() default "false";
+
+	/**
+	 * The max time to wait before unlock the method call.
+	 * 
+	 * @return the max time to wait in milliseconds
+	 */
+	public long maxTimeToWait() default 0;
 }

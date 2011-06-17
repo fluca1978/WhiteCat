@@ -45,13 +45,14 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation is the base for all the role-tied annotation. This annotation
- * is used to indicate a type, applied to a class, that specifies that the class is a role and
- * should thus be used accordingly.
- *
- * Each component of the annotation roles should be annotated thru this annotation itself. 
+ * is used to indicate a type, applied to a class, that specifies that the class
+ * is a role and should thus be used accordingly.
+ * 
+ * Each component of the annotation roles should be annotated thru this
+ * annotation itself.
  * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

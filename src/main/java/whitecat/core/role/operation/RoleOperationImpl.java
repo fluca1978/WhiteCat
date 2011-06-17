@@ -1,7 +1,10 @@
 package whitecat.core.role.operation;
-import whitecat.core.IProxyHandler;
 
-import whitecat.core.*;
+import whitecat.core.IProxyHandler;
+import whitecat.core.IRoleOperation;
+import whitecat.core.RoleInjectionType;
+import whitecat.core.RoleOperationStatus;
+import whitecat.core.WCException;
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.IMethodForwarderGenerator;
 import whitecat.core.role.IRole;
@@ -46,226 +49,239 @@ import whitecat.core.role.IRole;
  */
 
 /**
- * The default implementation of a role operation.
- * The role booster uses this class as an abstraction over the configuration to
- * complete a role operation.
+ * The default implementation of a role operation. The role booster uses this
+ * class as an abstraction over the configuration to complete a role operation.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class RoleOperationImpl implements IRoleOperation {
 
-    /**
-     * The role injection type of this operation.
-     */
-    private RoleInjectionType injectionType = null;
-    
-    
-    /**
-     * The method forwarder generator.
-     */
-    private IMethodForwarderGenerator methodForwarderGenerator = null;
-    
-    /**
-     * The proxy handler to use for this role operation.
-     */
-    private IProxyHandler<? extends AgentProxy> proxyHandler = null;
-    
-    /**
-     * The role operation status. By default it is operation enqued, that is not started yet.
-     */
-    private RoleOperationStatus operationStatus = RoleOperationStatus.ROLE_OPERATION_QUEUED;
+	/**
+	 * The role injection type of this operation.
+	 */
+	private RoleInjectionType					injectionType				= null;
 
-    /**
-     * The agent proxy that is going to be manipulated.
-     */
-    private AgentProxy agentProxy = null;
-    
-    /**
-     * The public role class to add to the agent proxy.
-     */
-    private Class publicRoleClass = null;
-    
-    /**
-     * The public role interface to add to the agent proxy.
-     */
-    private Class publicRoleInterface = null;
-    
-    /**
-     * The operation exception in the case the operation has been unsuccesful.
-     */
-    private WCException operationException = null;
-    
-    
-    /**
-     * A string used for method forwarders to access implementation details.
-     */
-    private String methodAccessKey = null;
-    
-    
-    /**
-     * The role this operation is tied to.
-     */
-    private IRole role = null;
-    
-    
-    /**
-     * The role annotation class to use.
-     */
-    private Class annotationClass = null;
-    
-    
-    /* (non-Javadoc)
-     * @see whitecat.core.IRoleOperation#getMethodForwarderGenerator()
-     */
-    public IMethodForwarderGenerator getMethodForwarderGenerator() {
-	return this.methodForwarderGenerator;
-    }
+	/**
+	 * The method forwarder generator.
+	 */
+	private IMethodForwarderGenerator			methodForwarderGenerator	= null;
 
-    /* (non-Javadoc)
-     * @see whitecat.core.IRoleOperation#getRoleInjectionType()
-     */
-    public RoleInjectionType getRoleInjectionType() {
-	return this.injectionType;
-    }
+	/**
+	 * The proxy handler to use for this role operation.
+	 */
+	private IProxyHandler<? extends AgentProxy>	proxyHandler				= null;
 
-    /* (non-Javadoc)
-     * @see whitecat.core.IRoleOperation#setMethodForwarderGenerator(whitecat.core.agents.IMethodForwarderGenerator)
-     */
-    public void setMethodForwarderGenerator(IMethodForwarderGenerator mfg) {
-	this.methodForwarderGenerator = mfg;
-    }
+	/**
+	 * The role operation status. By default it is operation enqued, that is not
+	 * started yet.
+	 */
+	private RoleOperationStatus					operationStatus				= RoleOperationStatus.ROLE_OPERATION_QUEUED;
 
-    /* (non-Javadoc)
-     * @see whitecat.core.IRoleOperation#setRoleInjectionType(whitecat.core.RoleInjectionType)
-     */
-    public void setRoleInjectionType(RoleInjectionType type) {
-	this.injectionType = type;
-    }
+	/**
+	 * The agent proxy that is going to be manipulated.
+	 */
+	private AgentProxy							agentProxy					= null;
 
-    public IProxyHandler<? extends AgentProxy> getAgentProxyHandler() {
-	return this.proxyHandler;
-    }
+	/**
+	 * The public role class to add to the agent proxy.
+	 */
+	private Class								publicRoleClass				= null;
 
-    public void setAgentProxyHandler(IProxyHandler<? extends AgentProxy> handler) {
-	this.proxyHandler = handler;
-    }
+	/**
+	 * The public role interface to add to the agent proxy.
+	 */
+	private Class								publicRoleInterface			= null;
 
-    /**
-     * Provides the value of the operationStatus field.
-     * @return the operationStatus
-     */
-    public synchronized final RoleOperationStatus getOperationStatus() {
-        return this.operationStatus;
-    }
+	/**
+	 * The operation exception in the case the operation has been unsuccesful.
+	 */
+	private WCException							operationException			= null;
 
-    /**
-     * Sets the value of the operationStatus field as specified
-     * by the value of operationStatus.
-     * @param operationStatus the operationStatus to set
-     */
-    public synchronized final void setOperationStatus(
-    	RoleOperationStatus operationStatus) {
-        this.operationStatus = operationStatus;
-    }
+	/**
+	 * A string used for method forwarders to access implementation details.
+	 */
+	private String								methodAccessKey				= null;
 
-    /**
-     * Provides the value of the agentProxy field.
-     * @return the agentProxy
-     */
-    public synchronized final AgentProxy getAgentProxy() {
-        return this.agentProxy;
-    }
+	/**
+	 * The role this operation is tied to.
+	 */
+	private IRole								role						= null;
 
-    /**
-     * Sets the value of the agentProxy field as specified
-     * by the value of agentProxy.
-     * @param agentProxy the agentProxy to set
-     */
-    public synchronized final void setAgentProxy(AgentProxy agentProxy) {
-        this.agentProxy = agentProxy;
-    }
+	/**
+	 * The role annotation class to use.
+	 */
+	private Class								annotationClass				= null;
 
-    /**
-     * Provides the value of the publicRoleClass field.
-     * @return the publicRoleClass
-     */
-    public synchronized final Class getPublicRoleClass() {
-        return this.publicRoleClass;
-    }
+	/**
+	 * Provides the value of the agentProxy field.
+	 * 
+	 * @return the agentProxy
+	 */
+	public synchronized final AgentProxy getAgentProxy() {
+		return agentProxy;
+	}
 
-    /**
-     * Sets the value of the publicRoleClass field as specified
-     * by the value of publicRoleClass.
-     * @param publicRoleClass the publicRoleClass to set
-     */
-    public synchronized final void setPublicRoleClass(Class publicRoleClass) {
-        this.publicRoleClass = publicRoleClass;
-    }
+	public IProxyHandler<? extends AgentProxy> getAgentProxyHandler() {
+		return proxyHandler;
+	}
 
-    /**
-     * Provides the value of the publicRoleInterface field.
-     * @return the publicRoleInterface
-     */
-    public synchronized final Class getPublicRoleInterface() {
-        return this.publicRoleInterface;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see whitecat.core.IRoleOperation#getMethodForwarderGenerator()
+	 */
+	public IMethodForwarderGenerator getMethodForwarderGenerator() {
+		return methodForwarderGenerator;
+	}
 
-    /**
-     * Sets the value of the publicRoleInterface field as specified
-     * by the value of publicRoleInterface.
-     * @param publicRoleInterface the publicRoleInterface to set
-     */
-    public synchronized final void setPublicRoleInterface(Class publicRoleInterface) {
-        this.publicRoleInterface = publicRoleInterface;
-        
-        // consistency: each time the public role interface changes the access key should be invalidated
-        this.methodAccessKey = null;
-    }
+	public synchronized WCException getOperationException() {
+		return operationException;
+	}
 
-    public synchronized WCException getOperationException() {
-	return this.operationException;
-    }
+	/**
+	 * Provides the value of the operationStatus field.
+	 * 
+	 * @return the operationStatus
+	 */
+	public synchronized final RoleOperationStatus getOperationStatus() {
+		return operationStatus;
+	}
 
-    public synchronized void setOperationException(WCException ex) {
-	this.operationException = ex;
-	
-	// consistency!
-	if( this.operationException != null )
-	    this.operationStatus = RoleOperationStatus.ROLE_OPERATION_COMPLETED_FAILURE;
-    }
+	/**
+	 * Provides the value of the publicRoleClass field.
+	 * 
+	 * @return the publicRoleClass
+	 */
+	public synchronized final Class getPublicRoleClass() {
+		return publicRoleClass;
+	}
 
-    public final IRole getRole() {
-	return this.role;
-    }
+	/**
+	 * Provides the value of the publicRoleInterface field.
+	 * 
+	 * @return the publicRoleInterface
+	 */
+	public synchronized final Class getPublicRoleInterface() {
+		return publicRoleInterface;
+	}
 
-    public final void setRole(IRole role) {
-	this.role = role;
-    }
+	public final IRole getRole() {
+		return role;
+	}
 
-    public final synchronized String getRoleImplementationAccessKey() {
-	// if the string is not yet implemented, construct it
-	if( this.methodAccessKey == null )
-	    if( this.publicRoleInterface != null )
-		this.methodAccessKey = this.publicRoleInterface.getClass().getName();
-	    else	
-		this.methodAccessKey = "";
-	else
-	    this.methodAccessKey = "";
-	
-	
-	// all done
-	return this.methodAccessKey;
-    }
+	public synchronized final Class getRoleAnnotationClass() {
+		return annotationClass;
+	}
 
-    public synchronized final Class getRoleAnnotationClass() {
-	return this.annotationClass;
-    }
+	public final synchronized String getRoleImplementationAccessKey() {
+		// if the string is not yet implemented, construct it
+		if (methodAccessKey == null)
+			if (publicRoleInterface != null)
+				methodAccessKey = publicRoleInterface.getClass().getName();
+			else methodAccessKey = "";
+		else methodAccessKey = "";
 
-    public synchronized final void setRoleAnnotationClass(Class annotationClass) {
-	this.annotationClass = annotationClass;	
-    }
+		// all done
+		return methodAccessKey;
+	}
 
-   
-    
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see whitecat.core.IRoleOperation#getRoleInjectionType()
+	 */
+	public RoleInjectionType getRoleInjectionType() {
+		return injectionType;
+	}
+
+	/**
+	 * Sets the value of the agentProxy field as specified by the value of
+	 * agentProxy.
+	 * 
+	 * @param agentProxy
+	 *            the agentProxy to set
+	 */
+	public synchronized final void setAgentProxy(final AgentProxy agentProxy) {
+		this.agentProxy = agentProxy;
+	}
+
+	public void setAgentProxyHandler(	final IProxyHandler<? extends AgentProxy> handler) {
+		proxyHandler = handler;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.IRoleOperation#setMethodForwarderGenerator(whitecat.core
+	 * .agents.IMethodForwarderGenerator)
+	 */
+	public void setMethodForwarderGenerator(final IMethodForwarderGenerator mfg) {
+		methodForwarderGenerator = mfg;
+	}
+
+	public synchronized void setOperationException(final WCException ex) {
+		operationException = ex;
+
+		// consistency!
+		if (operationException != null)
+			operationStatus = RoleOperationStatus.ROLE_OPERATION_COMPLETED_FAILURE;
+	}
+
+	/**
+	 * Sets the value of the operationStatus field as specified by the value of
+	 * operationStatus.
+	 * 
+	 * @param operationStatus
+	 *            the operationStatus to set
+	 */
+	public synchronized final void setOperationStatus(	final RoleOperationStatus operationStatus) {
+		this.operationStatus = operationStatus;
+	}
+
+	/**
+	 * Sets the value of the publicRoleClass field as specified by the value of
+	 * publicRoleClass.
+	 * 
+	 * @param publicRoleClass
+	 *            the publicRoleClass to set
+	 */
+	public synchronized final void setPublicRoleClass(	final Class publicRoleClass) {
+		this.publicRoleClass = publicRoleClass;
+	}
+
+	/**
+	 * Sets the value of the publicRoleInterface field as specified by the value
+	 * of publicRoleInterface.
+	 * 
+	 * @param publicRoleInterface
+	 *            the publicRoleInterface to set
+	 */
+	public synchronized final void setPublicRoleInterface(	final Class publicRoleInterface) {
+		this.publicRoleInterface = publicRoleInterface;
+
+		// consistency: each time the public role interface changes the access
+		// key should be invalidated
+		methodAccessKey = null;
+	}
+
+	public final void setRole(final IRole role) {
+		this.role = role;
+	}
+
+	public synchronized final void setRoleAnnotationClass(	final Class annotationClass) {
+		this.annotationClass = annotationClass;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see whitecat.core.IRoleOperation#setRoleInjectionType(whitecat.core.
+	 * RoleInjectionType)
+	 */
+	public void setRoleInjectionType(final RoleInjectionType type) {
+		injectionType = type;
+	}
 
 }

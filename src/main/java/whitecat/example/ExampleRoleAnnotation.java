@@ -45,7 +45,7 @@ import whitecat.core.annotations.ROLE;
 
 /**
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @ROLE()

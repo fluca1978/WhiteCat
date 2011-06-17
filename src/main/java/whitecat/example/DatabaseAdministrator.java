@@ -43,51 +43,55 @@ import whitecat.core.annotations.ROLE;
 
 /**
  * An example of role. This role implements a database administrator, and thus
- * it has a public interface so that other agents can request operations and services
- * to the database administrator.
+ * it has a public interface so that other agents can request operations and
+ * services to the database administrator.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
-@ROLE()		// to mark this as a role object
-
-		// here I specify the part of the role that can be visible
-		// to outsider and that will be applied to the proxy
-@PUBLICROLE(roleInterface = "whitecat.example.IDatabaseAdministrator",
-            roleAnnotation = "whitecat.example.ExampleRoleAnnotation"
-           )
-public class DatabaseAdministrator 
-implements IDatabaseAdministrator	
-		// this is a role with a public interface
+@ROLE()
+// to mark this as a role object
+// here I specify the part of the role that can be visible
+// to outsider and that will be applied to the proxy
+@PUBLICROLE(roleInterface = "whitecat.example.IDatabaseAdministrator", roleAnnotation = "whitecat.example.ExampleRoleAnnotation")
+public class DatabaseAdministrator implements IDatabaseAdministrator
+// this is a role with a public interface
 {
 
-    /**
-     * Public service: it can be called thru the proxy of an agent.
-     */
-    public StringBuffer backupDatabase(String databaseName) {
-	System.out.println("DatabaseAdministrator backupping database " + databaseName);
-	return new StringBuffer("SELECT * FROM MYTABLE;");
-    }
+	/**
+	 * Public service: it can be called thru the proxy of an agent.
+	 */
+	public StringBuffer backupDatabase(final String databaseName) {
+		System.out.println( "DatabaseAdministrator backupping database "
+				+ databaseName );
+		return new StringBuffer( "SELECT * FROM MYTABLE;" );
+	}
 
-    /**
-     * Public service: it can be called thru the proxy of an agent.
-     */
-    public boolean createDatabase(String databaseName) {
-	System.out.println("DatabaseAdministrator creating database " + databaseName);
-	return true;
-    }
-    
-    
-    public boolean doMaintainance(){
-	System.out.println("\n\t-----> DOING SOMETHING ADMINISTRATIVE <-----\n");
-	return true;
-    }
-    
-    /**
-     * Private service, that is a service that cannot be called thru the proxy of an agent.
-     * @param databaseName the database to reindex.
-     */
-    public void reindexDatabase(String databaseName){
-	System.out.println("DatabaseAdministrator is reindexing " + databaseName);
-    }
+	/**
+	 * Public service: it can be called thru the proxy of an agent.
+	 */
+	public boolean createDatabase(final String databaseName) {
+		System.out.println( "DatabaseAdministrator creating database "
+				+ databaseName );
+		return true;
+	}
+
+	public boolean doMaintainance() {
+		System.out
+				.println( "\n\t-----> DOING SOMETHING ADMINISTRATIVE <-----\n" );
+		return true;
+	}
+
+	/**
+	 * Private service, that is a service that cannot be called thru the proxy
+	 * of an agent.
+	 * 
+	 * @param databaseName
+	 *            the database to reindex.
+	 */
+	public void reindexDatabase(final String databaseName) {
+		System.out.println( "DatabaseAdministrator is reindexing "
+				+ databaseName );
+	}
 
 }

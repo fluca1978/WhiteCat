@@ -40,15 +40,17 @@ package whitecat.core.agents;
 
 /**
  * A type specific for the White Cat agents.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public interface WCAgent {
 
-    /**
-     * Returns the proxy for this agent. Each agent should know the proxy that other
-     * agents/entities are using.
-     * @return the agent proxy
-     */
-    public AgentProxy getAgentProxy();
+	/**
+	 * Returns the proxy for this agent. Each agent should know the proxy that
+	 * other agents/entities are using.
+	 * 
+	 * @return the agent proxy
+	 */
+	public AgentProxy getAgentProxy();
 }

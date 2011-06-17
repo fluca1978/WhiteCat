@@ -38,32 +38,33 @@
  */
 package whitecat.core.agents;
 
-
-
 import whitecat.core.IProxyHandler;
 import whitecat.core.WhiteCat;
 import whitecat.core.exceptions.WCProxyException;
 
 /**
- * A factory that creates the proxy handlers depending on the configuration parameters.
+ * A factory that creates the proxy handlers depending on the configuration
+ * parameters.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class ProxyHandlerFactory {
 
-    /**
-     * Provides a new proxy handler factory.
-     * @return a new proxy handler instance
-     * @throws WCProxyException
-     */
-    public static IProxyHandler getProxyHandler() throws WCProxyException{
-	try{
-	    return WhiteCat.getProxyHandler();
-	}catch(Exception e){
-	    e.printStackTrace();
-	    throw new WCProxyException("Exception caught while creating an empty proxy handler", e);
+	/**
+	 * Provides a new proxy handler factory.
+	 * 
+	 * @return a new proxy handler instance
+	 * @throws WCProxyException
+	 */
+	public static IProxyHandler getProxyHandler() throws WCProxyException {
+		try{
+			return WhiteCat.getProxyHandler();
+		}catch (final Exception e){
+			e.printStackTrace();
+			throw new WCProxyException(
+					"Exception caught while creating an empty proxy handler", e );
+		}
 	}
-    }
-    
-    
+
 }

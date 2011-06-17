@@ -41,16 +41,19 @@ package whitecat.core.exceptions;
 import whitecat.core.agents.AgentProxyID;
 
 /**
- * This exception is thrown when an agent is undergoing a role
- * manipulation operation by the role engine. This exception is thrown
- * by mutator methods within the proxy (i.e., methods that can change the internal state
- * of a proxy) since the newest state could possibly be not copied to the manipulated proxy.
+ * This exception is thrown when an agent is undergoing a role manipulation
+ * operation by the role engine. This exception is thrown by mutator methods
+ * within the proxy (i.e., methods that can change the internal state of a
+ * proxy) since the newest state could possibly be not copied to the manipulated
+ * proxy.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class WCProxyLockedException extends RuntimeException {
 
-    public WCProxyLockedException( AgentProxyID lockedProxyID ){
-	super("The proxy " + lockedProxyID + " points to an agent that is undergoing role manipulation!");
-    }
+	public WCProxyLockedException(final AgentProxyID lockedProxyID) {
+		super( "The proxy " + lockedProxyID
+				+ " points to an agent that is undergoing role manipulation!" );
+	}
 }

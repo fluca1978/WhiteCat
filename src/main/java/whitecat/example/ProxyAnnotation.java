@@ -43,7 +43,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ProxyAnnotation {

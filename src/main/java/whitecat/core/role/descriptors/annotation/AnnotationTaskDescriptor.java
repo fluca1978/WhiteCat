@@ -43,50 +43,52 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * A task descriptor defined thru an annotation.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AnnotationTaskDescriptor {
 
-    /**
-     * The aim of the role.
-     * @return a string description of the role aim
-     */
-    public String aim() default "";
-    
-    /**
-     * The name of the role.
-     * @return the name of the role.
-     */
-    public String name() default "";
+	/**
+	 * The task id to which this task must be added.
+	 * 
+	 * @return the task id of the task for which the current task is a subtask
+	 */
+	public String addToTaskID() default "";
 
-    
-    /**
-     * The keywords list separator.
-     * @return the keywords list separator, by default ','
-     */
-    public String keywordsSeparator() default ",";
-    
-    /**
-     * A list of keywords, separated by the keywordSeparator().
-     * @return the list of the keywords
-     */
-    public String keywords() default "";
+	/**
+	 * The aim of the role.
+	 * 
+	 * @return a string description of the role aim
+	 */
+	public String aim() default "";
 
-    
-    
-    
-    /**
-     * A task id, used to group tasks together to compose complex tasks.
-     * @return the task id.
-     */
-    public String taskID() default "task1";
-    
-    
-    /**
-     * The task id to which this task must be added.
-     * @return the task id of the task for which the current task is a subtask
-     */
-    public String addToTaskID() default "";
+	/**
+	 * A list of keywords, separated by the keywordSeparator().
+	 * 
+	 * @return the list of the keywords
+	 */
+	public String keywords() default "";
+
+	/**
+	 * The keywords list separator.
+	 * 
+	 * @return the keywords list separator, by default ','
+	 */
+	public String keywordsSeparator() default ",";
+
+	/**
+	 * The name of the role.
+	 * 
+	 * @return the name of the role.
+	 */
+	public String name() default "";
+
+	/**
+	 * A task id, used to group tasks together to compose complex tasks.
+	 * 
+	 * @return the task id.
+	 */
+	public String taskID() default "task1";
 }

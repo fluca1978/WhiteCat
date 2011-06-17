@@ -42,11 +42,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import whitecat.core.annotations.ROLE;
-import whitecat.core.annotations.ROLEANNOTATION;
 
 /**
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @ROLE()
 @Retention(RetentionPolicy.RUNTIME)

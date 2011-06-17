@@ -38,20 +38,18 @@
  */
 package whitecat.test;
 
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 import whitecat.core.IRoleBooster;
 import whitecat.core.WCException;
 import whitecat.core.WhiteCat;
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.exceptions.WCRoleRepositoryException;
-import whitecat.core.exceptions.WCSchedulingException;
 import whitecat.core.role.IRole;
 import whitecat.core.role.IRoleRepository;
 import whitecat.core.role.descriptors.EventDescriptor;
@@ -69,176 +67,186 @@ import whitecat.example.DBProxy;
 
 /**
  * A test for the annotation builder role descriptor.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class AnnotationRoleDescriptorBuilderTest {
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
-    
-    
-    @Test
-    public void testAnnotationBuilder(){
-	// get the role
-	IRole role = new AnnotatedRoleExample();
-	
-	// get the builder
-	IRoleDescriptorBuilder builder = WhiteCat.getRoleDescriptorBuilder();
-	
-	if( builder == null )
-	    fail("Got a null role descriptor builder! ");
-	
-	// build the role descriptor
-	RoleDescriptor desc = builder.buildRoleDescriptor( role );
-	
-	// if the name and the aim do not correspond...
-	String name = desc.getName();
-	String aim  = desc.getAim();
-	if( ! aim.contains("AIM") || ! name.contains("NAME") )
-	    fail("Error in the name/aim built!");
-	
-	// there must be no more than 3 tasks
-	if( desc.getTaskDescriptors().size() != 3 )
-	    fail("There are not 3 tasks!");
-	
-	// each task must have the name and the aim correct
-	for( TaskDescriptor td : desc.getTaskDescriptors() ){
-	    name = td.getName();
-	    aim  = td.getAim();
-	    
-	    if( ! aim.contains("AIM") || ! name.contains("NAME") )
-		    fail("Error in the name/aim built!");
-	    
-	}
-	
-	// build another role description and check if it is the same
-	RoleDescriptor desc2 = builder.buildRoleDescriptor( role );
-	if( ! desc.equals(desc2) ||  desc.hashCode() != desc2.hashCode() )
-	    fail("Two descriptor are different but the role is the same");
-	
-	
-	// get the tasks
-	for( IRoleTask task : desc.getTasks() ){
-	    // check the type of the task
-	    if( !(task instanceof MethodTaskExecutor) )
-		fail("The task should be a method task executor!");
-	    
-	    // check the task has a descriptor
-	    if( desc.getTaskDescriptor(task) == null )
-		fail("The task has not a descriptor!");
-	}
-	
-	// there must be one event descriptor, that is issuing
-	List<EventDescriptor> events = desc.getAllEventDescriptors();
-	if( events.size() != 1 )
-	    fail("There must be a single event descriptor!");
-	
-	EventDescriptor event = events.get(0);
-	if( event.isIssuing() == false || event.isReceiving() == true )
-	    fail("The event must be issuing!");
-
-	   
-	    
-    }
-    
-    @Test
-    public void testRoleRepository() throws WCRoleRepositoryException{
-	// get the role
-	IRole role = new AnnotatedRoleExample();
-	
-	// get the role repository
-	IRoleRepository repo = WhiteCat.getRoleRepository();
-	
-	// install the role
-	repo.installRole(role, false);
-	
-	// get back the role descriptor
-	RoleDescriptor desc = repo.getAvailableRoleDescriptors().get(0);
-	
-	// if the name and the aim do not correspond...
-	String name = desc.getName();
-	String aim  = desc.getAim();
-	if( ! aim.contains("AIM") || ! name.contains("NAME") )
-	    fail("Error in the name/aim built!");
-	
-	// there must be no more than 3 tasks
-	if( desc.getTaskDescriptors().size() != 3 )
-	    fail("There are not 3 tasks!");
-	
-	// each task must have the name and the aim correct
-	for( TaskDescriptor td : desc.getTaskDescriptors() ){
-	    name = td.getName();
-	    aim  = td.getAim();
-	    
-	    if( ! aim.contains("AIM") || ! name.contains("NAME") )
-		    fail("Error in the name/aim built!");
-	    
-	}
-	
-	// get the tasks
-	for( IRoleTask task : desc.getTasks() ){
-	    // check the type of the task
-	    if( !(task instanceof MethodTaskExecutor) )
-		fail("The task should be a method task executor!");
-	    
-	    // check the task has a descriptor
-	    if( desc.getTaskDescriptor(task) == null )
-		fail("The task has not a descriptor!");
-	}
-	
-	// there must be one event descriptor, that is issuing
-	List<EventDescriptor> events = desc.getAllEventDescriptors();
-	if( events.size() != 1 )
-	    fail("There must be a single event descriptor!");
-	
-	EventDescriptor event = events.get(0);
-	if( event.isIssuing() == false || event.isReceiving() == true )
-	    fail("The event must be issuing!");
-
-    }
-
-    
-    @Test
-    public void testScheduling() throws InstantiationException, IllegalAccessException, WCException, ClassNotFoundException{
-	// get the role
-	IRole role = new AnnotatedRoleExample();
-	
-	// get the builder
-	IRoleDescriptorBuilder builder = WhiteCat.getRoleDescriptorBuilder();
-	
-	if( builder == null )
-	    fail("Got a null role descriptor builder! ");
-	
-	// build the role descriptor
-	RoleDescriptor desc = builder.buildRoleDescriptor( role );
-	
-	// install the role into the repository
-	IRoleRepository repository = WhiteCat.getRoleRepository();
-	repository.installRole(desc, role, true);
-	
-	// get a scheduler
-	ITaskScheduler scheduler = WhiteCat.getTaskScheduler();
-	for( IRoleTask task : desc.getTasks() ){
-	    System.out.println("Scheduling the task " + task + " from role descriptor " + desc);
-	    scheduler.scheduleTask(task, null, TaskSchedulingExecutor.EXECUTE_BY_ANY_AGENT, TaskSchedulingInstant.SCHEDULE_AT_ROLE_ASSUMPTION, WhiteCat.getTaskExecutionResult() );
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
 	}
 
-	// now force a role assumption
-	Class agentClass = this.getClass().getClassLoader().loadClass("whitecat.example.DBAgent");
-	DBAgent agent = (DBAgent) agentClass.newInstance();
-	Class proxyClass = this.getClass().getClassLoader().loadClass("whitecat.example.DBProxy");
-	DBProxy proxy = (DBProxy) proxyClass.newInstance();
-	proxy.setMyAgent(agent);
+	@Test
+	public void testAnnotationBuilder() {
+		// get the role
+		final IRole role = new AnnotatedRoleExample();
 
-	IRoleBooster engine = WhiteCat.getRoleBooster();
-	AgentProxy newproxy = engine.injectPublicRole(agent, proxy, role);
-	System.out.println("New role assumed " + newproxy.getClass() + " vs " + proxy.getClass());
-	
-    }
-    
+		// get the builder
+		final IRoleDescriptorBuilder builder = WhiteCat
+				.getRoleDescriptorBuilder();
+
+		if (builder == null)
+			fail( "Got a null role descriptor builder! " );
+
+		// build the role descriptor
+		final RoleDescriptor desc = builder.buildRoleDescriptor( role );
+
+		// if the name and the aim do not correspond...
+		String name = desc.getName();
+		String aim = desc.getAim();
+		if (!aim.contains( "AIM" ) || !name.contains( "NAME" ))
+			fail( "Error in the name/aim built!" );
+
+		// there must be no more than 3 tasks
+		if (desc.getTaskDescriptors().size() != 3)
+			fail( "There are not 3 tasks!" );
+
+		// each task must have the name and the aim correct
+		for (final TaskDescriptor td : desc.getTaskDescriptors()){
+			name = td.getName();
+			aim = td.getAim();
+
+			if (!aim.contains( "AIM" ) || !name.contains( "NAME" ))
+				fail( "Error in the name/aim built!" );
+
+		}
+
+		// build another role description and check if it is the same
+		final RoleDescriptor desc2 = builder.buildRoleDescriptor( role );
+		if (!desc.equals( desc2 ) || (desc.hashCode() != desc2.hashCode()))
+			fail( "Two descriptor are different but the role is the same" );
+
+		// get the tasks
+		for (final IRoleTask task : desc.getTasks()){
+			// check the type of the task
+			if (!(task instanceof MethodTaskExecutor))
+				fail( "The task should be a method task executor!" );
+
+			// check the task has a descriptor
+			if (desc.getTaskDescriptor( task ) == null)
+				fail( "The task has not a descriptor!" );
+		}
+
+		// there must be one event descriptor, that is issuing
+		final List<EventDescriptor> events = desc.getAllEventDescriptors();
+		if (events.size() != 1)
+			fail( "There must be a single event descriptor!" );
+
+		final EventDescriptor event = events.get( 0 );
+		if ((event.isIssuing() == false) || (event.isReceiving() == true))
+			fail( "The event must be issuing!" );
+
+	}
+
+	@Test
+	public void testRoleRepository() throws WCRoleRepositoryException {
+		// get the role
+		final IRole role = new AnnotatedRoleExample();
+
+		// get the role repository
+		final IRoleRepository repo = WhiteCat.getRoleRepository();
+
+		// install the role
+		repo.installRole( role, false );
+
+		// get back the role descriptor
+		final RoleDescriptor desc = repo.getAvailableRoleDescriptors().get( 0 );
+
+		// if the name and the aim do not correspond...
+		String name = desc.getName();
+		String aim = desc.getAim();
+		if (!aim.contains( "AIM" ) || !name.contains( "NAME" ))
+			fail( "Error in the name/aim built!" );
+
+		// there must be no more than 3 tasks
+		if (desc.getTaskDescriptors().size() != 3)
+			fail( "There are not 3 tasks!" );
+
+		// each task must have the name and the aim correct
+		for (final TaskDescriptor td : desc.getTaskDescriptors()){
+			name = td.getName();
+			aim = td.getAim();
+
+			if (!aim.contains( "AIM" ) || !name.contains( "NAME" ))
+				fail( "Error in the name/aim built!" );
+
+		}
+
+		// get the tasks
+		for (final IRoleTask task : desc.getTasks()){
+			// check the type of the task
+			if (!(task instanceof MethodTaskExecutor))
+				fail( "The task should be a method task executor!" );
+
+			// check the task has a descriptor
+			if (desc.getTaskDescriptor( task ) == null)
+				fail( "The task has not a descriptor!" );
+		}
+
+		// there must be one event descriptor, that is issuing
+		final List<EventDescriptor> events = desc.getAllEventDescriptors();
+		if (events.size() != 1)
+			fail( "There must be a single event descriptor!" );
+
+		final EventDescriptor event = events.get( 0 );
+		if ((event.isIssuing() == false) || (event.isReceiving() == true))
+			fail( "The event must be issuing!" );
+
+	}
+
+	@Test
+	public void testScheduling() throws InstantiationException,
+								IllegalAccessException, WCException,
+								ClassNotFoundException {
+		// get the role
+		final IRole role = new AnnotatedRoleExample();
+
+		// get the builder
+		final IRoleDescriptorBuilder builder = WhiteCat
+				.getRoleDescriptorBuilder();
+
+		if (builder == null)
+			fail( "Got a null role descriptor builder! " );
+
+		// build the role descriptor
+		final RoleDescriptor desc = builder.buildRoleDescriptor( role );
+
+		// install the role into the repository
+		final IRoleRepository repository = WhiteCat.getRoleRepository();
+		repository.installRole( desc, role, true );
+
+		// get a scheduler
+		final ITaskScheduler scheduler = WhiteCat.getTaskScheduler();
+		for (final IRoleTask task : desc.getTasks()){
+			System.out.println( "Scheduling the task " + task
+					+ " from role descriptor " + desc );
+			scheduler.scheduleTask(
+					task,
+					null,
+					TaskSchedulingExecutor.EXECUTE_BY_ANY_AGENT,
+					TaskSchedulingInstant.SCHEDULE_AT_ROLE_ASSUMPTION,
+					WhiteCat.getTaskExecutionResult() );
+		}
+
+		// now force a role assumption
+		final Class agentClass = this.getClass().getClassLoader()
+				.loadClass( "whitecat.example.DBAgent" );
+		final DBAgent agent = (DBAgent) agentClass.newInstance();
+		final Class proxyClass = this.getClass().getClassLoader()
+				.loadClass( "whitecat.example.DBProxy" );
+		final DBProxy proxy = (DBProxy) proxyClass.newInstance();
+		proxy.setMyAgent( agent );
+
+		final IRoleBooster engine = WhiteCat.getRoleBooster();
+		final AgentProxy newproxy = engine
+				.injectPublicRole( agent, proxy, role );
+		System.out.println( "New role assumed " + newproxy.getClass() + " vs "
+				+ proxy.getClass() );
+
+	}
+
 }

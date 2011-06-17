@@ -38,30 +38,33 @@
  */
 package whitecat.core.agents;
 
-
-
 import whitecat.core.WhiteCat;
 import whitecat.core.exceptions.WCForwarderMethodException;
 
 /**
- * A factory that provides the method forwarder code generators depending
- * on the configuration of the WhiteCat engine.
+ * A factory that provides the method forwarder code generators depending on the
+ * configuration of the WhiteCat engine.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class MethodForwarderGeneratorFactory {
 
-    /**
-     * Provides a new instance of the method forwarder generator.
-     * @return a new instance of the method generator
-     * @throws WCForwarderMethodException if something goes wrong
-     */
-    public static IMethodForwarderGenerator getMethodForwarderGenerator() throws WCForwarderMethodException{
-	try{
-	    return WhiteCat.getMethodForwarderGenerator();
-	}catch(Exception e){
-	    e.printStackTrace();
-	    throw new WCForwarderMethodException("Exception caught while creating a forwarding generator", e);
+	/**
+	 * Provides a new instance of the method forwarder generator.
+	 * 
+	 * @return a new instance of the method generator
+	 * @throws WCForwarderMethodException
+	 *             if something goes wrong
+	 */
+	public static IMethodForwarderGenerator getMethodForwarderGenerator()
+																			throws WCForwarderMethodException {
+		try{
+			return WhiteCat.getMethodForwarderGenerator();
+		}catch (final Exception e){
+			e.printStackTrace();
+			throw new WCForwarderMethodException(
+					"Exception caught while creating a forwarding generator", e );
+		}
 	}
-    }
 }

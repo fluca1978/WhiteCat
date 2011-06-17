@@ -39,12 +39,13 @@
 package whitecat.core.agents;
 
 /**
- * This class represents a proxy identity, that is a unique identifier
- * for a proxy. Since a proxy could change during the application life cycle,
- * due to a role changement, the unique id identifies exactly one proxy
- * tied to a specific agent.
+ * This class represents a proxy identity, that is a unique identifier for a
+ * proxy. Since a proxy could change during the application life cycle, due to a
+ * role changement, the unique id identifies exactly one proxy tied to a
+ * specific agent.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class ProxyID {
 

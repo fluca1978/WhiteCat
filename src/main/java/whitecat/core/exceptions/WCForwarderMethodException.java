@@ -42,41 +42,42 @@ import whitecat.core.WCException;
 
 /**
  * An exception related to the method forwarder.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class WCForwarderMethodException extends WCException {
 
-    /**
+	/**
      * 
      */
-    public WCForwarderMethodException() {
-	// TODO Auto-generated constructor stub
-    }
+	public WCForwarderMethodException() {
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public WCForwarderMethodException(String arg0, Throwable arg1) {
-	super(arg0, arg1);
-	// TODO Auto-generated constructor stub
-    }
+	/**
+	 * @param arg0
+	 */
+	public WCForwarderMethodException(final String arg0) {
+		super( arg0 );
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * @param arg0
-     */
-    public WCForwarderMethodException(String arg0) {
-	super(arg0);
-	// TODO Auto-generated constructor stub
-    }
+	/**
+	 * @param arg0
+	 * @param arg1
+	 */
+	public WCForwarderMethodException(final String arg0, final Throwable arg1) {
+		super( arg0, arg1 );
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * @param arg0
-     */
-    public WCForwarderMethodException(Throwable arg0) {
-	super(arg0);
-	// TODO Auto-generated constructor stub
-    }
+	/**
+	 * @param arg0
+	 */
+	public WCForwarderMethodException(final Throwable arg0) {
+		super( arg0 );
+		// TODO Auto-generated constructor stub
+	}
 
 }

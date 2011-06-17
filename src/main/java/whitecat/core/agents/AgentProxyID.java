@@ -40,77 +40,81 @@ package whitecat.core.agents;
 
 /**
  * The identificator of a proxy. It should be unique over the platform.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class AgentProxyID {
 
-    /**
-     * A sequence number that identificates a single proxy.
-     */
-    private long sequenceID = 0;
-    
-    
-    /**
-     * the generation sequence of this proxy id, increased each time a new
-     * proxy is created.
-     */
-    private static long generationSequence = 0;
-    
-    /**
-     * Constructs the proxy id with the specified sequence number.
-     * @param sequence the sequence number for the proxy id.
-     */
-    private AgentProxyID(long sequence){
-	super();
-	this.sequenceID = sequence;
-    }
-    
-    public String toString(){
-	return "AgentProxyID-" + this.sequenceID;
-    }
-    
-    public int hashCode(){
-	return (int) this.sequenceID;
-    }
-    
-    public boolean equals(Object toCompare){
-	if( toCompare instanceof AgentProxyID )
-	    return ( this.sequenceID == ((AgentProxyID) toCompare).sequenceID );
-	else
-	    return false;
-    }
-    
-    /**
-     * Creates a unique agent proxy id.
-     * @return the agent proxy id generated.
-     */
-    public static final AgentProxyID getNextAgentProxyID(){
-	return new AgentProxyID( ++generationSequence );
-    }
-    
+	/**
+	 * Creates a agent proxy id copying the values from an original one. This is
+	 * useful to set the same agentproxyid after a role manipulation.
+	 * 
+	 * @param source
+	 *            the source agent proxy id to copy from
+	 * @return the agent proxy id with the same values.
+	 */
+	public static final AgentProxyID createByCopy(final AgentProxyID source) {
+		if (source == null)
+			return null;
+		else return new AgentProxyID( source.sequenceID );
+	}
 
-    /**
-     * Creates a agent proxy id copying the values from an original one. This is
-     * useful to set the same agentproxyid after a role manipulation.
-     * @param source the source agent proxy id to copy from
-     * @return the agent proxy id with the same values.
-     */
-    public static final AgentProxyID createByCopy(AgentProxyID source){
-	if( source == null )
-	    return null;
-	else
-	    return new AgentProxyID( source.sequenceID );
-    }
+	/**
+	 * Creates a unique agent proxy id.
+	 * 
+	 * @return the agent proxy id generated.
+	 */
+	public static final AgentProxyID getNextAgentProxyID() {
+		return new AgentProxyID( ++generationSequence );
+	}
 
-    /**
-     * Provides the value of the sequenceID field.
-     * @return the sequenceID
-     */
-    public synchronized final long getSequenceID() {
-        return this.sequenceID;
-    }
-    
-    
-    
+	/**
+	 * A sequence number that identificates a single proxy.
+	 */
+	private long		sequenceID			= 0;
+
+	/**
+	 * the generation sequence of this proxy id, increased each time a new proxy
+	 * is created.
+	 */
+	private static long	generationSequence	= 0;
+
+	/**
+	 * Constructs the proxy id with the specified sequence number.
+	 * 
+	 * @param sequence
+	 *            the sequence number for the proxy id.
+	 */
+	private AgentProxyID(final long sequence) {
+		super();
+		sequenceID = sequence;
+	}
+
+	@Override
+	public boolean equals(final Object toCompare) {
+		if (toCompare instanceof AgentProxyID)
+			return (sequenceID == ((AgentProxyID) toCompare).sequenceID);
+		else return false;
+	}
+
+	/**
+	 * Provides the value of the sequenceID field.
+	 * 
+	 * @return the sequenceID
+	 */
+	public synchronized final long getSequenceID() {
+		return sequenceID;
+	}
+
+	@Override
+	public int hashCode() {
+		return (int) sequenceID;
+	}
+
+	@Override
+	public String toString() {
+		return "AgentProxyID-" + sequenceID;
+	}
+
 }

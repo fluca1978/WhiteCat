@@ -38,8 +38,10 @@
  */
 package whitecat.test;
 
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
+import org.junit.Test;
 
 import whitecat.core.WhiteCat;
 import whitecat.core.exceptions.WCRoleRepositoryException;
@@ -47,68 +49,67 @@ import whitecat.core.role.IRole;
 import whitecat.core.role.IRoleRepository;
 import whitecat.core.role.descriptors.RoleDescriptor;
 import whitecat.example.DatabaseAdministrator;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class RoleRepositoryTest {
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+	}
 
-    @Test
-    public void testRoleRepository() throws WCRoleRepositoryException{
-	IRoleRepository repository = WhiteCat.getRoleRepository();
-	
-	// the repository cannot be null
-	if( repository == null )
-	    fail("Role repository is null!");
-	
-	
-	// install a new role
-	DatabaseAdministrator role = new DatabaseAdministrator();
-	RoleDescriptor desc = new RoleDescriptor(){
-	    public int hashCode(){
-		return -1;
-	    }
-	    
-	    public boolean equals(Object o ){
-		return o.hashCode() == this.hashCode();
-	    }
-	};
-	
-	boolean result = repository.installRole(desc, role, false);
-	if( result == false || ! repository.getAvailableRoleDescriptors().contains(desc) )
-	    fail("Role not installed or not available in the repository!");
-	
-	// get back the role descriptor for a role and see if it matches
-	RoleDescriptor descback = repository.getRoleDescriptor(role);
-	if( descback.equals(desc) == false )
-	    fail("Cannot get back the right role descriptor");
-	
-	
-	// get back the role
-	IRole backRole = repository.findRole(desc);
-	if( ! backRole.equals( role ) )
-	    fail("The role inserted is not the same I get back!");
-	
-	// remove the role
-	result = repository.removeRole(desc);
-	if( result == false ||  repository.getAvailableRoleDescriptors().contains(desc) )
-	    fail("Role not removed from the repository! " + result);
-	
-	// search again for the role
-	backRole = repository.findRole(desc);
-	if( backRole != null )
-	    fail("The role is still in the repository!");
-	
-    }
+	@Test
+	public void testRoleRepository() throws WCRoleRepositoryException {
+		final IRoleRepository repository = WhiteCat.getRoleRepository();
+
+		// the repository cannot be null
+		if (repository == null)
+			fail( "Role repository is null!" );
+
+		// install a new role
+		final DatabaseAdministrator role = new DatabaseAdministrator();
+		final RoleDescriptor desc = new RoleDescriptor() {
+			@Override
+			public boolean equals(final Object o) {
+				return o.hashCode() == hashCode();
+			}
+
+			@Override
+			public int hashCode() {
+				return -1;
+			}
+		};
+
+		boolean result = repository.installRole( desc, role, false );
+		if ((result == false)
+				|| !repository.getAvailableRoleDescriptors().contains( desc ))
+			fail( "Role not installed or not available in the repository!" );
+
+		// get back the role descriptor for a role and see if it matches
+		final RoleDescriptor descback = repository.getRoleDescriptor( role );
+		if (descback.equals( desc ) == false)
+			fail( "Cannot get back the right role descriptor" );
+
+		// get back the role
+		IRole backRole = repository.findRole( desc );
+		if (!backRole.equals( role ))
+			fail( "The role inserted is not the same I get back!" );
+
+		// remove the role
+		result = repository.removeRole( desc );
+		if ((result == false)
+				|| repository.getAvailableRoleDescriptors().contains( desc ))
+			fail( "Role not removed from the repository! " + result );
+
+		// search again for the role
+		backRole = repository.findRole( desc );
+		if (backRole != null)
+			fail( "The role is still in the repository!" );
+
+	}
 }

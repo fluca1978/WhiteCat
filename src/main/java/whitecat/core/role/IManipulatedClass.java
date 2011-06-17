@@ -41,8 +41,9 @@ package whitecat.core.role;
 /**
  * A tagging interface that is used to simply sign a class as manipulated by the
  * role engine.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public interface IManipulatedClass {
 

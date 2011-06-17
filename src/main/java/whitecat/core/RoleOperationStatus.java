@@ -39,14 +39,17 @@
 package whitecat.core;
 
 /**
- * This enumerations is an abstraction over a single role operation status, that is
- * the phase of the role operation as it is undergoing the role booster.
+ * This enumerations is an abstraction over a single role operation status, that
+ * is the phase of the role operation as it is undergoing the role booster.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public enum RoleOperationStatus {
-    ROLE_OPERATION_QUEUED,		// the role operation has not started yet
-    ROLE_OPERATION_STARTED,		// the role operation is started
-    ROLE_OPERATION_COMPLETED_SUCCESFUL,	// the role operation is completed with success
-    ROLE_OPERATION_COMPLETED_FAILURE	// the role operation is completed but with errors
+	ROLE_OPERATION_QUEUED, // the role operation has not started yet
+	ROLE_OPERATION_STARTED, // the role operation is started
+	ROLE_OPERATION_COMPLETED_SUCCESFUL, // the role operation is completed with
+										// success
+	ROLE_OPERATION_COMPLETED_FAILURE
+	// the role operation is completed but with errors
 }

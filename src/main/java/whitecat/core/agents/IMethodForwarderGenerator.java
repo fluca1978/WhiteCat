@@ -38,57 +38,78 @@
  */
 package whitecat.core.agents;
 
+import javassist.CtMethod;
 import whitecat.core.IRoleOperation;
 import whitecat.core.exceptions.WCForwarderMethodException;
 import whitecat.core.role.IRole;
-import javassist.CtMethod;
 
 /**
- * The interface provides utility method for the generation of forwarders method, that are
- * methods in the agent proxy that must forward request to the method on the role itself.
+ * The interface provides utility method for the generation of forwarders
+ * method, that are methods in the agent proxy that must forward request to the
+ * method on the role itself.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public interface IMethodForwarderGenerator {
 
-    
-    /**
-     * Inits this method generator with the proxy class name it will be used onto and
-     * a key calculated from the role engine.
-     * @param proxyClassName the real (not manipulated) proxy class name used for the manipulations. It can be
-     * used to know properties of the proxy itself.
-     * @param key a key computed by the role engine during the manipulation, used as an identifier
-     * for the manipulation itself.
-     * @param roleClassName the name of the role class, used for knowing properties of the role itself
-     */
-    public void init(String proxyClassName, String roleClassName, String key);
-    
-    
-    /**
-     * Initializes the method forwarder generator with the specified role operation, that must contain
-     * the proxy, the role and therefore the access key to work on.
-     * @param roleOperation the role operation this method forwarder generator will work on
-     */
-    public void init( IRoleOperation roleOperation );
-    
-    
-    /**
-     * Generates source code for a method forwarder. Given a method in the interface,
-     * this method returns the source code that implements such method.
-     * @param interfaceMethod the source method from the role interface
-     * @return the code source for the method that implements the interface method one.
-     * @exception WCForwarderMethodException if something goes wrong
-     */
-    public String getMethodForwarderCode(CtMethod interfaceMethod) throws WCForwarderMethodException;
-    
-    /**
-     * This method is called at the end of the generation of the new proxy instance. Place
-     * in this method code that serves for binding parameters used for method forwarding calls to
-     * the role instance (for instance the binding of a key in the hashmap for the references).
-     * @return true if the bind has been done
-     * @throws WCForwarderMethodException if something goes wrong
-     * @param roleInstance the role reference (if available)
-     * @param proxy the agent proxy created from the manipulation
-     */
-    public boolean bindReferences(AgentProxy proxy, IRole roleInstance) throws WCForwarderMethodException;
+	/**
+	 * This method is called at the end of the generation of the new proxy
+	 * instance. Place in this method code that serves for binding parameters
+	 * used for method forwarding calls to the role instance (for instance the
+	 * binding of a key in the hashmap for the references).
+	 * 
+	 * @return true if the bind has been done
+	 * @throws WCForwarderMethodException
+	 *             if something goes wrong
+	 * @param roleInstance
+	 *            the role reference (if available)
+	 * @param proxy
+	 *            the agent proxy created from the manipulation
+	 */
+	public boolean bindReferences(AgentProxy proxy, IRole roleInstance)
+																		throws WCForwarderMethodException;
+
+	/**
+	 * Generates source code for a method forwarder. Given a method in the
+	 * interface, this method returns the source code that implements such
+	 * method.
+	 * 
+	 * @param interfaceMethod
+	 *            the source method from the role interface
+	 * @return the code source for the method that implements the interface
+	 *         method one.
+	 * @exception WCForwarderMethodException
+	 *                if something goes wrong
+	 */
+	public String getMethodForwarderCode(CtMethod interfaceMethod)
+																	throws WCForwarderMethodException;
+
+	/**
+	 * Initializes the method forwarder generator with the specified role
+	 * operation, that must contain the proxy, the role and therefore the access
+	 * key to work on.
+	 * 
+	 * @param roleOperation
+	 *            the role operation this method forwarder generator will work
+	 *            on
+	 */
+	public void init(IRoleOperation roleOperation);
+
+	/**
+	 * Inits this method generator with the proxy class name it will be used
+	 * onto and a key calculated from the role engine.
+	 * 
+	 * @param proxyClassName
+	 *            the real (not manipulated) proxy class name used for the
+	 *            manipulations. It can be used to know properties of the proxy
+	 *            itself.
+	 * @param key
+	 *            a key computed by the role engine during the manipulation,
+	 *            used as an identifier for the manipulation itself.
+	 * @param roleClassName
+	 *            the name of the role class, used for knowing properties of the
+	 *            role itself
+	 */
+	public void init(String proxyClassName, String roleClassName, String key);
 }

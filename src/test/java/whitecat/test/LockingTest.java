@@ -38,34 +38,46 @@
  */
 package whitecat.test;
 
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import whitecat.core.IProxyStorage;
-import whitecat.core.ProxyStorageImpl;
 import whitecat.core.WhiteCat;
-import whitecat.core.agents.AgentProxy;
 import whitecat.example.DBAgent;
 import whitecat.example.DBProxy;
 
-
-import static org.junit.Assert.*;
-
 /**
  * A test for the locking mechanism.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class LockingTest implements Runnable {
 
+	private long			start			= 0, end = 0;
+	private final long		sleeping		= 5600;
+	private Thread			unlockingThread	= null;
 
-	private long start = 0, end = 0;
-	private long sleeping = 5600;
-	private Thread unlockingThread = null;
+	private IProxyStorage	storage			= null;
+	private DBProxy			proxy			= null;
 
-	private IProxyStorage storage = null;
-	private DBProxy   proxy = null;
+	public void run() {
+
+		System.out.println( "Unlocking thread sleeping for " + sleeping );
+		try{
+			Thread.currentThread();
+			Thread.sleep( sleeping );
+		}catch (final InterruptedException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out
+				.println( "Unlocking the proxy " + System.currentTimeMillis() );
+		storage.unlockAgentProxy( proxy, true );
+
+	}
 
 	/**
 	 * @throws java.lang.Exception
@@ -80,47 +92,32 @@ public class LockingTest implements Runnable {
 	}
 
 	@Test
-	public void testBlocking(){
-
+	public void testBlocking() {
 
 		// store the proxy in the storage
-		storage.storeAgentProxy(proxy);
+		storage.storeAgentProxy( proxy );
 
 		// the proxy should not be locked now!
-		if( storage.isAgentProxyLocked(proxy) )
-			fail("Proxy locked as soon as stored!");
+		if (storage.isAgentProxyLocked( proxy ))
+			fail( "Proxy locked as soon as stored!" );
 
 		// lock the proxy
-		storage.lockAgentProxy(proxy, false, -1);
-		if(!  storage.isAgentProxyLocked(proxy) )
-			fail("Proxy status should be locked now! " + System.currentTimeMillis());
+		storage.lockAgentProxy( proxy, false, -1 );
+		if (!storage.isAgentProxyLocked( proxy ))
+			fail( "Proxy status should be locked now! "
+					+ System.currentTimeMillis() );
 
 		// do a method call to a blocking method
 		start = System.currentTimeMillis();
-		int result = proxy.lockableMethod( 3 );
-		end   = System.currentTimeMillis();
+		final int result = proxy.lockableMethod( 3 );
+		end = System.currentTimeMillis();
 
-		if( result != 3*2 )
-			fail("Result incorrect");
+		if (result != 3 * 2)
+			fail( "Result incorrect" );
 
-		if( (end - start) < sleeping *9/10 )
-			fail("Locking time was incorrect " + (end - start) + " " + end + " " + start );
-
-
-
-	}
-
-	public void run() {
-
-		System.out.println("Unlocking thread sleeping for " + this.sleeping);
-		try {
-			Thread.currentThread().sleep(sleeping);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("Unlocking the proxy " + System.currentTimeMillis());
-		this.storage.unlockAgentProxy(proxy, true);
+		if ((end - start) < sleeping * 9 / 10)
+			fail( "Locking time was incorrect " + (end - start) + " " + end
+					+ " " + start );
 
 	}
 }

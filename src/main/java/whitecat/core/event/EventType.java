@@ -40,16 +40,17 @@ package whitecat.core.event;
 
 /**
  * The types of role event managed by the framework.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public enum EventType {
 
-    PUBLIC_ROLE_ADDED,		/* a public role has been added */
-    PUBLIC_ROLE_REMOVED,	/* a public role has been removed */
-    VISIBILE_ROLE_ADDED,	/* a visible role has been added */
-    VISIBLE_ROLE_REMOVED,	/* a visibile role has been removed */
-    PRIVATE_ROLE_ADDED,		/* a private role has been added */
-    PRIVATE_ROLE_REMOVED, 	/* a private role has been removed */
-    PUBLIC_ROLE_REMOVING;	/* a public role is being removed */
+	PUBLIC_ROLE_ADDED, /* a public role has been added */
+	PUBLIC_ROLE_REMOVED, /* a public role has been removed */
+	VISIBILE_ROLE_ADDED, /* a visible role has been added */
+	VISIBLE_ROLE_REMOVED, /* a visibile role has been removed */
+	PRIVATE_ROLE_ADDED, /* a private role has been added */
+	PRIVATE_ROLE_REMOVED, /* a private role has been removed */
+	PUBLIC_ROLE_REMOVING; /* a public role is being removed */
 }

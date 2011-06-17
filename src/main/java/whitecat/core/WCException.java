@@ -40,44 +40,45 @@ package whitecat.core;
 
 /**
  * An exception thrown by the White Cat role engine or subsystem. Each exception
- * thrown during White Cat functionality is a subclass of this, and so it is possible
- * to simply handle this exception in all the user code.
+ * thrown during White Cat functionality is a subclass of this, and so it is
+ * possible to simply handle this exception in all the user code.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class WCException extends Exception {
 
-    /**
+	/**
      * 
      */
-    public WCException() {
-	super();
-	// TODO Auto-generated constructor stub
-    }
+	public WCException() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public WCException(String arg0, Throwable arg1) {
-	super(arg0, arg1);
-	// TODO Auto-generated constructor stub
-    }
+	/**
+	 * @param arg0
+	 */
+	public WCException(final String arg0) {
+		super( arg0 );
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * @param arg0
-     */
-    public WCException(String arg0) {
-	super(arg0);
-	// TODO Auto-generated constructor stub
-    }
+	/**
+	 * @param arg0
+	 * @param arg1
+	 */
+	public WCException(final String arg0, final Throwable arg1) {
+		super( arg0, arg1 );
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * @param arg0
-     */
-    public WCException(Throwable arg0) {
-	super(arg0);
-	// TODO Auto-generated constructor stub
-    }
+	/**
+	 * @param arg0
+	 */
+	public WCException(final Throwable arg0) {
+		super( arg0 );
+		// TODO Auto-generated constructor stub
+	}
 
 }

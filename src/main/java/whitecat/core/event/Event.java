@@ -38,85 +38,95 @@
  */
 package whitecat.core.event;
 
-import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.AgentProxyID;
-import whitecat.core.role.descriptors.IRoleDescriptorBuilder;
 import whitecat.core.role.descriptors.RoleDescriptor;
 
 /**
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class Event {
-    
-    /**
-     * The type of this event.
-     */
-    private EventType type = null;
-    
-    /**
-     * The id of the agent proxy that is going manipulated.
-     */
-    private AgentProxyID agentProxyID = null;
-    
-    /**
-     * The role descriptor this role event refers to.
-     */
-    private RoleDescriptor descriptor = null;
-    
-    /**
-     * Builds an event with the specified proxy id and the type of event.
-     * @param proxyID the id of the proxy
-     * @param type the type of the event
-     * @param descriptor the role descriptor this event refers to
-     */
-    private Event(AgentProxyID proxyID, EventType type, RoleDescriptor descriptor){
-	super();
-	this.agentProxyID = proxyID;
-	this.type = type;
-	this.descriptor = descriptor;
-    }
-    
-    
-    /**
-     * Builds up the event for the specified proxy id and the type of the event.
-     * @param proxyID the id of the proxy
-     * @param type the type of the event
-     * @param descriptor the role descriptor this event refers to
-     * @return the event of the specified 
-     */
-    public static Event createEvent(AgentProxyID proxyID, EventType type, RoleDescriptor descriptor){
-	return new Event(proxyID, type, descriptor);
-	
-    }
-    
-    
-    /**
-     * Provides the source agent proxy id.
-     * @return the id of the proxy this event refers to
-     */
-    public AgentProxyID getAgentProxyID(){
-	return this.agentProxyID;
-    }
-    
-    /**
-     * The event type for this event.
-     * @return the event type of this event.
-     */
-    public EventType getEventType(){
-	return this.type;
-    }
-    
-    /**
-     * Provides the role descriptor related to this role event.
-     * @return the role descriptor
-     */
-    public RoleDescriptor getRoleDescriptor(){
-	return this.descriptor;
-    }
-    
-    
-    public String toString(){
-	return this.type + " - " +  this.agentProxyID;
-    }
+
+	/**
+	 * Builds up the event for the specified proxy id and the type of the event.
+	 * 
+	 * @param proxyID
+	 *            the id of the proxy
+	 * @param type
+	 *            the type of the event
+	 * @param descriptor
+	 *            the role descriptor this event refers to
+	 * @return the event of the specified
+	 */
+	public static Event createEvent(final AgentProxyID proxyID,
+									final EventType type,
+									final RoleDescriptor descriptor) {
+		return new Event( proxyID, type, descriptor );
+
+	}
+
+	/**
+	 * The type of this event.
+	 */
+	private EventType		type			= null;
+
+	/**
+	 * The id of the agent proxy that is going manipulated.
+	 */
+	private AgentProxyID	agentProxyID	= null;
+
+	/**
+	 * The role descriptor this role event refers to.
+	 */
+	private RoleDescriptor	descriptor		= null;
+
+	/**
+	 * Builds an event with the specified proxy id and the type of event.
+	 * 
+	 * @param proxyID
+	 *            the id of the proxy
+	 * @param type
+	 *            the type of the event
+	 * @param descriptor
+	 *            the role descriptor this event refers to
+	 */
+	private Event(final AgentProxyID proxyID, final EventType type,
+					final RoleDescriptor descriptor) {
+		super();
+		agentProxyID = proxyID;
+		this.type = type;
+		this.descriptor = descriptor;
+	}
+
+	/**
+	 * Provides the source agent proxy id.
+	 * 
+	 * @return the id of the proxy this event refers to
+	 */
+	public AgentProxyID getAgentProxyID() {
+		return agentProxyID;
+	}
+
+	/**
+	 * The event type for this event.
+	 * 
+	 * @return the event type of this event.
+	 */
+	public EventType getEventType() {
+		return type;
+	}
+
+	/**
+	 * Provides the role descriptor related to this role event.
+	 * 
+	 * @return the role descriptor
+	 */
+	public RoleDescriptor getRoleDescriptor() {
+		return descriptor;
+	}
+
+	@Override
+	public String toString() {
+		return type + " - " + agentProxyID;
+	}
 }

@@ -39,24 +39,28 @@
 package whitecat.core.agents;
 
 /**
- * This interface is used to mark every agent proxy that must be clonable
- * with a custom user control. If your agent proxies have a specific state that must
- * be kept among different role manipulation by the role booster, you should add this
- * interface to your proxy implementation.
- * Please consider that this method does not override the initializeByCopy method of the agent proxy:
- * the initializeByCopy is used to guarantee that the minimun information about the agent proxy are copied,
- * while this interface gives the users more control over which extended state to copy.
+ * This interface is used to mark every agent proxy that must be clonable with a
+ * custom user control. If your agent proxies have a specific state that must be
+ * kept among different role manipulation by the role booster, you should add
+ * this interface to your proxy implementation. Please consider that this method
+ * does not override the initializeByCopy method of the agent proxy: the
+ * initializeByCopy is used to guarantee that the minimun information about the
+ * agent proxy are copied, while this interface gives the users more control
+ * over which extended state to copy.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public interface IClonableAgentProxy {
-    
-    /**
-     * This method is used to clone the agent proxy status. Implement this method
-     * copying field by field the agent proxy state.
-     * @param sourceAgentProxy the agent from which copy the state (usually the old - not manipulated -
-     * proxy instace)
-     */
-    public void cloneAgentProxyState( IClonableAgentProxy sourceAgentProxy );
+
+	/**
+	 * This method is used to clone the agent proxy status. Implement this
+	 * method copying field by field the agent proxy state.
+	 * 
+	 * @param sourceAgentProxy
+	 *            the agent from which copy the state (usually the old - not
+	 *            manipulated - proxy instace)
+	 */
+	public void cloneAgentProxyState(IClonableAgentProxy sourceAgentProxy);
 
 }

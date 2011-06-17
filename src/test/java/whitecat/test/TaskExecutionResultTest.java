@@ -38,14 +38,10 @@
  */
 package whitecat.test;
 
-
-import static org.junit.Assert.*;
-
-import javax.management.RuntimeErrorException;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert.*;
 
 import whitecat.core.WCException;
 import whitecat.core.WhiteCat;
@@ -53,77 +49,79 @@ import whitecat.core.role.task.ITaskExecutionResult;
 
 /**
  * A test for the execution result.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
-public class TaskExecutionResultTest  {
+public class TaskExecutionResultTest {
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+	}
 
-    @Test
-    public void testExecutionResult() throws WCException, InterruptedException{
-	// get a task result
-	ITaskExecutionResult result = WhiteCat.getTaskExecutionResult();
+	@Test
+	public void testExecutionResult() throws WCException, InterruptedException {
+		// get a task result
+		final ITaskExecutionResult result = WhiteCat.getTaskExecutionResult();
 
-	// it should not be null and not be the same for any other call
-	if( result == null )
-	    fail("Execution result null!");
-	if( result == WhiteCat.getTaskExecutionResult() || result.equals( WhiteCat.getTaskExecutionResult()) )
-	    fail("Obtained two equals task execution results!");
+		// it should not be null and not be the same for any other call
+		if (result == null)
+			fail( "Execution result null!" );
+		if ((result == WhiteCat.getTaskExecutionResult())
+				|| result.equals( WhiteCat.getTaskExecutionResult() ))
+			fail( "Obtained two equals task execution results!" );
 
-	// now the result should not be available
-	if( result.isResultAvailable() )
-	    fail("Result should not be available now!");
+		// now the result should not be available
+		if (result.isResultAvailable())
+			fail( "Result should not be available now!" );
 
-	result.setResult( new String("RESULT") );
-	if( ! result.isResultAvailable() )
-	    fail("Result should be available now!");
+		result.setResult( new String( "RESULT" ) );
+		if (!result.isResultAvailable())
+			fail( "Result should be available now!" );
 
-	// now the sync..
-	long start = System.currentTimeMillis();
-	Object innerResult = result.getTaskResult( 36600 );
-	long end = System.currentTimeMillis();
-	if( (end - start) > 1 )
-	    fail("With a result available we should not wait!");
+		// now the sync..
+		final long start = System.currentTimeMillis();
+		result.getTaskResult( 36600 );
+		final long end = System.currentTimeMillis();
+		if ((end - start) > 1)
+			fail( "With a result available we should not wait!" );
 
+		final ITaskExecutionResult result2 = WhiteCat.getTaskExecutionResult();
+		final Runnable waitingThread = new Runnable() {
 
+			public void run() {
+				while (!result2.isResultAvailable()){
+					Object rr;
+					try{
+						rr = result2.getTaskResult( true );
+						if (rr == null)
+							throw new RuntimeException(
+									"Do not get the result!" );
+					}catch (final WCException e){
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
-	final ITaskExecutionResult result2 = WhiteCat.getTaskExecutionResult();
-	Runnable waitingThread = new Runnable(){
+				}
 
-	    public void run() {
-		while( ! result2.isResultAvailable() ){
-		    Object rr;
-		    try {
-			rr = result2.getTaskResult( true );
-			if( rr == null )
-			    throw new RuntimeException("Do not get the result!");
-		    } catch (WCException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		    }
+			}
 
-		}
+		};
 
-	    }
+		// start a new thread waiting for the result
+		final Thread t = new Thread( waitingThread );
+		t.start();
+		Thread.currentThread();
+		Thread.sleep( 15000 );
+		result2.setResult( new String( "Hello" ) );
 
-	};
+		// we should not be able to set the result twice or more
+		if (result.setResult( new String( "Second result" ) ))
+			fail( "Cannot set the result twice!" );
 
-	// start a new thread waiting for the result
-	Thread t = new Thread( waitingThread );
-	t.start();
-	Thread.currentThread().sleep( 15000 );
-	result2.setResult( new String("Hello") );
-
-	// we should not be able to set the result twice or more
-	if( result.setResult( new String("Second result")) )
-	    fail("Cannot set the result twice!");
-
-    }
+	}
 
 }

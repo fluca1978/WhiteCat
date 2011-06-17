@@ -41,43 +41,44 @@ package whitecat.core.exceptions;
 import whitecat.core.WCException;
 
 /**
- * An exception to indicate that something has gone wrong with the scheduling mechanism.
+ * An exception to indicate that something has gone wrong with the scheduling
+ * mechanism.
  * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class WCSchedulingException extends WCException {
 
-    /**
+	/**
      * 
      */
-    public WCSchedulingException() {
-	// TODO Auto-generated constructor stub
-    }
+	public WCSchedulingException() {
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public WCSchedulingException(String arg0, Throwable arg1) {
-	super(arg0, arg1);
-	// TODO Auto-generated constructor stub
-    }
+	/**
+	 * @param arg0
+	 */
+	public WCSchedulingException(final String arg0) {
+		super( arg0 );
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * @param arg0
-     */
-    public WCSchedulingException(String arg0) {
-	super(arg0);
-	// TODO Auto-generated constructor stub
-    }
+	/**
+	 * @param arg0
+	 * @param arg1
+	 */
+	public WCSchedulingException(final String arg0, final Throwable arg1) {
+		super( arg0, arg1 );
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * @param arg0
-     */
-    public WCSchedulingException(Throwable arg0) {
-	super(arg0);
-	// TODO Auto-generated constructor stub
-    }
+	/**
+	 * @param arg0
+	 */
+	public WCSchedulingException(final Throwable arg0) {
+		super( arg0 );
+		// TODO Auto-generated constructor stub
+	}
 
 }

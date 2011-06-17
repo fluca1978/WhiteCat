@@ -43,30 +43,32 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator of the White Cat OSGi bundle.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class WCBundleActivator implements BundleActivator {
 
-    /**
-     * The context this activator is bound to.
-     */
-    private static BundleContext myContext = null;
-    
-    /* (non-Javadoc)
-     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-     */
-    public void start(BundleContext context) throws Exception {
-	System.out.println("Activating the bundle...");
-	this.myContext = context;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+	 * )
+	 */
+	public void start(final BundleContext context) throws Exception {
+		System.out.println( "Activating the bundle..." );
 
-    }
+	}
 
-    /* (non-Javadoc)
-     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
-    public void stop(BundleContext arg0) throws Exception {
-	System.out.println("Stopping the bundle...");
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(final BundleContext arg0) throws Exception {
+		System.out.println( "Stopping the bundle..." );
+	}
 
 }

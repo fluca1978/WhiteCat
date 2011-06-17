@@ -42,8 +42,9 @@ package whitecat.core.role;
  * A tagged interface that a concrete role implementation (i.e., a role class)
  * should implement. The adoption of this interface is just to limit the type of
  * arguments of the Role Engine, it is not used for any other purposes.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public interface IRole {
 

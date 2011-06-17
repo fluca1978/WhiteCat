@@ -41,208 +41,204 @@ package whitecat.core.lock;
 import whitecat.core.agents.AgentProxy;
 
 /**
- * This class is a wrapper around the status of an agent proxy, such as its locking status,
- * its statistics about manipulations and so on. It is used by the storage to keep in sync
- * the status of an agent proxy.
+ * This class is a wrapper around the status of an agent proxy, such as its
+ * locking status, its statistics about manipulations and so on. It is used by
+ * the storage to keep in sync the status of an agent proxy.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class AgentProxyStatus {
 
-    /**
-     * The proxy (last updated) this status is referred to.
-     */
-    private AgentProxy proxy = null;
-    
-    /**
-     * The number of times this proxy has been locked, that is how many locks it is handling at the moment.
-     * (this is not a statistic information)
-     */
-    private int lockCount = 0;
-    
-    /**
-     * The number of times this proxy has been manipulated, i.e., how many time this proxy has requested
-     * an operation to the role booster.
-     */
-    private int manipulationCount = 0;
-    
-    
-    /**
-     * An object to lock on when a proxy method is invoked but cannot proceed.
-     */
-    private Object lockingObject = new Object();
-    
-    
-    /**
-     * Default constructor: it is possible to build a proxy status only having a proxy to wrap into.
-     * @param proxy the proxy this status now refers to
-     */
-    private AgentProxyStatus( AgentProxy proxy ){
-	super();
-	this.proxy = proxy;
-    }
-    
-    
-    
-    
-    /**
-     * Construct a new agent proxy status for the specified proxy.
-     * @param proxy the proxy to wrap in the agent status
-     * @return the agent proxy status wrapper
-     */
-    public static AgentProxyStatus newInstance( AgentProxy proxy ){
-	    return new AgentProxyStatus( proxy );
-    }
-    
-
-    /**
-     * Provides the value of the lockCount field. If this value is greater than zero, it means that the proxy
-     * is currently locked by something.
-     * @return the lockCount
-     */
-    public synchronized final int getLockCount() {
-        return this.lockCount;
-    }
-
-
-    /**
-     * Provides the value of the manipulationCount field. It is a statistic field, so that it counts all
-     * the manipulation this proxy has overtook.
-     * @return the manipulationCount
-     */
-    public synchronized final int getManipulationCount() {
-        return this.manipulationCount;
-    }
-
-
-    /**
-     * Sets the value of the proxy field as specified
-     * by the value of proxy.
-     * @param proxy the proxy to set
-     */
-    public synchronized final void setProxy(AgentProxy proxy) {
-        this.proxy = proxy;
-        this.unlockAll();		// a new proxy should not be locked!
-    }
-    
-    
-    /**
-     * Increments the manipulation count.
-     */
-    public synchronized final void incrementManipulationCount(){
-	this.manipulationCount++;
-    }
-    
-    /**
-     * Increments the lock count, that is another thread/agent is locking this proxy.
-     */
-    public synchronized final void incrementLockCount(){
-	this.lockCount++;
-    }
-    
-    /**
-     * Decrement the lock count, that is a thread is no more locking this proxy.
-     */
-    public synchronized final void decrementLockCount(){
-	this.lockCount--;
-	if( this.lockCount <= 0 )
-	    this.notifyAll();
-    }
-    
-    
-    /**
-     * This proxy is locked if the lock count is greater than zero.
-     * @return true if the proxy has been locked and not yet unlocked
-     */
-    public synchronized final boolean isLocked(){
-	return (this.lockCount > 0);
-    }
-    
-    /**
-     * Removes all the locks on this proxy.
-     */
-    public final void unlockAll(){
-	synchronized ( this.lockingObject) {
-	    this.lockCount = 0;
-	    this.lockingObject.notifyAll();
+	/**
+	 * Construct a new agent proxy status for the specified proxy.
+	 * 
+	 * @param proxy
+	 *            the proxy to wrap in the agent status
+	 * @return the agent proxy status wrapper
+	 */
+	public static AgentProxyStatus newInstance(final AgentProxy proxy) {
+		return new AgentProxyStatus( proxy );
 	}
-    }
 
+	/**
+	 * The proxy (last updated) this status is referred to.
+	 */
+	private AgentProxy		proxy				= null;
 
+	/**
+	 * The number of times this proxy has been locked, that is how many locks it
+	 * is handling at the moment. (this is not a statistic information)
+	 */
+	private int				lockCount			= 0;
 
+	/**
+	 * The number of times this proxy has been manipulated, i.e., how many time
+	 * this proxy has requested an operation to the role booster.
+	 */
+	private int				manipulationCount	= 0;
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-	StringBuffer buffer = new StringBuffer( 50 );
-	buffer.append( this.proxy );
-	buffer.append( " " );
-	buffer.append( "locks = ");
-	buffer.append( this.lockCount );
-	buffer.append( " " );
-	buffer.append( "manipulations = " );
-	buffer.append( this.manipulationCount );
-	return buffer.toString();
-    }
-    
-    
-    
-    /**
-     * Provides the value of the proxy field. If the current status is locked, than the calling thread
-     * is suspended waiting for the status to become unlocked. This means that this method call is blocking!
-     * @return the proxy
-     */
-    public final AgentProxy getProxy() {
-	// if this status is locked, cannot return the agent proxy, so lock the calling thread
-	try{
-	    synchronized( this.lockingObject ){
-		while( this.lockCount > 0 )
-		    this.lockingObject.wait();
-	    }
-	}catch(InterruptedException e){
-	    e.printStackTrace();
+	/**
+	 * An object to lock on when a proxy method is invoked but cannot proceed.
+	 */
+	private final Object	lockingObject		= new Object();
+
+	/**
+	 * Default constructor: it is possible to build a proxy status only having a
+	 * proxy to wrap into.
+	 * 
+	 * @param proxy
+	 *            the proxy this status now refers to
+	 */
+	private AgentProxyStatus(final AgentProxy proxy) {
+		super();
+		this.proxy = proxy;
 	}
-	
-        return this.proxy;
-    }
 
-
-
-
-    /**
-     * Locks this agent proxy on its locking object.
-     * The locking counter is incremented.
-     */
-    public void lock(){
-	try{
-	    synchronized( this.lockingObject ){
-		this.incrementLockCount();
-		this.lockingObject.wait();
-	    }
-	}catch(InterruptedException e){
-	    e.printStackTrace();
+	/**
+	 * Decrement the lock count, that is a thread is no more locking this proxy.
+	 */
+	public synchronized final void decrementLockCount() {
+		lockCount--;
+		if (lockCount <= 0)
+			notifyAll();
 	}
-    }
-    
-    
-    /**
-     * Locks the current thread caller for the specified time.
-     * @param thresold the max time to lock for
-     */
-    public void lock( long thresold ){
-	try{
-	    synchronized ( this.lockingObject) {
-		this.incrementLockCount();
-		this.lockingObject.wait( thresold );
-	    }
-	}catch(InterruptedException e){
-	    e.printStackTrace();
+
+	/**
+	 * Provides the value of the lockCount field. If this value is greater than
+	 * zero, it means that the proxy is currently locked by something.
+	 * 
+	 * @return the lockCount
+	 */
+	public synchronized final int getLockCount() {
+		return lockCount;
 	}
-    }
-    
-    
- 
-    
+
+	/**
+	 * Provides the value of the manipulationCount field. It is a statistic
+	 * field, so that it counts all the manipulation this proxy has overtook.
+	 * 
+	 * @return the manipulationCount
+	 */
+	public synchronized final int getManipulationCount() {
+		return manipulationCount;
+	}
+
+	/**
+	 * Provides the value of the proxy field. If the current status is locked,
+	 * than the calling thread is suspended waiting for the status to become
+	 * unlocked. This means that this method call is blocking!
+	 * 
+	 * @return the proxy
+	 */
+	public final AgentProxy getProxy() {
+		// if this status is locked, cannot return the agent proxy, so lock the
+		// calling thread
+		try{
+			synchronized (lockingObject){
+				while (lockCount > 0)
+					lockingObject.wait();
+			}
+		}catch (final InterruptedException e){
+			e.printStackTrace();
+		}
+
+		return proxy;
+	}
+
+	/**
+	 * Increments the lock count, that is another thread/agent is locking this
+	 * proxy.
+	 */
+	public synchronized final void incrementLockCount() {
+		lockCount++;
+	}
+
+	/**
+	 * Increments the manipulation count.
+	 */
+	public synchronized final void incrementManipulationCount() {
+		manipulationCount++;
+	}
+
+	/**
+	 * This proxy is locked if the lock count is greater than zero.
+	 * 
+	 * @return true if the proxy has been locked and not yet unlocked
+	 */
+	public synchronized final boolean isLocked() {
+		return (lockCount > 0);
+	}
+
+	/**
+	 * Locks this agent proxy on its locking object. The locking counter is
+	 * incremented.
+	 */
+	public void lock() {
+		try{
+			synchronized (lockingObject){
+				incrementLockCount();
+				lockingObject.wait();
+			}
+		}catch (final InterruptedException e){
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Locks the current thread caller for the specified time.
+	 * 
+	 * @param thresold
+	 *            the max time to lock for
+	 */
+	public void lock(final long thresold) {
+		try{
+			synchronized (lockingObject){
+				incrementLockCount();
+				lockingObject.wait( thresold );
+			}
+		}catch (final InterruptedException e){
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Sets the value of the proxy field as specified by the value of proxy.
+	 * 
+	 * @param proxy
+	 *            the proxy to set
+	 */
+	public synchronized final void setProxy(final AgentProxy proxy) {
+		this.proxy = proxy;
+		unlockAll(); // a new proxy should not be locked!
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuffer buffer = new StringBuffer( 50 );
+		buffer.append( proxy );
+		buffer.append( " " );
+		buffer.append( "locks = " );
+		buffer.append( lockCount );
+		buffer.append( " " );
+		buffer.append( "manipulations = " );
+		buffer.append( manipulationCount );
+		return buffer.toString();
+	}
+
+	/**
+	 * Removes all the locks on this proxy.
+	 */
+	public final void unlockAll() {
+		synchronized (lockingObject){
+			lockCount = 0;
+			lockingObject.notifyAll();
+		}
+	}
+
 }

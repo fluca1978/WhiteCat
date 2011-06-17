@@ -38,93 +38,108 @@
  */
 package whitecat.core.role.task;
 
-import org.apache.log4j.Logger;
-
 import whitecat.core.WCException;
 
 /**
- * The default implementation of the task execution result.
- * Implements a simple future reply mechanism.
+ * The default implementation of the task execution result. Implements a simple
+ * future reply mechanism.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class TaskExecutionResultImpl implements ITaskExecutionResult {
 
-    /**
-     * The result of the task execution.
-     */
-    private Object result = null;
+	/**
+	 * The result of the task execution.
+	 */
+	private Object	result		= null;
 
-    /**
-     * Indicates if this task result has been cancelled.
-     */
-    private boolean isCancelled = false;
+	/**
+	 * Indicates if this task result has been cancelled.
+	 */
+	private boolean	isCancelled	= false;
 
-    /* (non-Javadoc)
-     * @see whitecat.core.role.task.scheduling.ITaskExecutionResult#getTaskResult(boolean)
-     */
-    public final synchronized Object getTaskResult(boolean blocking) throws WCException{
-	// if the result is ready, do not wait at all
-	if( this.isResultAvailable() )
-	    return this.result;
+	public synchronized final void cancel() {
+		isCancelled = true;
+		notifyAll();
+	}
 
-	// the result is not ready yet, do I have to wait?
-	if( ! blocking )
-	    return null;
-	else{
-	    while( ! this.isResultAvailable() )
-		try {
-		    this.wait();
-		} catch (InterruptedException e) {
-		    throw new WCException("Exception caught while waiting for a task result", e);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.role.task.scheduling.ITaskExecutionResult#getTaskResult
+	 * (boolean)
+	 */
+	public final synchronized Object getTaskResult(final boolean blocking)
+																			throws WCException {
+		// if the result is ready, do not wait at all
+		if (isResultAvailable())
+			return result;
+
+		// the result is not ready yet, do I have to wait?
+		if (!blocking)
+			return null;
+		else{
+			while (!isResultAvailable())
+				try{
+					this.wait();
+				}catch (final InterruptedException e){
+					throw new WCException(
+							"Exception caught while waiting for a task result",
+							e );
+				}
+
+			return result;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.role.task.scheduling.ITaskExecutionResult#getTaskResult
+	 * (long)
+	 */
+	public synchronized final Object getTaskResult(final long timeout)
+																		throws WCException {
+		// if the result is ready, do not wait at all
+		if (isResultAvailable())
+			return result;
+
+		// the result is not ready yet, do I have to wait?
+		if (timeout > 0){
+			try{
+				this.wait( timeout );
+			}catch (final InterruptedException e){
+				throw new WCException(
+						"Exception caught while waiting for a task result", e );
+			}
+
 		}
 
-	    return this.result;
-	}
-    }
-
-    /* (non-Javadoc)
-     * @see whitecat.core.role.task.scheduling.ITaskExecutionResult#getTaskResult(long)
-     */
-    public synchronized final Object getTaskResult(long timeout) throws WCException {
-	// if the result is ready, do not wait at all
-	if( this.isResultAvailable() )
-	    return this.result;
-
-	// the result is not ready yet, do I have to wait?
-	if( timeout > 0 ){
-	    try {
-		this.wait(timeout);
-	    } catch (InterruptedException e) {
-		throw new WCException("Exception caught while waiting for a task result", e);
-	    }
-
+		return result;
 	}
 
-	return this.result;
-    }
-
-    /* (non-Javadoc)
-     * @see whitecat.core.role.task.scheduling.ITaskExecutionResult#isResultAvailable()
-     */
-    public final synchronized boolean isResultAvailable() {
-	return (this.result != null || this.isCancelled);
-    }
-
-    public final synchronized boolean setResult(Object result) {
-	// do not allow setting the result more than once
-	if( this.result != null )
-	    return false;
-	else{
-	    this.result = result;
-	    this.notifyAll();
-	    return true;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.role.task.scheduling.ITaskExecutionResult#isResultAvailable
+	 * ()
+	 */
+	public final synchronized boolean isResultAvailable() {
+		return ((result != null) || isCancelled);
 	}
-    }
 
-
-    public synchronized final void cancel(){
-	this.isCancelled = true;
-	this.notifyAll();
-    }
+	public final synchronized boolean setResult(final Object result) {
+		// do not allow setting the result more than once
+		if (this.result != null)
+			return false;
+		else{
+			this.result = result;
+			notifyAll();
+			return true;
+		}
+	}
 }

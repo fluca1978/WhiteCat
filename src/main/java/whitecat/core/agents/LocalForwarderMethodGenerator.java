@@ -45,106 +45,117 @@ import whitecat.core.exceptions.WCForwarderMethodException;
 import whitecat.core.role.IRole;
 
 /**
- * A method forwarder generator that works assuming that the proxy and the agent using the
- * role are local each other. The method generated exploits a capability of the LocalAgentProxy
- * that is an hashmap that stores references to the role instance.
+ * A method forwarder generator that works assuming that the proxy and the agent
+ * using the role are local each other. The method generated exploits a
+ * capability of the LocalAgentProxy that is an hashmap that stores references
+ * to the role instance.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class LocalForwarderMethodGenerator implements IMethodForwarderGenerator {
 
-    
-    /**
-     * The key used for the method forwarding.
-     */
-    private String hashMapKey = null;
-    
-    /**
-     * The role class name.
-     */
-    private String roleClassName = null;
-    
-    /* (non-Javadoc)
-     * @see whitecat.core.agents.MethodForwarderGenerator#bindReferences()
-     */
-    public boolean bindReferences(AgentProxy proxy, IRole roleInstance) throws WCForwarderMethodException {
-	// bind the role instance to the hashmap key
-	if( proxy instanceof LocalAgentProxy ){
-	    ((LocalAgentProxy)proxy).addRoleImplementationReference(this.hashMapKey, roleInstance);
-	    return true;
+	/**
+	 * The key used for the method forwarding.
+	 */
+	private String	hashMapKey		= null;
+
+	/**
+	 * The role class name.
+	 */
+	private String	roleClassName	= null;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see whitecat.core.agents.MethodForwarderGenerator#bindReferences()
+	 */
+	public boolean bindReferences(final AgentProxy proxy,
+									final IRole roleInstance)
+																throws WCForwarderMethodException {
+		// bind the role instance to the hashmap key
+		if (proxy instanceof LocalAgentProxy){
+			((LocalAgentProxy) proxy).addRoleImplementationReference(
+					hashMapKey,
+					roleInstance );
+			return true;
+		}else return false;
 	}
-	else
-	    return false;
-    }
 
-    /* (non-Javadoc)
-     * @see whitecat.core.agents.MethodForwarderGenerator#getMethodForwarderCode(javassist.CtMethod)
-     */
-    public String getMethodForwarderCode(CtMethod interfaceMethod)
-	    throws WCForwarderMethodException {
-	try{
-	    // construct the Java source code for the new method
-	    StringBuffer methodCode = new StringBuffer(200);
-	    methodCode.append(" public ");
-	    methodCode.append(interfaceMethod.getReturnType().getName());
-	    methodCode.append(" ");
-	    methodCode.append(interfaceMethod.getName());
-	    methodCode.append("( ");
-	    CtClass params[] = interfaceMethod.getParameterTypes();
-	    for(int parNo = 0; params != null && parNo < params.length; parNo++ ){
-		if( parNo > 0 )
-		    methodCode.append(",");	// more than one parameter, separate them with comma
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.agents.MethodForwarderGenerator#getMethodForwarderCode(
+	 * javassist.CtMethod)
+	 */
+	public String getMethodForwarderCode(final CtMethod interfaceMethod)
+																		throws WCForwarderMethodException {
+		try{
+			// construct the Java source code for the new method
+			final StringBuffer methodCode = new StringBuffer( 200 );
+			methodCode.append( " public " );
+			methodCode.append( interfaceMethod.getReturnType().getName() );
+			methodCode.append( " " );
+			methodCode.append( interfaceMethod.getName() );
+			methodCode.append( "( " );
+			final CtClass params[] = interfaceMethod.getParameterTypes();
+			for (int parNo = 0; (params != null) && (parNo < params.length); parNo++){
+				if (parNo > 0)
+					methodCode.append( "," ); // more than one parameter,
+												// separate them with comma
 
-		methodCode.append( params[parNo].getName() );	// parameter type
-		methodCode.append(" param" + parNo);		// parameter identifier
-	    }
+				methodCode.append( params[parNo].getName() ); // parameter type
+				methodCode.append( " param" + parNo ); // parameter identifier
+			}
 
-	    methodCode.append(" ) ");
+			methodCode.append( " ) " );
 
-	    // body definition: I need to cast the reference extracted from the proxy
-	    // to an object of the type of the role, and than I need to invoke the method
-	    // passing all the argument of the forwarder one. If the method has a return type
-	    // different from void, that I also need to insert a return statement.
-	    methodCode.append("{ ");
+			// body definition: I need to cast the reference extracted from the
+			// proxy
+			// to an object of the type of the role, and than I need to invoke
+			// the method
+			// passing all the argument of the forwarder one. If the method has
+			// a return type
+			// different from void, that I also need to insert a return
+			// statement.
+			methodCode.append( "{ " );
 
-	    
-	    if( ! "void".equals(interfaceMethod.getReturnType().getName()) )
-		methodCode.append(" return ");
-	    
-	    
-	    methodCode.append(" ((");
-	    methodCode.append( this.roleClassName );
-	    methodCode.append(" ) ");
-	    methodCode.append(" this.roleMap.get(\"");
-	    methodCode.append( this.hashMapKey );
-	    methodCode.append("\")).");
-	    methodCode.append(interfaceMethod.getName());
-	    methodCode.append("($$); }");
+			if (!"void".equals( interfaceMethod.getReturnType().getName() ))
+				methodCode.append( " return " );
 
-	    
-	    // all done
-	    return methodCode.toString();
+			methodCode.append( " ((" );
+			methodCode.append( roleClassName );
+			methodCode.append( " ) " );
+			methodCode.append( " this.roleMap.get(\"" );
+			methodCode.append( hashMapKey );
+			methodCode.append( "\"))." );
+			methodCode.append( interfaceMethod.getName() );
+			methodCode.append( "($$); }" );
 
-	}catch(Exception e){
-	    throw new WCForwarderMethodException("Exception caught during forwarding method construction", e);
+			// all done
+			return methodCode.toString();
+
+		}catch (final Exception e){
+			throw new WCForwarderMethodException(
+					"Exception caught during forwarding method construction", e );
+		}
 	}
-    }
 
-    
-    
-    public void init(String proxyClassName, String roleClassName, String key) {
-	// store the key of the hashmap
-	this.hashMapKey = key;
-	
-	// store also the classname of the role
-	this.roleClassName = roleClassName;
-    }
+	public synchronized final void init(final IRoleOperation roleOperation) {
+		this.init(
+				roleOperation.getAgentProxy().getClass().getName(),
+				roleOperation.getRole().getClass().getName(),
+				roleOperation.getRoleImplementationAccessKey() );
+	}
 
-    public synchronized final void init(IRoleOperation roleOperation) {
-	this.init( roleOperation.getAgentProxy().getClass().getName(),
-		   roleOperation.getRole().getClass().getName(),
-		   roleOperation.getRoleImplementationAccessKey()
-		   );
-    }
+	public void init(final String proxyClassName, final String roleClassName,
+						final String key) {
+		// store the key of the hashmap
+		hashMapKey = key;
+
+		// store also the classname of the role
+		this.roleClassName = roleClassName;
+	}
 
 }

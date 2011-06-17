@@ -43,25 +43,23 @@ import whitecat.core.annotations.ROLE;
 
 /**
  * An example of logger role.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @ROLE()
-		// here I specify the part of the role that can be visible
-		// to outsider and that will be applied to the proxy
-@PUBLICROLE(roleInterface  = "whitecat.example.ILogger",
-    	    roleAnnotation = "whitecat.example.DBRoleAnnotation" 
-           )
-public class LoggerRole implements ILogger{
+// here I specify the part of the role that can be visible
+// to outsider and that will be applied to the proxy
+@PUBLICROLE(roleInterface = "whitecat.example.ILogger", roleAnnotation = "whitecat.example.DBRoleAnnotation")
+public class LoggerRole implements ILogger {
 
-    public boolean log(String msg) {
-	if( msg == null || msg.length() > 300 )
-	    return false;
-	else{
-	    System.out.println("[LOGGER] " + msg);
-	    return true;
+	public boolean log(final String msg) {
+		if ((msg == null) || (msg.length() > 300))
+			return false;
+		else{
+			System.out.println( "[LOGGER] " + msg );
+			return true;
+		}
 	}
-    }
 
-    
 }

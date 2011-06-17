@@ -38,35 +38,37 @@
  */
 package whitecat.example;
 
-import java.math.*;
 import java.util.Random;
 
 import whitecat.core.annotations.ROLE;
 import whitecat.core.role.IRole;
 
 /**
- * A private role, that is a role that must be used as it is and is not applied to the
- * agent proxy.
+ * A private role, that is a role that must be used as it is and is not applied
+ * to the agent proxy.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @ROLE()
 @DBRoleAnnotation()
 public class DatabaseUser implements IRole {
 
-    /**
-     * Count the tuples into a database.
-     * @return the number of tuples
-     */
-    public long selectCount(){
-	return new Random().nextLong();
-    }
-    
-    /**
-     * Returns the max price in the database.
-     * @return the max price value
-     */
-    public float getMaxPrice(){
-	return new Random().nextFloat();
-    }
+	/**
+	 * Returns the max price in the database.
+	 * 
+	 * @return the max price value
+	 */
+	public float getMaxPrice() {
+		return new Random().nextFloat();
+	}
+
+	/**
+	 * Count the tuples into a database.
+	 * 
+	 * @return the number of tuples
+	 */
+	public long selectCount() {
+		return new Random().nextLong();
+	}
 }

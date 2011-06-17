@@ -42,73 +42,90 @@ import whitecat.core.IProxyHandler;
 import whitecat.core.exceptions.WCProxyException;
 
 /**
- * A local proxy handler for handling source and destination proxies in a local (i.e.,
- * not networked environment).
+ * A local proxy handler for handling source and destination proxies in a local
+ * (i.e., not networked environment).
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class LocalProxyHandler implements IProxyHandler<LocalAgentProxy> {
 
-    /**
-     * The source and destination proxy handled by this proxy handler.
-     */
-    private LocalAgentProxy sourceProxy      = null;
-    private LocalAgentProxy destinationProxy = null;
-    
-    
-    /* (non-Javadoc)
-     * @see whitecat.core.ProxyHandler#setDestinationProxy(whitecat.core.agents.AgentProxy)
-     */
-    public void setDestinationProxy(LocalAgentProxy destination)
-	    throws WCProxyException {
-	
-	// cannot set the source proxy if already set
-	if( this.destinationProxy != null )
-	    throw new WCProxyException("Cannot set the destination proxy multiple times on the same proxy handler. Hint: create a new proxy handler.");
-	
-	// cannot use a null proxy
-	if( destination == null )
-	    throw new WCProxyException("Cannot use a null destination proxy.");
-	
-	// set the proxy
-	this.destinationProxy = destination;
-    }
+	/**
+	 * The source and destination proxy handled by this proxy handler.
+	 */
+	private LocalAgentProxy	sourceProxy			= null;
+	private LocalAgentProxy	destinationProxy	= null;
 
-    /* (non-Javadoc)
-     * @see whitecat.core.ProxyHandler#setSourceProxy(whitecat.core.agents.AgentProxy)
-     */
-    public void setSourceProxy(LocalAgentProxy source) throws WCProxyException {
-	// cannot set the source proxy if already set
-	if( this.sourceProxy != null )
-	    throw new WCProxyException("Cannot set the source proxy multiple times on the same proxy handler. Hint: create a new proxy handler.");
-	
-	// cannot use a null proxy
-	if( source == null )
-	    throw new WCProxyException("Cannot use a null source proxy.");
-	
-	// set the proxy
-	this.sourceProxy = source;    
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see whitecat.core.ProxyHandler#setDestinationProxy(whitecat.core.agents.
+	 * AgentProxy)
+	 */
+	public void setDestinationProxy(final LocalAgentProxy destination)
+																		throws WCProxyException {
 
-    /* (non-Javadoc)
-     * @see whitecat.core.ProxyHandler#updateProxy()
-     */
-    public boolean updateProxy() throws WCProxyException {
-	// check if both the proxy are in the right place
-	if( this.sourceProxy == null || this.destinationProxy == null )
-	    throw new WCProxyException("Source or destination proxies are not set yet!");
-	
-	// do the copy here
-	this.destinationProxy.setMyAgent( this.sourceProxy.getMyAgent() );
-	this.destinationProxy.initializeByCopy( this.sourceProxy );	
-	
-	// if the old proxy instance is clonable, clone it now!
-	// Please note that if the original agent proxy is clonable, also the new one must be, but we check
-	// for it in the case something in the manipulation process has going bad!
-	if( this.sourceProxy instanceof IClonableAgentProxy && this.destinationProxy instanceof IClonableAgentProxy )
-	    ((IClonableAgentProxy) this.sourceProxy).cloneAgentProxyState( (IClonableAgentProxy) this.destinationProxy );
-	
-	return true;
-    }
+		// cannot set the source proxy if already set
+		if (destinationProxy != null)
+			throw new WCProxyException(
+					"Cannot set the destination proxy multiple times on the same proxy handler. Hint: create a new proxy handler." );
+
+		// cannot use a null proxy
+		if (destination == null)
+			throw new WCProxyException( "Cannot use a null destination proxy." );
+
+		// set the proxy
+		destinationProxy = destination;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.ProxyHandler#setSourceProxy(whitecat.core.agents.AgentProxy
+	 * )
+	 */
+	public void setSourceProxy(final LocalAgentProxy source)
+															throws WCProxyException {
+		// cannot set the source proxy if already set
+		if (sourceProxy != null)
+			throw new WCProxyException(
+					"Cannot set the source proxy multiple times on the same proxy handler. Hint: create a new proxy handler." );
+
+		// cannot use a null proxy
+		if (source == null)
+			throw new WCProxyException( "Cannot use a null source proxy." );
+
+		// set the proxy
+		sourceProxy = source;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see whitecat.core.ProxyHandler#updateProxy()
+	 */
+	public boolean updateProxy() throws WCProxyException {
+		// check if both the proxy are in the right place
+		if ((sourceProxy == null) || (destinationProxy == null))
+			throw new WCProxyException(
+					"Source or destination proxies are not set yet!" );
+
+		// do the copy here
+		destinationProxy.setMyAgent( sourceProxy.getMyAgent() );
+		destinationProxy.initializeByCopy( sourceProxy );
+
+		// if the old proxy instance is clonable, clone it now!
+		// Please note that if the original agent proxy is clonable, also the
+		// new one must be, but we check
+		// for it in the case something in the manipulation process has going
+		// bad!
+		if ((sourceProxy instanceof IClonableAgentProxy)
+				&& (destinationProxy instanceof IClonableAgentProxy))
+			((IClonableAgentProxy) sourceProxy)
+					.cloneAgentProxyState( (IClonableAgentProxy) destinationProxy );
+
+		return true;
+	}
 
 }

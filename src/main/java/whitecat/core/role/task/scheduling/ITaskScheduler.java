@@ -38,55 +38,73 @@
  */
 package whitecat.core.role.task.scheduling;
 
-import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.AgentProxyID;
 import whitecat.core.exceptions.WCSchedulingException;
 import whitecat.core.role.task.IRoleTask;
 import whitecat.core.role.task.ITaskExecutionResult;
 
 /**
- * The scheduler for the execution of tasks.
- * A task can be scheduled for the execution by one or more agents at the role assumption
- * or before the role release.
- * This allows agents to asynchonously cooperate each other asking for services
- * to be executed as soon as possible.
+ * The scheduler for the execution of tasks. A task can be scheduled for the
+ * execution by one or more agents at the role assumption or before the role
+ * release. This allows agents to asynchonously cooperate each other asking for
+ * services to be executed as soon as possible.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public interface ITaskScheduler {
 
+	/**
+	 * Removes the scheduled task (if found).
+	 * 
+	 * @param toExecute
+	 *            the task to execute
+	 * @param executor
+	 *            the agent proxy that will execute the task (or null if any
+	 *            agent proxy can execute the task)
+	 * @param executorMatchPolicy
+	 *            the type of executor match (only one agent proxy or any agent
+	 *            proxy)
+	 * @param executionInstancePolicy
+	 *            when the task must be executed
+	 * @param result
+	 *            the task execution result to use for getting back the task
+	 *            execution result
+	 * @return true if the task has been removed, false if it cannot be found
+	 * @throws WCSchedulingException
+	 *             if something bad goes with the scheduling
+	 */
+	public boolean removeScheduledTask(	IRoleTask toExecute,
+										AgentProxyID executor,
+										TaskSchedulingExecutor executorMatchPolicy,
+										TaskSchedulingInstant executionInstancePolicy,
+										ITaskExecutionResult result);
 
-    /**
-     * Schedules a new task for the execution by the specified agent proxy at the specified event.
-     * @param toExecute the task to execute
-     * @param executor the agent proxy that will execute the task (or null if any agent proxy can execute
-     * the task)
-     * @param executorMatchPolicy the type of executor match (only one agent proxy or any agent proxy)
-     * @param executionInstancePolicy when the task must be executed
-     * @param result the task execution result to use for getting back the task execution result
-     * @return true if the task has been scheduled, false if it cannot be scheduled
-     * @throws WCSchedulingException if something bad goes with the scheduling
-     */
-    public boolean scheduleTask( IRoleTask toExecute, 
-                                 AgentProxyID executor, 
-                                 TaskSchedulingExecutor executorMatchPolicy, 
-                                 TaskSchedulingInstant executionInstancePolicy, 
-                                 ITaskExecutionResult result) throws WCSchedulingException;
-    
-    /**
-     * Removes the scheduled task (if found).
-     * @param toExecute the task to execute
-     * @param executor the agent proxy that will execute the task (or null if any agent proxy can execute
-     * the task)
-     * @param executorMatchPolicy the type of executor match (only one agent proxy or any agent proxy)
-     * @param executionInstancePolicy when the task must be executed
-     * @param result the task execution result to use for getting back the task execution result
-     * @return true if the task has been removed, false if it cannot be found
-     * @throws WCSchedulingException if something bad goes with the scheduling
-     */
-    public boolean removeScheduledTask( IRoleTask toExecute, 
-                                        AgentProxyID executor, 
-                                        TaskSchedulingExecutor executorMatchPolicy, 
-                                        TaskSchedulingInstant executionInstancePolicy, 
-                                        ITaskExecutionResult result);
+	/**
+	 * Schedules a new task for the execution by the specified agent proxy at
+	 * the specified event.
+	 * 
+	 * @param toExecute
+	 *            the task to execute
+	 * @param executor
+	 *            the agent proxy that will execute the task (or null if any
+	 *            agent proxy can execute the task)
+	 * @param executorMatchPolicy
+	 *            the type of executor match (only one agent proxy or any agent
+	 *            proxy)
+	 * @param executionInstancePolicy
+	 *            when the task must be executed
+	 * @param result
+	 *            the task execution result to use for getting back the task
+	 *            execution result
+	 * @return true if the task has been scheduled, false if it cannot be
+	 *         scheduled
+	 * @throws WCSchedulingException
+	 *             if something bad goes with the scheduling
+	 */
+	public boolean scheduleTask(IRoleTask toExecute, AgentProxyID executor,
+								TaskSchedulingExecutor executorMatchPolicy,
+								TaskSchedulingInstant executionInstancePolicy,
+								ITaskExecutionResult result)
+															throws WCSchedulingException;
 }

@@ -38,33 +38,37 @@
  */
 package whitecat.example;
 
+import whitecat.core.annotations.ROLE;
 import whitecat.core.role.IPublicRole;
-import whitecat.core.role.IRole;
-import whitecat.core.annotations.*;
 
 /**
  * The public part of the database administrator.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @ROLE()
-public interface IDatabaseAdministrator 
-extends IPublicRole	// this is a public role and so
-		// extends the public role interface
+public interface IDatabaseAdministrator extends IPublicRole // this is a public
+															// role and so
+// extends the public role interface
 {
-    /**
-     * An example of public service: create a database for the specified name.
-     * @param databaseName the name of the database to create
-     * @return true if the database has been created
-     */
-    public boolean createDatabase(String databaseName);
-    
-    /**
-     * An example of a service: backup a database and return the database dump
-     * as text.
-     * @param databaseName the database to backup
-     * @return the sql dump of the database
-     */
-    public StringBuffer backupDatabase(String databaseName);
+	/**
+	 * An example of a service: backup a database and return the database dump
+	 * as text.
+	 * 
+	 * @param databaseName
+	 *            the database to backup
+	 * @return the sql dump of the database
+	 */
+	public StringBuffer backupDatabase(String databaseName);
+
+	/**
+	 * An example of public service: create a database for the specified name.
+	 * 
+	 * @param databaseName
+	 *            the name of the database to create
+	 * @return true if the database has been created
+	 */
+	public boolean createDatabase(String databaseName);
 
 }

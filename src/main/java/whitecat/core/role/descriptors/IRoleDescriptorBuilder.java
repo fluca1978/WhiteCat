@@ -41,20 +41,23 @@ package whitecat.core.role.descriptors;
 import whitecat.core.role.IRole;
 
 /**
- * A role descriptor builder is an engine that can build a role descriptor
- * from a role. For instance, this engine can analyze the role class and get all the
+ * A role descriptor builder is an engine that can build a role descriptor from
+ * a role. For instance, this engine can analyze the role class and get all the
  * annotations in order to build a role descriptor.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public interface IRoleDescriptorBuilder {
-    
-    
-    /**
-     * Builds a role descriptor automatically starting from the role implementation.
-     * @param role the role to analyze
-     * @return the role descriptor
-     */
-    public RoleDescriptor buildRoleDescriptor( IRole role );
+
+	/**
+	 * Builds a role descriptor automatically starting from the role
+	 * implementation.
+	 * 
+	 * @param role
+	 *            the role to analyze
+	 * @return the role descriptor
+	 */
+	public RoleDescriptor buildRoleDescriptor(IRole role);
 
 }

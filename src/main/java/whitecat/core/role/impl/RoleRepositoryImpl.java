@@ -39,8 +39,6 @@
 package whitecat.core.role.impl;
 
 import java.util.HashMap;
-
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -53,153 +51,173 @@ import whitecat.core.role.descriptors.RoleDescriptor;
 
 /**
  * A concrete implementation of a role repository.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class RoleRepositoryImpl implements IRoleRepository {
 
+	/**
+	 * A role descriptor builder used to build descriptors when no one is
+	 * provided.
+	 */
+	private IRoleDescriptorBuilder			roleDescriptorBuilder	= null;
 
-    /**
-     * A role descriptor builder used to build descriptors when no one is provided.
-     */
-    private IRoleDescriptorBuilder roleDescriptorBuilder = null;
+	/**
+	 * An hashmap with the installed roles. The map is keyed by the descriptors
+	 * and has each implementation of the roles.
+	 */
+	private HashMap<RoleDescriptor, IRole>	roles					= null;
 
-    /**
-     * An hashmap with the installed roles. The map is keyed by the descriptors
-     * and has each implementation of the roles.
-     */
-    private HashMap<RoleDescriptor, IRole> roles = null;
+	public RoleRepositoryImpl() {
+		super();
+		roles = new HashMap<RoleDescriptor, IRole>();
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.role.RoleRepository#findRole(whitecat.core.role.descriptors
+	 * .RoleDescriptor)
+	 */
+	public IRole findRole(final RoleDescriptor descriptor)
+															throws WCRoleRepositoryException {
+		// check if the role and the descriptor are valid
+		if (descriptor == null)
+			throw new WCRoleRepositoryException(
+					"Cannot search with a null role descriptor" );
 
-    public RoleRepositoryImpl(){
-	super();
-	this.roles = new HashMap<RoleDescriptor, IRole>();
-    }
+		return roles.get( descriptor );
+	}
 
-    /* (non-Javadoc)
-     * @see whitecat.core.role.RoleRepository#findRole(whitecat.core.role.descriptors.RoleDescriptor)
-     */
-    public IRole findRole(RoleDescriptor descriptor)
-	    throws WCRoleRepositoryException {
-	// check if the role and the descriptor are valid
-	if( descriptor == null )
-	    throw new WCRoleRepositoryException("Cannot search with a null role descriptor");
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see whitecat.core.role.RoleRepository#getAvailableRoleDescriptors()
+	 */
+	public List<RoleDescriptor> getAvailableRoleDescriptors()
+																throws WCRoleRepositoryException {
+		return new LinkedList<RoleDescriptor>( roles.keySet() );
+	}
 
-	return this.roles.get(descriptor);
-    }
+	public synchronized final RoleDescriptor getRoleDescriptor(final IRole role) {
+		// check arguments
+		if ((role == null) || roles.isEmpty()
+				|| (roles.containsValue( role ) == false))
+			return null;
 
-    /* (non-Javadoc)
-     * @see whitecat.core.role.RoleRepository#getAvailableRoleDescriptors()
-     */
-    public List<RoleDescriptor> getAvailableRoleDescriptors()
-	    throws WCRoleRepositoryException {
-	return new LinkedList<RoleDescriptor>( this.roles.keySet() );
-    }
+		// now search the key for the specified role
+		for (final RoleDescriptor desc : roles.keySet()){
+			final IRole keyRole = roles.get( desc );
+			if (keyRole.equals( role ))
+				return desc;
+		}
 
-    /* (non-Javadoc)
-     * @see whitecat.core.role.RoleRepository#installRole(whitecat.core.role.descriptors.RoleDescriptor, whitecat.core.role.IRole, boolean)
-     */
-    public boolean installRole(RoleDescriptor descriptor, IRole role,
-	    boolean overrideIfExists) throws WCRoleRepositoryException {
+		return null;
 
-	if(! overrideIfExists ){
-	    // check if the role is already contained in the hashmap
-	    if( this.roles.containsValue(role) ){
-		// get the key (the role descriptor) this role is associated with
-		Set<RoleDescriptor> descriptors = this.roles.keySet();
-		for (Iterator iterator = descriptors.iterator(); iterator.hasNext();) {
-		    RoleDescriptor roleDescriptor = (RoleDescriptor) iterator.next();
+	}
 
-		    if( this.roles.get(roleDescriptor).equals(role) && roleDescriptor.equals(descriptor) )
-			return true;
+	public synchronized boolean installRole(final IRole role,
+											final boolean overrideIfExsist)
+																			throws WCRoleRepositoryException {
+		// check arguments
+		if (role == null)
+			return false;
+
+		if (roleDescriptorBuilder == null)
+			throw new WCRoleRepositoryException(
+					"Cannot install a role without the role descriptor and a descriptor builder" );
+
+		// get the role descriptor
+		final RoleDescriptor desc = roleDescriptorBuilder
+				.buildRoleDescriptor( role );
+		if (desc == null)
+			throw new WCRoleRepositoryException(
+					"Cannot build the descriptor for the specified role" );
+
+		// now install the role
+		return this.installRole( desc, role, overrideIfExsist );
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.role.RoleRepository#installRole(whitecat.core.role.descriptors
+	 * .RoleDescriptor, whitecat.core.role.IRole, boolean)
+	 */
+	public boolean installRole(final RoleDescriptor descriptor,
+								final IRole role, final boolean overrideIfExists)
+																					throws WCRoleRepositoryException {
+
+		if (!overrideIfExists){
+			// check if the role is already contained in the hashmap
+			if (roles.containsValue( role )){
+				// get the key (the role descriptor) this role is associated
+				// with
+				final Set<RoleDescriptor> descriptors = roles.keySet();
+				for (final Object element : descriptors){
+					final RoleDescriptor roleDescriptor = (RoleDescriptor) element;
+
+					if (roles.get( roleDescriptor ).equals( role )
+							&& roleDescriptor.equals( descriptor ))
+						return true;
+
+				}
+
+				// if here the same role has been installed with a different
+				// role descriptor
+				return false;
+			}
 
 		}
 
-		// if here the same role has been installed with a different role descriptor
+		// install the role
+		roles.put( descriptor, role );
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * whitecat.core.role.RoleRepository#removeRole(whitecat.core.role.IRole)
+	 */
+	public boolean removeRole(final IRole role)
+												throws WCRoleRepositoryException {
+		if (roles.containsValue( role )){
+			final Set<RoleDescriptor> descriptors = roles.keySet();
+			for (final Object element : descriptors){
+				final RoleDescriptor roleDescriptor = (RoleDescriptor) element;
+				if (roles.get( roleDescriptor ).equals( role )){
+					roles.remove( roleDescriptor );
+					return true;
+				}
+
+			}
+
+			// should never happen
+			return false;
+		}else
+		// the role is not contained
 		return false;
-	    }
 
 	}
 
-	// install the role
-	this.roles.put(descriptor, role);
-	return true;
-    }
-
-    /* (non-Javadoc)
-     * @see whitecat.core.role.RoleRepository#removeRole(whitecat.core.role.IRole)
-     */
-    public boolean removeRole(IRole role) throws WCRoleRepositoryException {
-	if( this.roles.containsValue(role) ){
-	    Set<RoleDescriptor> descriptors = this.roles.keySet();
-	    for (Iterator iterator = descriptors.iterator(); iterator.hasNext();) {
-		RoleDescriptor roleDescriptor = (RoleDescriptor) iterator.next();
-		if( this.roles.get(roleDescriptor).equals(role) ){
-		    this.roles.remove(roleDescriptor);
-		    return true;
-		}
-
-	    }
-
-	    // should never happen
-	    return false;
-	}
-	else
-	    // the role is not contained
-	    return false;
-
-    }
-
-
-    /**
-     * Removes a role depending on its descriptor.
-     */
-    public boolean removeRole(RoleDescriptor descriptor)
-	    throws WCRoleRepositoryException {
-	if( this.roles.containsKey(descriptor) ){
-	    this.roles.remove(descriptor);
-	    return true;
-	}
-	else return false;
-    }
-
-    public synchronized void setRoleDescriptorBuilder(IRoleDescriptorBuilder builder) {
-	this.roleDescriptorBuilder = builder;
-    }
-
-    public synchronized  boolean installRole(IRole role, boolean overrideIfExsist)
-	    throws WCRoleRepositoryException {
-	// check arguments
-	if( role == null )
-	    return false;
-
-	if( this.roleDescriptorBuilder == null )
-	    throw new WCRoleRepositoryException("Cannot install a role without the role descriptor and a descriptor builder");
-
-	// get the role descriptor
-	RoleDescriptor desc = this.roleDescriptorBuilder.buildRoleDescriptor(role);
-	if( desc == null )
-	    throw new WCRoleRepositoryException("Cannot build the descriptor for the specified role");
-
-	// now install the role
-	return this.installRole(desc, role, overrideIfExsist);
-    }
-
-    public synchronized final RoleDescriptor getRoleDescriptor(IRole role) {
-	// check arguments
-	if( role == null || this.roles.isEmpty() || this.roles.containsValue(role) == false )
-	    return null;
-
-	// now search the key for the specified role
-	for( RoleDescriptor desc : this.roles.keySet() ){
-	    IRole keyRole = this.roles.get(desc);
-	    if( keyRole.equals(role) )
-		return desc;
+	/**
+	 * Removes a role depending on its descriptor.
+	 */
+	public boolean removeRole(final RoleDescriptor descriptor)
+																throws WCRoleRepositoryException {
+		if (roles.containsKey( descriptor )){
+			roles.remove( descriptor );
+			return true;
+		}else return false;
 	}
 
-
-	return null;
-
-    }
+	public synchronized void setRoleDescriptorBuilder(	final IRoleDescriptorBuilder builder) {
+		roleDescriptorBuilder = builder;
+	}
 
 }

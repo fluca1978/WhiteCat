@@ -42,45 +42,56 @@ import whitecat.core.agents.AgentProxy;
 import whitecat.core.exceptions.WCProxyException;
 
 /**
- * This interface is used to safely and consistently handling a couple of proxies,
- * that is the proxy before a role manipulation and a proxy after a role manipulation.
- * This interface is used by the role engine to update the proxy after the manipulation
- * to the proxy before the manipulation. Instances of this interface can provide
- * different update policies.
+ * This interface is used to safely and consistently handling a couple of
+ * proxies, that is the proxy before a role manipulation and a proxy after a
+ * role manipulation. This interface is used by the role engine to update the
+ * proxy after the manipulation to the proxy before the manipulation. Instances
+ * of this interface can provide different update policies.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public interface ProxyHandler<PH extends AgentProxy> {
 
-    /**
-     * Stores the source proxy to the proxy handler.
-     * @param source the proxy that must be handled as source, that is the proxy
-     * that must be used to update another proxy
-     * @throws WCProxyException if the proxy is not valid (e.g., null) or the
-     * proxy has been assigned several times as source (only one source assignement
-     * should be granted).
-     */
-    public void setSourceProxy(PH source) throws WCProxyException;
-    
-    /**
-     * Stores the proxy destination, that is a proxy that will be updated with the state
-     * of the proxy stored as a source.
-     * @param destination the proxy that will be later updated
-     * @throws WCProxyException if the proxy is not valid (e.g., is null)
-     */
-    public void setDestinationProxy(PH destination) throws WCProxyException;
-    
-    /**
-     * Updates the proxy marked as destination with the state of the proxy marked
-     * as source. It is strongly recommended that the implementation of the proxy
-     * handler is in the same package (or in some ways has access) to the proxy private
-     * fields, so that it can easily access the fields and the state of the source proxy and
-     * can copy it to the destination proxy. Another way is to insert a method within the proxy class
-     * that allows a deeper copy of the proxy state (something like the clone method).
-     * <B>Please note that this method should take care of ICloneableAgentProxy interface and
-     * should invoke the clone method if the proxies are cloneable.</B>
-     * @return true if the update has been performed, false otherwise
-     * @throws WCProxyException if something goes wrong during the copy
-     */
-    public boolean updateProxy() throws WCProxyException;
+	/**
+	 * Stores the proxy destination, that is a proxy that will be updated with
+	 * the state of the proxy stored as a source.
+	 * 
+	 * @param destination
+	 *            the proxy that will be later updated
+	 * @throws WCProxyException
+	 *             if the proxy is not valid (e.g., is null)
+	 */
+	public void setDestinationProxy(PH destination) throws WCProxyException;
+
+	/**
+	 * Stores the source proxy to the proxy handler.
+	 * 
+	 * @param source
+	 *            the proxy that must be handled as source, that is the proxy
+	 *            that must be used to update another proxy
+	 * @throws WCProxyException
+	 *             if the proxy is not valid (e.g., null) or the proxy has been
+	 *             assigned several times as source (only one source assignement
+	 *             should be granted).
+	 */
+	public void setSourceProxy(PH source) throws WCProxyException;
+
+	/**
+	 * Updates the proxy marked as destination with the state of the proxy
+	 * marked as source. It is strongly recommended that the implementation of
+	 * the proxy handler is in the same package (or in some ways has access) to
+	 * the proxy private fields, so that it can easily access the fields and the
+	 * state of the source proxy and can copy it to the destination proxy.
+	 * Another way is to insert a method within the proxy class that allows a
+	 * deeper copy of the proxy state (something like the clone method).
+	 * <B>Please note that this method should take care of ICloneableAgentProxy
+	 * interface and should invoke the clone method if the proxies are
+	 * cloneable.</B>
+	 * 
+	 * @return true if the update has been performed, false otherwise
+	 * @throws WCProxyException
+	 *             if something goes wrong during the copy
+	 */
+	public boolean updateProxy() throws WCProxyException;
 }

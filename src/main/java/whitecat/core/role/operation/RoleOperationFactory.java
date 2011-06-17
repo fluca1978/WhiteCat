@@ -1,4 +1,5 @@
 package whitecat.core.role.operation;
+
 import whitecat.core.IRoleOperation;
 import whitecat.core.WhiteCat;
 
@@ -42,19 +43,21 @@ import whitecat.core.WhiteCat;
  */
 
 /**
- * A factory to build a new operation to do with a role booster.
- * Please note that a role booster is always initialized with a role operation,
- * so this factory must be used only to do another operation with the same role booster.
+ * A factory to build a new operation to do with a role booster. Please note
+ * that a role booster is always initialized with a role operation, so this
+ * factory must be used only to do another operation with the same role booster.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class RoleOperationFactory {
 
-    /**
-     * Provides a new role operation.
-     * @return a new role operation
-     */
-    public static IRoleOperation getRoleOperation(){
-	return WhiteCat.getNewRoleOperation();
-    }
+	/**
+	 * Provides a new role operation.
+	 * 
+	 * @return a new role operation
+	 */
+	public static IRoleOperation getRoleOperation() {
+		return WhiteCat.getNewRoleOperation();
+	}
 }

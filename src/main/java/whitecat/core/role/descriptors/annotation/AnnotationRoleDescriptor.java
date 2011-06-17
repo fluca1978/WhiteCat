@@ -43,39 +43,45 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * An annotation used to describe a role.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AnnotationRoleDescriptor {
 
-    /**
-     * The aim of the role.
-     * @return a string description of the role aim
-     */
-    public String aim() default "";
-    
-    /**
-     * The name of the role.
-     * @return the name of the role.
-     */
-    public String name() default "";
-    
-    /**
-     * The version of the role descriptor.
-     * @return the version of the role descriptor
-     */
-    public float version() default 3;
-    
-    /**
-     * The keywords list separator.
-     * @return the keywords list separator, by default ','
-     */
-    public String keywordsSeparator() default ",";
-    
-    /**
-     * A list of keywords, separated by the keywordSeparator().
-     * @return the list of the keywords
-     */
-    public String keywords() default "";
+	/**
+	 * The aim of the role.
+	 * 
+	 * @return a string description of the role aim
+	 */
+	public String aim() default "";
+
+	/**
+	 * A list of keywords, separated by the keywordSeparator().
+	 * 
+	 * @return the list of the keywords
+	 */
+	public String keywords() default "";
+
+	/**
+	 * The keywords list separator.
+	 * 
+	 * @return the keywords list separator, by default ','
+	 */
+	public String keywordsSeparator() default ",";
+
+	/**
+	 * The name of the role.
+	 * 
+	 * @return the name of the role.
+	 */
+	public String name() default "";
+
+	/**
+	 * The version of the role descriptor.
+	 * 
+	 * @return the version of the role descriptor
+	 */
+	public float version() default 3;
 }

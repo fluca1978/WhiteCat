@@ -41,51 +41,57 @@ package whitecat.core.role.task;
 import whitecat.core.WCException;
 
 /**
- * Implements the result of a task execution.
- * A task can be deferred (i.e., scheduled), and in such case
- * the task execution result implements a future reply pattern, that is
- * it synchronizes waiting for the reply to be set.
+ * Implements the result of a task execution. A task can be deferred (i.e.,
+ * scheduled), and in such case the task execution result implements a future
+ * reply pattern, that is it synchronizes waiting for the reply to be set.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public interface ITaskExecutionResult {
 
-    /**
-     * Provides the task execution result waiting if it is not ready. 
-     * @param blocking true if the caller must wait until the reply is ready
-     * @return the object that is the task result return or null if the result is
-     * still not ready
-     */
-    public Object getTaskResult( boolean blocking ) throws WCException;
-    
-    /**
-     * Gets the task execution result waiting for a timeout before
-     * giving away.
-     * @param timeout the number of milliseconds to wait before the caller
-     * is unlocked
-     * @return the object result of the task execution or null if the timeout
-     * has experied
-     */
-    public Object getTaskResult( long timeout ) throws WCException ;
-    
-    /**
-     * Notifies if the task result is ready. This method can be used
-     * to get the task result without being blocked.
-     * @return true if the task result is ready
-     */
-    public boolean isResultAvailable();
-    
-    /**
-     * Sets the execution result for this task result wrapper.
-     * The result should be set only once.
-     * @param result the task execution result
-     * @return true if the result is set, false otherwise
-     */
-    public boolean setResult(Object result );
-    
-    /**
-     * Cancel this task execution result, that is this result is no more
-     * required and waiting callers should be notified.
-     */
-    public void cancel();
+	/**
+	 * Cancel this task execution result, that is this result is no more
+	 * required and waiting callers should be notified.
+	 */
+	public void cancel();
+
+	/**
+	 * Provides the task execution result waiting if it is not ready.
+	 * 
+	 * @param blocking
+	 *            true if the caller must wait until the reply is ready
+	 * @return the object that is the task result return or null if the result
+	 *         is still not ready
+	 */
+	public Object getTaskResult(boolean blocking) throws WCException;
+
+	/**
+	 * Gets the task execution result waiting for a timeout before giving away.
+	 * 
+	 * @param timeout
+	 *            the number of milliseconds to wait before the caller is
+	 *            unlocked
+	 * @return the object result of the task execution or null if the timeout
+	 *         has experied
+	 */
+	public Object getTaskResult(long timeout) throws WCException;
+
+	/**
+	 * Notifies if the task result is ready. This method can be used to get the
+	 * task result without being blocked.
+	 * 
+	 * @return true if the task result is ready
+	 */
+	public boolean isResultAvailable();
+
+	/**
+	 * Sets the execution result for this task result wrapper. The result should
+	 * be set only once.
+	 * 
+	 * @param result
+	 *            the task execution result
+	 * @return true if the result is set, false otherwise
+	 */
+	public boolean setResult(Object result);
 }

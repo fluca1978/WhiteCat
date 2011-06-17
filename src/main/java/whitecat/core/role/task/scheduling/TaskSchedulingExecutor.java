@@ -39,13 +39,16 @@
 package whitecat.core.role.task.scheduling;
 
 /**
- * Indicates who can execute a task, that is a specific agent or
- * any agent that has assumed the appropriate role.
+ * Indicates who can execute a task, that is a specific agent or any agent that
+ * has assumed the appropriate role.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public enum TaskSchedulingExecutor {
 
-    EXECUTE_BY_EXACT_AGENT,		// the task can be excuted only by the agent specified
-    EXECUTE_BY_ANY_AGENT		// the task can be executed by any agent
-}	
+	EXECUTE_BY_EXACT_AGENT, // the task can be excuted only by the agent
+							// specified
+	EXECUTE_BY_ANY_AGENT
+	// the task can be executed by any agent
+}

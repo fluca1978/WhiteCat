@@ -40,15 +40,18 @@ package whitecat.core.event;
 
 /**
  * The event listener for the role events.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public interface EventListener {
-    
-    /**
-     * This method is called each time an event must be handled.
-     * @param event the event to process
-     */
-    public void handleEvent(Event event);
+
+	/**
+	 * This method is called each time an event must be handled.
+	 * 
+	 * @param event
+	 *            the event to process
+	 */
+	public void handleEvent(Event event);
 
 }

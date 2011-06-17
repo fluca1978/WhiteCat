@@ -41,18 +41,19 @@ package whitecat.core.exceptions;
 import whitecat.core.WCException;
 
 /**
- * An exception that deals with generic proxy problems, such as for instance
- * a reconfiguration of a proxy that is wrong.
+ * An exception that deals with generic proxy problems, such as for instance a
+ * reconfiguration of a proxy that is wrong.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class WCProxyException extends WCException {
 
-    public WCProxyException(String message){
-	super(message);
-    }
-    
-    public WCProxyException(String message, Throwable cause){
-	super(message, cause);
-    }
+	public WCProxyException(final String message) {
+		super( message );
+	}
+
+	public WCProxyException(final String message, final Throwable cause) {
+		super( message, cause );
+	}
 }

@@ -42,20 +42,21 @@ import whitecat.core.WCException;
 
 /**
  * A generic exception that can happen within a role repository operation.
+ * 
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class WCRoleRepositoryException extends WCException {
 
-    /**
+	/**
      * 
      */
-    public WCRoleRepositoryException(String message) {
-	super(message);
-    }
-    
-    public WCRoleRepositoryException(String message, Throwable t){
-	super(message,t);
-    }
+	public WCRoleRepositoryException(final String message) {
+		super( message );
+	}
+
+	public WCRoleRepositoryException(final String message, final Throwable t) {
+		super( message, t );
+	}
 
 }

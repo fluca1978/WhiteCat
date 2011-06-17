@@ -42,50 +42,52 @@ import java.util.LinkedList;
 
 import whitecat.core.agents.AgentProxy;
 import whitecat.core.agents.WCAgent;
-import whitecat.core.annotations.ROLE;
 import whitecat.core.role.IRole;
 
 /**
  * @author Luca Ferrari - cat4hire (at) sourceforge.net
- *
+ * 
  */
 public class DBAgent implements WCAgent {
-    
-    private boolean administrator = false;
-    
-    /**
-     * A list of my roles.
-     */
-    private LinkedList<IRole> roles = new LinkedList<IRole>();
-    
-    public DBAgent(boolean administrator){
-	super();
-	this.administrator = administrator;
-    }
-    
-    public DBAgent(){
-	this(false);
-    }
-    
-    public void run(){
-	if( this.administrator ){
-	    // I'm an administrator
-	}
-	else{
-	    // I'm a database user
-	    IRole role = new DatabaseUser(); 
-	    roles.add( role );
-	    System.out.println("Agent counting the tuples and getting the max " + ((DatabaseUser)role).selectCount() + " " + ((DatabaseUser)role).getMaxPrice());
-	}
-    }
-    
 
-    /* (non-Javadoc)
-     * @see whitecat.core.agents.WCAgent#getAgentProxy()
-     */
-    public AgentProxy getAgentProxy() {
-	// TODO Auto-generated method stub
-	return null;
-    }
+	private boolean					administrator	= false;
+
+	/**
+	 * A list of my roles.
+	 */
+	private final LinkedList<IRole>	roles			= new LinkedList<IRole>();
+
+	public DBAgent() {
+		this( false );
+	}
+
+	public DBAgent(final boolean administrator) {
+		super();
+		this.administrator = administrator;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see whitecat.core.agents.WCAgent#getAgentProxy()
+	 */
+	public AgentProxy getAgentProxy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void run() {
+		if (administrator){
+			// I'm an administrator
+		}else{
+			// I'm a database user
+			final IRole role = new DatabaseUser();
+			roles.add( role );
+			System.out
+					.println( "Agent counting the tuples and getting the max "
+							+ ((DatabaseUser) role).selectCount() + " "
+							+ ((DatabaseUser) role).getMaxPrice() );
+		}
+	}
 
 }
