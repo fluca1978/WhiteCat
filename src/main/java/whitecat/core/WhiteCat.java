@@ -20,7 +20,7 @@
  *
  * 
  *
- * Copyright (C) Luca Ferrari 2008-2011 - cat4hire@users.sourceforge.net
+ * Copyright (C) Luca Ferrari 2006-2012 - fluca1978 (at) gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ import whitecat.core.role.task.scheduling.ITaskScheduler;
  * This is the main class of the whole system. This class has been created to
  * act as a front-end for the whole system.
  * 
- * @author Luca Ferrari - cat4hire (at) sourceforge.net
+ * @author Luca Ferrari - fluca1978 (at) gmail.com
  * 
  */
 public class WhiteCat {

@@ -31,7 +31,7 @@ import whitecat.core.role.IRole;
  *
  * 
  *
- * Copyright (C) Luca Ferrari 2008-2011 - cat4hire@users.sourceforge.net
+ * Copyright (C) Luca Ferrari 2006-2012 - fluca1978 (at) gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ import whitecat.core.role.IRole;
  * The default implementation of a role operation. The role booster uses this
  * class as an abstraction over the configuration to complete a role operation.
  * 
- * @author Luca Ferrari - cat4hire (at) sourceforge.net
+ * @author Luca Ferrari - fluca1978 (at) gmail.com
  * 
  */
 public class RoleOperationImpl implements IRoleOperation {

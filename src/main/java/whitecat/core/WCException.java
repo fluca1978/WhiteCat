@@ -20,7 +20,7 @@
  *
  * 
  *
- * Copyright (C) Luca Ferrari 2008-2011 - cat4hire@users.sourceforge.net
+ * Copyright (C) Luca Ferrari 2006-2012 - fluca1978 (at) gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ package whitecat.core;
  * thrown during White Cat functionality is a subclass of this, and so it is
  * possible to simply handle this exception in all the user code.
  * 
- * @author Luca Ferrari - cat4hire (at) sourceforge.net
+ * @author Luca Ferrari - fluca1978 (at) gmail.com
  * 
  */
 public class WCException extends Exception {

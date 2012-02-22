@@ -20,7 +20,7 @@
  *
  * 
  *
- * Copyright (C) Luca Ferrari 2008-2011 - cat4hire@users.sourceforge.net
+ * Copyright (C) Luca Ferrari 2006-2012 - fluca1978 (at) gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ import whitecat.core.role.descriptors.annotation.AnnotationTaskDescriptor;
  * An example of role built with annotations, that can be used to provide a role
  * descriptor automatically.
  * 
- * @author Luca Ferrari - cat4hire (at) sourceforge.net
+ * @author Luca Ferrari - fluca1978 (at) gmail.com
  * 
  */
 @ROLE()

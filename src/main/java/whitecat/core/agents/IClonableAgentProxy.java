@@ -20,7 +20,7 @@
  *
  * 
  *
- * Copyright (C) Luca Ferrari 2008-2011 - cat4hire@users.sourceforge.net
+ * Copyright (C) Luca Ferrari 2006-2012 - fluca1978 (at) gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ package whitecat.core.agents;
  * agent proxy are copied, while this interface gives the users more control
  * over which extended state to copy.
  * 
- * @author Luca Ferrari - cat4hire (at) sourceforge.net
+ * @author Luca Ferrari - fluca1978 (at) gmail.com
  * 
  */
 public interface IClonableAgentProxy {

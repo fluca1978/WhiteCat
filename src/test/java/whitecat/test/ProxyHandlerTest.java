@@ -21,7 +21,7 @@ import whitecat.example.DBProxy;
 /**
  * Test the proxy handler.
  * 
- * @author Luca Ferrari - cat4hire (at) sourceforge.net
+ * @author Luca Ferrari - fluca1978 (at) gmail.com
  * 
  */
 public class ProxyHandlerTest {

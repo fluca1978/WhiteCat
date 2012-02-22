@@ -50,7 +50,7 @@ import whitecat.core.role.descriptors.RoleDescriptor;
  * This aspect drives the proxy storage mechanism, ensuring that
  * each time a proxy is manipulated, the proxy and its agent is
  * inserted in the proxy storage.
- * @author Luca Ferrari - cat4hire (at) sourceforge.net
+ * @author Luca Ferrari - fluca1978 (at) gmail.com
  *
  */
 public aspect ProxyStorageAspect {
