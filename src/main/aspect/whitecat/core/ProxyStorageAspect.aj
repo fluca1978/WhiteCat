@@ -17,7 +17,7 @@
  *    Software Practice and Experience
  *    2011
  *
- * Copyright (C) Luca Ferrari 2008-2010 - cat4hire@users.sourceforge.net
+ * Copyright (C) Luca Ferrari 2008-2013 - fluca1978 (at) gmail (dot) com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
